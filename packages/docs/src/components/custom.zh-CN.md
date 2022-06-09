@@ -27,7 +27,7 @@ toc: menu
  * iframe: 200
  */
 import React, { useEffect , useState } from 'react'
-import { Egreact } from '@egreact/core'
+import { Egreact } from 'egreact'
 const sprite = new egret.Sprite()
 sprite.graphics.beginFill(0xff8fae, 1);
 sprite.graphics.drawRect(0, 0, 150, 150);
@@ -112,7 +112,7 @@ export default () => (
 /**
  * iframe: 200
  */
-import { Egreact , ArrayContainer } from '@egreact/core'
+import { Egreact , ArrayContainer } from 'egreact'
 import React, { useEffect, useRef, useState } from "react";
 
 export default function TestFont() {

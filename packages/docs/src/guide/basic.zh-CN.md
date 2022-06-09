@@ -10,7 +10,7 @@ order: 3
 `Egreact` 是渲染的入口，从这里开始使用 tsx 编写 egret 应用。
 ``` tsx | pure
 import React from 'react'
-import { Egreact } from '@egreact/core'
+import { Egreact } from 'egreact'
 
 export default () => (
   <div>
@@ -32,7 +32,7 @@ egret 配置项和 `options` 详见[入口文件说明](https://docs.egret.com/e
 可以不使用组件 `Egreact` ,直接使用 `renderer` 渲染
 
 ``` tsx | pure
-import { createRenderer } from '@egreact/core'
+import { createRenderer } from 'egreact'
 
 // rootContainer 要加入显示列表
 const rootContainer = new egret.DisplayObjectContainer()
@@ -173,7 +173,7 @@ child['x'] = 100;
  * defaultShowCode: true
  */
 import React, { useState } from 'react'
-import { Egreact } from '@egreact/core'
+import { Egreact } from 'egreact'
 export default () => {
   const [x, setX] = useState(0)
   return (
@@ -216,7 +216,7 @@ onTouchTapCaptureOnce12
  */
 import React from 'react'
 import Test from './components/Test.tsx'
-import { Egreact } from '@egreact/core'
+import { Egreact } from 'egreact'
 import { Provider, useSelector, useDispatch } from 'react-redux'
 import { RootState, store } from './store'
 import { increment } from './store/counterSlice'
@@ -251,7 +251,7 @@ export default () =>(<Provider store={store}><App/></Provider>)
  */
 import React from 'react'
 import Test from './components/Test.tsx'
-import { Egreact } from '@egreact/core'
+import { Egreact } from 'egreact'
 import { Provider, useSelector, useDispatch } from 'react-redux'
 import { RootState, store } from './store'
 import { increment } from './store/counterSlice'

@@ -9,7 +9,7 @@
   "author": "xingyu.hu",
   "license": "ISC",
   "dependencies": {
-    "@egreact/core": "workspace:^0.0.1"
+    "egreact": "workspace:^0.0.1"
   },
   "devDependencies": {
     "@reduxjs/toolkit": "^1.8.2",

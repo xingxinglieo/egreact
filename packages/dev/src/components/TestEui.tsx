@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { useState, useRef } from "react";
-import { EventProp } from '@egreact/core'
+import { EventProp } from 'egreact'
 console.log(EventProp.eventSetter)
 export default function Test() {
   const [medias, setMedias] = useState([

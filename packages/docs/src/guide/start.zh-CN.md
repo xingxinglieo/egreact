@@ -28,7 +28,7 @@ npm install @egreact/core
  * defaultShowCode: true
  */
 import React from 'react'
-import { Egreact } from '@egreact/core'
+import { Egreact } from 'egreact'
 
 export default () => (
   <Egreact>
