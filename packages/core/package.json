@@ -1,0 +1,19 @@
+{
+  "name": "@egreact/core",
+  "version": "0.0.1",
+  "description": "A react render for egret",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "jest --silent --maxWorkers=100% --detect-open-handles"
+  },
+  "author": "xingyu.hu",
+  "license": "ISC",
+  "dependencies": {
+  },
+  "peerDependencies": {
+    "react": ">=18.0",
+    "react-dom": ">=18.0",
+    "react-reconciler": ">=0.28.0",
+    "react-router-dom": ">=5.0"
+  }
+}
