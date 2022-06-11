@@ -6,8 +6,8 @@ export default defineConfig({
   locales: [["zh-CN", "中文"]],
   base: "/egreact-docs/",
   publicPath: "/egreact-docs/",
-  favicon: "/egreact-docs/egreact.png",
-  logo: "/egreact-docs/egreact.png",
+  favicon: "https://xingxinglieo.github.io/egreact/egreact.png",
+  logo: "https://xingxinglieo.github.io/egreact/egreact.png",
   outputPath: "docs-dist",
   navs: [
     null, // null 值代表保留约定式生成的导航，只做增量配置
