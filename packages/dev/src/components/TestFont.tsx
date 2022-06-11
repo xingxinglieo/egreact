@@ -1,4 +1,4 @@
-import { Instance, ArrayContainer } from "@egreact/core";
+import { Instance, ArrayContainer } from "egreact";
 import React, { useEffect, useRef } from "react";
 import { RootState } from "../store";
 import { increment } from "../store/counterSlice";
@@ -19,7 +19,7 @@ export default function Test() {
       }}
     >
       <arrayContainer attach="textFlow" ref={arrayContainer}>
-        <objectContainer text={count} style={{ textColor: 0xff0000 }} />
+        <objectContainer text={count + ''} style={{ textColor: 0xff0000 }} />
       </arrayContainer>
     </eui-label>
   );

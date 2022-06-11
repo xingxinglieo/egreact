@@ -1,11 +1,11 @@
-import displayObjectPropsHandlers from "./DisplayObject";
-import { graphicsProp } from "../common";
-import { mixinHelper } from "../utils";
+import displayObjectPropsHandlers from './DisplayObject'
+import { graphicsProp } from '../common'
+import { mixinHelper } from '../utils'
 const shapePropsHandlers = mixinHelper
   .set({
     ...displayObjectPropsHandlers,
-    __Class: egret.Sprite
+    __Class: egret.Sprite,
   })
-  .mixin(graphicsProp, "graphics")
-  .get();
-export default shapePropsHandlers;
+  .mixin(graphicsProp, 'graphics')
+  .get()
+export default shapePropsHandlers

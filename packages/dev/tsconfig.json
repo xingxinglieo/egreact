@@ -16,8 +16,5 @@
     "noImplicitThis": false,
     "baseUrl": "./"
   },
-  "include": [
-    "packages/**/*",
-    "node_modules/egret-engine/build"
-  ]
+  "include": ["src","node_modules/egreact/types"],
 }

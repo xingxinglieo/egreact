@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { useState, useRef } from "react";
-import { EventProp } from 'egreact'
-console.log(EventProp.eventSetter)
+import { EventProp } from "egreact";
+console.log(EventProp.eventSetter);
 export default function Test() {
   const [medias, setMedias] = useState([
     {
@@ -49,26 +49,27 @@ export default function Test() {
     () => [
       {
         avatar: "resource/assets/Ask/avatar_1.png",
-        nickname: "Huasasa",
-        from: "Interact friend from Fruit Game",
-        water: 50
+        nickname: "Egreact",
+        from: "address list",
+        sun: 50
       },
       {
         avatar: "resource/assets/Ask/avatar_2.png",
-        nickname: "Eason",
-        from: "Interact friend from Fruit Game",
-        water: 50
+        nickname: "React",
+        from: "address list",
+        sun: 50
       },
       {
         avatar: "resource/assets/Ask/avatar_3.png",
-        nickname: "Kaley",
-        from: "Interact friend from Fruit Game",
-        water: 50
+        nickname: "Redux",
+        from: "game",
+        sun: 50
       }
     ],
     []
   );
   const scroller = useRef<eui.Scroller>(null!);
+
   // const scrollerBar = useRef<eui.HScrollBar>(null!);
   useEffect(() => {
     // scroller.current.addChild(scrollerBar.current);
@@ -94,7 +95,7 @@ export default function Test() {
               horizontalCenter="0"
               fontFamily="Roboto"
             >
-              Ask For Water
+              Ask For Sun
             </eui-label>
           </eui-group>
           <eui-group width="100%">
@@ -125,7 +126,7 @@ export default function Test() {
                   layout-gap={68}
                   layout="horizontal"
                   layout-paddingLeft={42}
-                  layout-paddingRight={42} 
+                  layout-paddingRight={42}
                   layout-paddingTop={27}
                   layout-paddingBottom={27}
                 >
@@ -218,7 +219,7 @@ export default function Test() {
                             ellipseWidth="60"
                           />
                           <eui-label
-                            text="Ask For Water"
+                            text="Ask For Sun"
                             top="12"
                             bottom="12"
                             left="22"
@@ -250,14 +251,18 @@ export default function Test() {
                           textColor="0xAFAFAF"
                           size="24"
                         />
-                        <eui-image source="resource/assets/Ask/water.png" />
+                        <eui-image
+                          source="resource/assets/Ask/sun.png"
+                          width={20}
+                          height={20}
+                        />
                         <eui-label
-                          text={data.water}
-                          textColor="0x22CCF5"
+                          text={data.sun}
+                          textColor="0xf4ea29"
                           size="24"
                         />
                         <eui-label
-                          text=" extra water from this friend today"
+                          text=" extra sun from this friend today"
                           textColor="0xAFAFAF"
                           size="24"
                         />

@@ -20,7 +20,6 @@ export type EventInfo = {
   priority: number
   keys: string[]
 }
-
 export type PropResetter = void | ((removed: boolean) => void)
 export type PropSetter<P, I = Instance, T = P> = (args: {
   newValue: P

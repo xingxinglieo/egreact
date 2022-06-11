@@ -22,7 +22,8 @@ export class Anchor extends eui.Label {
 // ...font,
 const aTag = {
   ...label,
-  __Class: Anchor,
+  __Class: eui.Label,
+  // __Class: Anchor,
   // __Class: proxyHelper({
   //   constructor: Anchor,
   //   configs: {

@@ -7,7 +7,7 @@ import {
 } from "react-redux";
 import { RootState, store } from "./store";
 import ReactDOM from "react-dom";
-import { Egreact, EgreactLink } from "@egreact/core";
+import { Egreact, EgreactLink } from "egreact";
 import {
   HashRouter,
   BrowserRouter,

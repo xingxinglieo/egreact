@@ -2,21 +2,51 @@
   "name": "egreact",
   "version": "0.0.1",
   "description": "A react render for egret",
-  "main": "src/index.ts",
+  "keywords": [
+    "react",
+    "reactjs",
+    "egret"
+  ],
+  "author": "xingyu.hu(https://github.com/xingxinglieo)",
+  "repository": "https://github.com/xingxinglieo/egreact",
+  "bugs": "https://github.com/xingxinglieo/egreact/issues",
+  "homepage": "https://xingxinglieo.github.io/egreact-docs",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist",
+    "types"
+  ],
   "test": "jest --silent --maxWorkers=100% --detect-open-handles",
   "scripts": {
-    "test": "jest --silent --maxWorkers=100% --detect-open-handles"
+    "build:dev": "cross-env NODE_ENV=development rollup -c",
+    "build:prod": "cross-env NODE_ENV=production rollup -c",
+    "build:types": "tsc",
+    "build": "npm run build:types && npm run build:dev && npm run build:prod"
   },
-  "author": "xingyu.hu",
   "license": "ISC",
-  "dependencies": {},
   "peerDependencies": {
-    "react": ">=18.0",
-    "react-dom": ">=18.0",
-    "react-reconciler": ">=0.28.0",
+    "react": "^16.8 || ^17.0 || ^18.0",
+    "react-dom": "^16.8 || ^17.0 || ^18.0",
+    "react-reconciler": ">=0.26.0",
     "react-router-dom": ">=5.0"
+  },
+  "peerDependenciesMeta": {
+    "react-router-dom": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.2",
+    "rollup": "^2.75.6",
+    "rollup-plugin-sourcemaps": "^0.6.3",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript": "^1.0.1",
+    "tslib": "^2.4.0",
+    "typescript": "^4.7.3"
   }
 }
