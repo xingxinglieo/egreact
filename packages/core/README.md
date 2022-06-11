@@ -7,4 +7,4 @@
 - 完备的 TypeScript 支持，编写 egreact 时处处有 TypeScript 提示，给予最好的开发体验
 - 自定义原生组件，开放自定义原生组件的接口，可以自行拓展原生组件，拓宽组件的描述能力。
 
-### [文档](https://xingxinglieo.github.io/egreact-docs)
+### [文档](https://xingxinglieo.github.io/egreact)
