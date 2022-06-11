@@ -96,7 +96,7 @@ importers:
       dumi: ^1.1.42
       egreact: workspace:^0.0.1
       father-build: ^1.17.2
-      gh-pages: ^3.0.0
+      gh-pages: ^3.2.3
       lint-staged: ^10.0.7
       prettier: ^2.2.1
       react: ^18.1.0
