@@ -294,6 +294,12 @@ export const hostConfig: HostConfig = {
 }
 
 const reconciler = Reconciler(hostConfig)
+
+reconciler.injectIntoDevTools({
+  bundleType: process.env.NODE_ENV === 'production' ? 0 : 1,
+  rendererPackageName: 'egreact',
+  version: '17.0.0',
+})
 export function createRenderer(containerNode: egret.DisplayObjectContainer) {
   let fiberRoot
   return function render(child: React.ReactNode) {
