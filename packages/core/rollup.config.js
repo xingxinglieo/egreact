@@ -1,12 +1,17 @@
 import typescript from 'rollup-plugin-typescript'
-import sourceMaps from 'rollup-plugin-sourcemaps'
+import replace from '@rollup/plugin-replace'
 import { terser } from 'rollup-plugin-terser'
-const isProduction = process.env.NODE_ENV === 'production'
+
+const env = process.env.NODE_ENV
+const isProduction = env === 'production'
 const configs = {
   input: './src/index.ts',
   plugins: [
+    replace({
+      'process.env.NODE_ENV': JSON.stringify(env),
+      preventAssignment: true
+    }),
     typescript({}),
-    sourceMaps(),
     ...(isProduction
       ? [
           terser({
