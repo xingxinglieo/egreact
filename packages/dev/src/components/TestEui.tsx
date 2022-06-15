@@ -73,6 +73,7 @@ export default function Test() {
   // const scrollerBar = useRef<eui.HScrollBar>(null!);
   useEffect(() => {
     // scroller.current.addChild(scrollerBar.current);
+    console.log(scroller.current.getBounds())
   }, []);
   return (
     <eui-scroller width={750} height={1334}>

@@ -1,5 +1,6 @@
 import typescript from 'rollup-plugin-typescript'
 import replace from '@rollup/plugin-replace'
+import json from '@rollup/plugin-json'
 import { terser } from 'rollup-plugin-terser'
 
 const env = process.env.NODE_ENV
@@ -7,9 +8,10 @@ const isProduction = env === 'production'
 const configs = {
   input: './src/index.ts',
   plugins: [
+    json(),
     replace({
       'process.env.NODE_ENV': JSON.stringify(env),
-      preventAssignment: true
+      preventAssignment: true,
     }),
     typescript({}),
     ...(isProduction

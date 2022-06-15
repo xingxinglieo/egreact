@@ -23,6 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
+import { getBoundingClientRect } from '../devtool'
 import { EVENT_CATEGORT_MAP } from '../Host'
 import type { PropSetter, IElementProps, Instance, IRenderInfo, EventInfo } from '../type'
 import { FLAG } from '../type'
@@ -33,6 +34,17 @@ const hyphenateRE = /\B([A-Z])/g
  */
 export function hyphenate(str: string) {
   return str.replace(hyphenateRE, '-$1').toLowerCase()
+}
+
+/**
+ * @description 获取用于操作的实际 instance
+ */
+export function getActualInstance(instance: Instance<any>) {
+  return instance.__target ?? instance
+}
+
+export function getCanvas() {
+  return document.querySelector('.egret-player > canvas') as HTMLCanvasElement
 }
 
 export type Changes = [key: string, value: unknown, isEvent: boolean, keys: string[]]
@@ -88,13 +100,6 @@ export const is = {
 }
 
 /**
- * @description 获取用于操作的实际 instance
- */
-export function getActualInstance(instance: Instance<any>) {
-  return instance.__target ?? instance
-}
-
-/**
  * @description 附加 __renderInfo
  */
 export function affixInfo<T = unknown>(
@@ -114,11 +119,35 @@ export function affixInfo<T = unknown>(
       memoizedDefualt: {},
       memoizedProps: {},
       memoizedResetter: {},
-      // memoizedEvents: {},
       ...info,
     }
   }
+  if (__DEV__) {
+    // devtool need to get rect of element
+    // https://github.com/facebook/react/blob/29c2c633159cb2171bb04fe84b9caa09904388e8/packages/react-devtools-shared/src/backend/views/utils.js#L108
+    instance.getBoundingClientRect = () => getBoundingClientRect(instance)
+
+    // https://github.com/facebook/react/blob/327e4a1f96fbb874001b17684fbb073046a84938/packages/react-devtools-shared/src/backend/views/Highlighter/Overlay.js#L193
+    instance.nodeType = 1
+
+    // https://github.com/facebook/react/blob/327e4a1f96fbb874001b17684fbb073046a84938/packages/react-devtools-shared/src/backend/views/Highlighter/Overlay.js#L233
+    instance.nodeName = instance.__class__
+
+    instance.ownerDocument = document
+  }
+
   return instance
+}
+
+// 找一个 egret 的祖先（有宽高）。
+export function findEgretAncestor(o: Instance<unknown>): Instance<egret.DisplayObject> | null {
+  while (!(getActualInstance(o) instanceof egret.DisplayObject)) {
+    if (!o.__renderInfo.fiber.return) {
+      return null
+    }
+    o = o.__renderInfo.fiber.return.stateNode
+  }
+  return getActualInstance(o)
 }
 
 export const isEvent = (key: string) => /^on([A-Z][a-z]+)+\d*$/.test(key) // 是否为事件

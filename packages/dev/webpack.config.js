@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { DefinePlugin } = require("webpack");
 module.exports = {
   mode: "development",
   entry: "./src/index.tsx",
@@ -30,6 +31,9 @@ module.exports = {
     port: 3333 // 默认端口 3000
   },
   plugins: [
+    new DefinePlugin({
+      __DEV__: JSON.stringify(true)
+    }),
     new HtmlWebpackPlugin({
       template: "./index.html"
     })

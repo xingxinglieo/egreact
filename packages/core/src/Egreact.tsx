@@ -9,6 +9,12 @@ import {
   ErrorBoundary,
 } from './utils'
 import { createRenderer } from './renderer'
+import {
+  proxyGetComputedStyle,
+  proxyListener,
+  unProxyGetComputedStyle,
+  unProxyListener,
+} from './devtool'
 
 // 单独拿出来用于提示
 const DomEgretPropsName = [
@@ -41,6 +47,7 @@ type Props = {
   contextsFrom?: boolean | React.Context<any>[] | HTMLElement
 } & JSX.IntrinsicElements['div']
 const entryClass = '__Main'
+let moutedCount = 0
 
 export default function Egreact({
   children,
@@ -94,6 +101,19 @@ export default function Egreact({
       setContexts(contextsFrom)
     }
     setMouted(true)
+
+    moutedCount++
+    if (__DEV__ && moutedCount === 1) {
+      proxyGetComputedStyle()
+      proxyListener()
+    }
+    return () => {
+      moutedCount--
+      if (moutedCount === 0) {
+        unProxyGetComputedStyle()
+        unProxyListener()
+      }
+    }
   }, [])
 
   const render = useRef<(child: ReactNode) => any>(null)

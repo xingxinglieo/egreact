@@ -33,6 +33,7 @@ import {
   diffProps,
   DiffSet,
   is,
+  findEgretAncestor,
   // isEvent,
   affixInfo,
   reduceKeysToTarget,
@@ -85,7 +86,6 @@ const createInstance: HostConfig['createInstance'] = function (
     // mountedApplyProps 为真时，不在创建时应用 props，而是在挂载时应用 props
     instance.__renderInfo.memoizedProps = { ...props }
   }
-
   return instance
 }
 
@@ -295,11 +295,17 @@ export const hostConfig: HostConfig = {
 
 const reconciler = Reconciler(hostConfig)
 
-reconciler.injectIntoDevTools({
-  bundleType: process.env.NODE_ENV === 'production' ? 0 : 1,
-  rendererPackageName: 'egreact',
-  version: '17.0.0',
-})
+import packagejson from '../package.json'
+if (__DEV__) {
+  reconciler.injectIntoDevTools({
+    bundleType: 0,
+    rendererPackageName: 'egreact',
+    version: packagejson.version,
+    findFiberByHostInstance(instance: Instance) {
+      return instance?.__renderInfo?.fiber ?? null
+    },
+  })
+}
 export function createRenderer(containerNode: egret.DisplayObjectContainer) {
   let fiberRoot
   return function render(child: React.ReactNode) {

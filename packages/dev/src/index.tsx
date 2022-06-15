@@ -45,7 +45,7 @@ function App() {
           height: "100%"
         }}
         orientation="auto"
-        scaleMode="showAll"
+        scaleMode="noScale"
         frameRate="60"
         contentWidth="750"
         contentHeight="1334"
@@ -68,12 +68,6 @@ function App() {
             <EgreactLink to={"font"} textColor={0x000000}>
               test for font
             </EgreactLink>
-            {/* <eui-label text="Receive" textColor="0xAFAFAF" size="24" />
-            <eui-label
-              text=" extra water from this friend today"
-              textColor="0xAFAFAF"
-              size="24"
-            /> */}
           </eui-group>
           <Routes>
             <Route path="/" element={<TestEui />} />
