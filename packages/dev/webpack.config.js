@@ -6,7 +6,7 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".js", ".tsx", "jsx", ".mjs", ".json"],
     // 去那些目录搜索
-    modules: ["./src", "node_modules"],
+    modules: ["src", "node_modules"],
     // 优先采用es6语法的第三方模块
     mainFields: ["jsnext:main", "module", "main"],
     // 别名

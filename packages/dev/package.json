@@ -6,7 +6,7 @@
   "scripts": {
     "dev:local": "webpack serve",
     "dev:core": "cd ../core && npm run dev",
-    "dev": "concurrently npm:dev:local && npm:dev:core"
+    "dev": "concurrently npm:dev:core npm:dev:local"
   },
   "author": "xingyu.hu",
   "license": "ISC",
