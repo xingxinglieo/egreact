@@ -24,10 +24,11 @@ global.RES = RES
 global.EXML = EXML
 global.__extends = __extends
 
-window.__DEV__ = true
+// window.__DEV__ = true
 global.sLog = function () {}
-
+process.env.NODE_ENV = 'devlopment'
 // 可以检查未处理的Error;
 process.on('unhandledRejection', (reason) => {
   throw reason
 })
+

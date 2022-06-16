@@ -166,7 +166,7 @@ export function proxyListener() {
         if (type === 'pointerover') {
           // 特殊处理，react devtool 没有监听 pointermove，但是进入画布的话，只有一次 pointerover
           // 为了鼠标移动就能判断，在 canvas 上监听 pointermove
-          const throllerProxyHandler = throttle(proxyHandler, 300)
+          const throllerProxyHandler = throttle(proxyHandler, 150)
           const canvas = getCanvas()
           canvas.addEventListener('pointermove', throllerProxyHandler, options)
           // 保存一下最后这个参数

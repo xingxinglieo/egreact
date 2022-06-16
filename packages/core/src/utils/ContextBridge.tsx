@@ -90,8 +90,7 @@ export const ContextListeners = memo(
 
 export const ContextListener = memo(
   ({ context, values, index }: { context: React.Context<any>; values: any[]; index: number }) => {
-    const p = values[index]
     values[index] = useContext(context)
-    return null
+    return null;
   },
 )

@@ -25,7 +25,7 @@ SOFTWARE.
  */
 import Reconciler from 'react-reconciler'
 import { catalogueMap } from './Host/index'
-import { LegacyRoot } from 'react-reconciler/constants'
+import { ConcurrentRoot, DefaultEventPriority } from 'react-reconciler/constants'
 import RenderString from './Host/custom/RenderString'
 import {
   getActualInstance,
@@ -260,6 +260,7 @@ export const hostConfig: HostConfig = {
   shouldSetTextContent: (_type, props) => {
     return 'text' in props
   },
+  getCurrentEventPriority: () => DefaultEventPriority,
   getPublicInstance: (renderInstance) => renderInstance,
   prepareForCommit: () => null,
   preparePortalMount: () => null,
@@ -299,7 +300,7 @@ import packagejson from '../package.json'
 export function findFiberByHostInstance(instance: Instance) {
   return instance?.__renderInfo?.fiber ?? null
 }
-if (__DEV__) {
+if (process.env.NODE_ENV !== 'production') {
   reconciler.injectIntoDevTools({
     bundleType: 0,
     rendererPackageName: 'egreact',
@@ -314,7 +315,7 @@ export function createRenderer(containerNode: egret.DisplayObjectContainer) {
     if (!fiberRoot) {
       fiberRoot = reconciler.createContainer(
         affixInfo(containerNode),
-        LegacyRoot,
+        ConcurrentRoot,
         null,
         false,
         null,

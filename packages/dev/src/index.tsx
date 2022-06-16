@@ -6,7 +6,7 @@ import {
   useDispatch
 } from "react-redux";
 import { RootState, store } from "./store";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { Egreact, EgreactLink } from "egreact";
 import {
   HashRouter,
@@ -78,11 +78,10 @@ function App() {
     </div>
   );
 }
-ReactDOM.render(
+createRoot(document.getElementById("app")).render(
   <HashRouter>
     <Provider store={store}>
       <App />
     </Provider>
-  </HashRouter>,
-  document.getElementById("app")
+  </HashRouter>
 );

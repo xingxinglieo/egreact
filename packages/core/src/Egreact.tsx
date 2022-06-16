@@ -103,7 +103,7 @@ export default function Egreact({
     setMouted(true)
 
     moutedCount++
-    if (__DEV__ && moutedCount === 1) {
+    if (process.env.NODE_ENV !== 'production' && moutedCount === 1) {
       proxyGetComputedStyle()
       proxyListener()
     }

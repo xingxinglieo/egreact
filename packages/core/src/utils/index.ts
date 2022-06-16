@@ -122,7 +122,7 @@ export function affixInfo<T = unknown>(
       ...info,
     }
   }
-  if (__DEV__) {
+  if (process.env.NODE_ENV !== 'production') {
     // devtool need to get rect of element
     // https://github.com/facebook/react/blob/29c2c633159cb2171bb04fe84b9caa09904388e8/packages/react-devtools-shared/src/backend/views/utils.js#L108
     instance.getBoundingClientRect = () => getBoundingClientRect(instance)
@@ -383,8 +383,13 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
  * 并从此节点遍历到根结点,收集路径上的 Provider 的 Context
  */
 export function collectContextsFromDom(dom: any) {
-  if (!(dom instanceof HTMLElement)) return []
-  const fiberKey = Object.keys(dom).filter((key) => key.startsWith('__react'))[0]
+  if (!(dom instanceof HTMLElement)){
+    console.error(`prop is not a HTMLElement`)
+    return []
+  } 
+  const fiberKey = Object.keys(dom).find(
+    (key) => key.startsWith('__react') && dom[key]?.stateNode === dom,
+  )
   if (!fiberKey) {
     console.error(`dom must created by react-dom`)
     return []

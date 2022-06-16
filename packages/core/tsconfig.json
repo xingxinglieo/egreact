@@ -12,9 +12,9 @@
     "removeComments": true,
     "emitDeclarationOnly": true,
     "outDir": "./dist/types",
+    "baseUrl": "./src",
     "resolveJsonModule": true,
     "noImplicitThis": false,
-    "baseUrl": "./src",
     "importHelpers": true
   },
   "include": ["src", "types"],
