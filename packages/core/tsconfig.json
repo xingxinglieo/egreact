@@ -17,6 +17,6 @@
     "baseUrl": "./src",
     "importHelpers": true
   },
-  "include": ["src/**/*", "types"],
-  "exclude": ["node_modules", "dist", "__test__/**/*"]
+  "include": ["src", "types", "__tests__"],
+  "exclude": ["node_modules", "dist"]
 }

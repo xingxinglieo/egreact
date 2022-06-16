@@ -6,8 +6,7 @@ const displayObjectContainerPropsHandlers = {
   __Class: egret.DisplayObjectContainer,
   childrenSortMode: ({ newValue, instance }: PropSetterParameters<string>) => (
     instance.setChildrenSortMode(newValue),
-    // @ts-ignore
-    () => instance.setChildrenSortMode(egret?.ChildrenSortMode?.['DEFAULT'] ?? 'DEFAULT')
+    (isRemove) => isRemove && instance.setChildrenSortMode('DEFAULT')
   ),
 }
 export default displayObjectContainerPropsHandlers

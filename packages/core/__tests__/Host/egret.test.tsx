@@ -6,9 +6,13 @@ const container = new egret.DisplayObjectContainer()
 const texture = new egret.Texture()
 const Test = () => {
   const [num, setNum] = useState('100%')
+  const [p, setP] = useState<any>({
+    childrenSortMode: 'DECREASE_Y',
+  })
   useEffect(() => {
     setNum('100')
-  })
+    setP({})
+  },[])
   return (
     <>
       <bitmap args={[texture]} />
@@ -18,7 +22,7 @@ const Test = () => {
       <displayObject height={num} width={num} visible name={1} />
       <displayObject height={50} width={50} />
 
-      <displayObjectContainer childrenSortMode={'DECREASE_Y'} />
+      <displayObjectContainer {...p} />
     </>
   )
 }

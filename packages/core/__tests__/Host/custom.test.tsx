@@ -27,11 +27,11 @@ function Test() {
     expect(arr[0]).toBe(font1)
     expect(arr[1]).toBe(font2)
     expect(arr[2]).toBe(objectContainer)
-    expect(arr[0]).toEqual({
+    expect(arr[0]).toMatchObject({
       text: '10',
       style: { textColor: 0x000000, size: 20 },
     })
-    expect(objectContainer).toEqual({
+    expect(objectContainer).toMatchObject({
       text: 10,
       style: { textColor: '0xff0000' },
     })

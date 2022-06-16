@@ -296,14 +296,15 @@ export const hostConfig: HostConfig = {
 const reconciler = Reconciler(hostConfig)
 
 import packagejson from '../package.json'
+export function findFiberByHostInstance(instance: Instance) {
+  return instance?.__renderInfo?.fiber ?? null
+}
 if (__DEV__) {
   reconciler.injectIntoDevTools({
     bundleType: 0,
     rendererPackageName: 'egreact',
     version: packagejson.version,
-    findFiberByHostInstance(instance: Instance) {
-      return instance?.__renderInfo?.fiber ?? null
-    },
+    findFiberByHostInstance,
   })
 }
 export function createRenderer(containerNode: egret.DisplayObjectContainer) {

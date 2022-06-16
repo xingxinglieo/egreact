@@ -12,7 +12,6 @@ module.exports = {
   },
   testRegex: '(/__tests__/.*\\.(test|spec))\\.[tj]sx?$', // 查找测试文件
   testEnvironment: 'jsdom',
-  // testRegex: '(test|spec).[tj]sx?$', // 查找测试文件
   /**
    * 测试代码覆盖率
    * % stmts是语句覆盖率（statement coverage）：每个语句是否都执行了
@@ -29,14 +28,10 @@ module.exports = {
     // 排除哪些目录或文件跳过覆盖率信息
     'node_modules',
     '__test__',
-    'src/index.ts'
+    'src/index.ts',
+    'src/outside.ts',
+    'src/types',
   ],
-  // coverageReporters: [
-  //   // 控制台输出覆盖率报告，值为text或text-summary
-  //   'text',
-  //   'cobertura',
-  //   'lcov',
-  // ],
   coverageThreshold: {
     // 最小覆盖率指标
     global: {
@@ -44,13 +39,9 @@ module.exports = {
       branches: 80,
       functions: 95,
       lines: 90,
-      statements: 100,
+      statements: 90,
     },
   },
-  //   sandboxInjectedGlobals: [
-  //     // 加快查找全局属性（如： Math, window 这类全局属性）
-  //     'Math',
-  //   ],
   setupFiles: ['jest-canvas-mock'],
   setupFilesAfterEnv: ['./jest.globalsetup.js'],
   moduleFileExtensions: [
@@ -61,10 +52,6 @@ module.exports = {
   ],
   moduleNameMapper: {
     // 模块映射，相当于webpack中的alias别名
-    // '.*.png$': '<rootDir>/__tests__/mock/file-mock', // 图片拦截放在首位, 优先被mock
-    // '^@src/(.*)$': '<rootDir>/src/$1',
-    // '^@/(.*)$': '<rootDir>/src/$1',
-    // '@utils/(.*)$': '<rootDir>/src/utils/$1',
   },
   modulePathIgnorePatterns: [
     // 防止意外忽略不同环境中可能具有不同根目录的所有文件

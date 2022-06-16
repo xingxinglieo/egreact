@@ -142,9 +142,6 @@ export function affixInfo<T = unknown>(
 // 找一个 egret 的祖先（有宽高）。
 export function findEgretAncestor(o: Instance<unknown>): Instance<egret.DisplayObject> | null {
   while (!(getActualInstance(o) instanceof egret.DisplayObject)) {
-    if (!o.__renderInfo.fiber.return) {
-      return null
-    }
     o = o.__renderInfo.fiber.return.stateNode
   }
   return getActualInstance(o)

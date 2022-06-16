@@ -14,10 +14,7 @@ content = fs.readFileSync(path.resolve(egretNodeModulesPath, 'egret.web.js'), 'u
 eval(content)
 content = fs.readFileSync(path.resolve(egretNodeModulesPath, 'eui.js'), 'utf-8')
 eval(content)
-content = fs.readFileSync(
-  path.resolve(egretNodeModulesPath, 'assetsmanager.js'),
-  'utf-8',
-)
+content = fs.readFileSync(path.resolve(egretNodeModulesPath, 'assetsmanager.js'), 'utf-8')
 eval(content)
 content = fs.readFileSync(path.resolve(egretNodeModulesPath, 'tween.js'), 'utf-8')
 eval(content)
@@ -27,6 +24,7 @@ global.RES = RES
 global.EXML = EXML
 global.__extends = __extends
 
+window.__DEV__ = true
 global.sLog = function () {}
 
 // 可以检查未处理的Error;
