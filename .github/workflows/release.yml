@@ -18,8 +18,10 @@ jobs:
           node-version: 14
           cache: 'pnpm'
       - run: pnpm install
+      - run: cd packages/core && npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
       - run: cd packages/core && npm run build 
       - run: cd packages/core && npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_TOKEN}}
+          NODE_TOKEN: ${{secrets.NPM_ACCESS_TOKEN}}
         
