@@ -18,7 +18,6 @@ jobs:
           node-version: 14
           cache: 'pnpm'
       - run: pnpm install
-      - run: cd packages/core && npm run test
       - run: cd packages/core && npm run build 
       - run: cd packages/core && npm publish
         env:
