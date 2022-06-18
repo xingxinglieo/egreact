@@ -17,8 +17,6 @@ jobs:
         with:
           node-version: 14
           cache: 'pnpm'
-      - run: npm config set //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
-      - run: npm whoami    
       - run: pnpm install --frozen-lockfile
       - run: cd packages/core && npm run test
       - run: cd packages/core && npm run build 
