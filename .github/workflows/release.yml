@@ -19,6 +19,7 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
       - run: cd packages/core && npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+      - run: npm whoami
       - run: cd packages/core && npm run build 
       - run: cd packages/core && npm publish
         env:
