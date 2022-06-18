@@ -20,9 +20,9 @@ jobs:
           registry-url: https://registry.npmjs.org/
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
-      - run: cd core && npm run test
-      - run: cd core && npm run build 
+      - run: cd packages/core && npm run test
+      - run: cd packages/core && npm run build 
 
-      - run: cd core && npm publish
+      - run: cd packages/core && npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM}}
