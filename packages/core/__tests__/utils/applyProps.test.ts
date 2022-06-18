@@ -1,8 +1,8 @@
-import { applyProps, affixInfo, diffProps } from '../../src/utils'
+import { applyProps, attachInfo, diffProps } from '../../src/utils'
 import groupHandlers from '../../src/Host/eui/Group'
-// import {FLAG} from '../../flag'
+// import {CONSTANTS} from '../../flag'
 describe('apply props', () => {
-  const instance = affixInfo<eui.Group>(new eui.Group(), {
+  const instance = attachInfo<eui.Group>(new eui.Group(), {
     propsHandlers: {
       ...groupHandlers,
       // @ts-ignore

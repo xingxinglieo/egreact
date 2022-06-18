@@ -2,8 +2,8 @@ import { getCanvas, findEgretAncestor } from './utils'
 import { findTargetByPosition } from './outside'
 import { catalogueMap } from './Host/index'
 import { throttle } from 'lodash'
-import { Instance } from './type'
-
+import { CONSTANTS, Instance } from './type'
+import { Reconciler } from 'react-reconciler'
 /**
  * @description dom px 和 egret 坐标值换算比例
  */
@@ -201,5 +201,20 @@ export function unProxyListener() {
     window.removeEventListener(info[0], info[3] as EventHandler, info[2])
     // 使用原生重新挂载
     window.addEventListener(info[0], info[1], info[2])
+  }
+}
+
+export function findFiberByHostInstance(instance: Instance) {
+  return instance?.[CONSTANTS.INFO_KEY]?.fiber ?? null
+}
+import packagejson from '../package.json'
+export function injectIntoDevTools(reconciler: Reconciler<any, any, any, any, any>) {
+  if (process.env.NODE_ENV !== 'production') {
+    reconciler.injectIntoDevTools({
+      bundleType: 0,
+      rendererPackageName: 'egreact',
+      version: packagejson.version,
+      findFiberByHostInstance,
+    })
   }
 }

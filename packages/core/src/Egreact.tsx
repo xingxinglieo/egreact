@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useImperativeHandle, Context } from 'react'
 import {
   hyphenate,
   collectContextsFromDom,
@@ -8,7 +8,8 @@ import {
   CallBackArray,
   ErrorBoundary,
 } from './utils'
-import { createRenderer } from './renderer'
+import { createEgreactRoot, EgreactRoot } from './renderer'
+import { RootOptions } from 'react-dom/client'
 import {
   proxyGetComputedStyle,
   proxyListener,
@@ -32,8 +33,9 @@ const DomEgretPropsName = [
 type Props = {
   [key in typeof DomEgretPropsName[number]]?: string
 } & {
-  options?: egret.runEgretOptions
+  egretOptions?: egret.runEgretOptions
 
+  rendererOptions?: RootOptions
   container?: egret.DisplayObjectContainer
 
   // 是否执行 runEgret
@@ -46,114 +48,137 @@ type Props = {
   // Context: 直接传入 Context ; Html: 从 dom 向上搜寻;
   contextsFrom?: boolean | React.Context<any>[] | HTMLElement
 } & JSX.IntrinsicElements['div']
+
+interface EgreactRef {
+  container: egret.DisplayObjectContainer
+  root: EgreactRoot
+  dom: HTMLDivElement
+}
+
 const entryClass = '__Main'
 let moutedCount = 0
 
-export default function Egreact({
-  children,
-  options = {},
-  container,
-  contextsFrom,
-  runEgret,
-  renderDom,
-  ...otherProps
-}: Props) {
-  if (container) {
-    if (renderDom === undefined) renderDom = false
-    if (runEgret === undefined) runEgret = false
-  } else {
-    if (renderDom === undefined) renderDom = true
-    if (runEgret === undefined) runEgret = true
-  }
-  if (contextsFrom === undefined && renderDom) {
-    contextsFrom = true
-  }
-
-  const divRef = useRef<HTMLDivElement>(null!)
-  const domProps = useMemo(
-    () =>
-      Object.keys(otherProps).reduce((obj, key) => {
-        // egretProps 转为data-中划线连接
-        DomEgretPropsName.includes(key as any)
-          ? (obj['data-' + hyphenate(key)] = otherProps[key])
-          : (obj[key] = otherProps[key])
-        return obj
-      }, {} as JSX.IntrinsicElements['div']),
-    [],
-  )
-  const containerInstance = useRef<egret.DisplayObjectContainer>(container!)
-  const values = useRef(new CallBackArray())
-  const [contexts, setContexts] = useState([])
-  const [mouted, setMouted] = useState(false)
-  useEffect(() => {
-    if (runEgret) {
-      window[entryClass] = egret.DisplayObjectContainer
-      egret.runEgret(options)
-    }
-    if (container) {
-      containerInstance.current = container
-    } else containerInstance.current = egret.lifecycle.stage
-    if (contextsFrom === true) {
-      setContexts(collectContextsFromDom(divRef.current))
-    } else if (contextsFrom instanceof HTMLElement) {
-      setContexts(collectContextsFromDom(contextsFrom))
-    } else if (is.arr(contextsFrom)) {
-      setContexts(contextsFrom)
-    }
-    setMouted(true)
-
-    moutedCount++
-    if (process.env.NODE_ENV !== 'production' && moutedCount === 1) {
-      proxyGetComputedStyle()
-      proxyListener()
-    }
-    return () => {
-      moutedCount--
-      if (moutedCount === 0) {
-        unProxyGetComputedStyle()
-        unProxyListener()
-      }
-    }
-  }, [])
-
-  const render = useRef<(child: ReactNode) => any>(null)
-  const [error, setError] = React.useState<any>(false)
-  if (error) throw error
-  useEffect(() => {
-    if (mouted) {
-      if (!render.current) {
-        render.current = createRenderer(containerInstance.current)
-      }
-      render.current(
-        contextsFrom === false ? (
-          children
-        ) : (
-          <ErrorBoundary set={setError}>
-            <ContextProviders contexts={contexts} values={values.current}>
-              {children}
-            </ContextProviders>
-          </ErrorBoundary>
-        ),
-      )
-    }
-  })
-  return (
-    <>
-      {contextsFrom === false ? null : (
-        <ContextListeners contexts={contexts} values={values.current} />
-      )}
-      {renderDom ? (
-        <div
-          ref={divRef}
-          style={{
-            width: '100%',
-            height: '100%',
-            margin: 'auto',
-          }}
-          data-entry-class={entryClass}
-          {...domProps}
-          className={'egret-player ' + (domProps.className || '')}></div>
-      ) : null}
-    </>
-  )
+function hyphenateEgretConfig(p: any) {
+  return Object.keys(p).reduce((obj, key) => {
+    // egretProps 转为data-中划线连接
+    DomEgretPropsName.includes(key as any)
+      ? (obj['data-' + hyphenate(key)] = p[key])
+      : (obj[key] = p[key])
+    return obj
+  }, {} as JSX.IntrinsicElements['div'])
 }
+
+export const Egreact = React.forwardRef<EgreactRef, Props>(
+  (
+    {
+      children,
+      egretOptions = {},
+      rendererOptions = {},
+      container,
+      contextsFrom,
+      runEgret,
+      renderDom,
+      ...otherProps
+    },
+    ref,
+  ) => {
+    if (container) {
+      if (renderDom === undefined) renderDom = false
+      if (runEgret === undefined) runEgret = false
+    } else {
+      if (renderDom === undefined) renderDom = true
+      if (runEgret === undefined) runEgret = true
+    }
+    if (contextsFrom === undefined && renderDom) {
+      contextsFrom = true
+    }
+
+    const divRef = useRef<HTMLDivElement>(null!)
+    const domProps = hyphenateEgretConfig(otherProps)
+    const containerInstance = useRef<egret.DisplayObjectContainer>(container!)
+    const values = useRef(new CallBackArray())
+    const [contexts, setContexts] = useState<Context<any>[]>([])
+    const [mouted, setMouted] = useState(false)
+    const egreactRoot = useRef<EgreactRoot>(null)
+
+    useEffect(() => {
+      if (runEgret) {
+        window[entryClass] = egret.DisplayObjectContainer
+        egret.runEgret(egretOptions)
+      }
+      if (container) {
+        containerInstance.current = container
+      } else containerInstance.current = egret.lifecycle.stage
+      if (contextsFrom === true) {
+        setContexts(collectContextsFromDom(divRef.current))
+      } else if (contextsFrom instanceof HTMLElement) {
+        setContexts(collectContextsFromDom(contextsFrom))
+      } else if (is.arr(contextsFrom)) {
+        setContexts(contextsFrom)
+      }
+      setMouted(true)
+
+      moutedCount++
+      if (process.env.NODE_ENV !== 'production' && moutedCount === 1) {
+        proxyGetComputedStyle()
+        proxyListener()
+      }
+      return () => {
+        moutedCount--
+        if (process.env.NODE_ENV !== 'production' && moutedCount === 0) {
+          unProxyGetComputedStyle()
+          unProxyListener()
+        }
+        egreactRoot.current.unmount()
+      }
+    }, [])
+
+    const [error, setError] = React.useState<any>(false)
+    if (error) throw error
+    useEffect(() => {
+      if (mouted) {
+        if (!egreactRoot.current) {
+          egreactRoot.current = createEgreactRoot(containerInstance.current, rendererOptions)
+        }
+        egreactRoot.current.render(
+          contextsFrom === false ? (
+            children
+          ) : (
+            <ErrorBoundary set={setError}>
+              <ContextProviders contexts={contexts} values={values.current}>
+                {children}
+              </ContextProviders>
+            </ErrorBoundary>
+          ),
+        )
+      }
+    })
+
+    useImperativeHandle(ref, () => ({
+      container: containerInstance.current,
+      root: egreactRoot.current,
+      contexts: contexts,
+      dom: divRef.current,
+    }))
+
+    return (
+      <>
+        {contextsFrom === false ? null : (
+          <ContextListeners contexts={contexts} values={values.current} />
+        )}
+        {renderDom ? (
+          <div
+            ref={divRef}
+            style={{
+              width: '100%',
+              height: '100%',
+              margin: 'auto',
+            }}
+            data-entry-class={entryClass}
+            {...domProps}
+            className={'egret-player ' + (domProps.className || '')}></div>
+        ) : null}
+      </>
+    )
+  },
+)

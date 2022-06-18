@@ -1,7 +1,7 @@
 import { PropSetterParameters } from './../../type'
 import { proxyHelper } from '../utils'
 import type { Instance, IContainer } from '../../type'
-import { FLAG } from '../../type'
+import { CONSTANTS } from '../../type'
 import { NormalProp, EventProp } from '../common'
 export class Primitive extends egret.EventDispatcher implements IContainer {
   __target: any
@@ -42,7 +42,7 @@ export class Primitive extends egret.EventDispatcher implements IContainer {
   }
 }
 
-const objectDiffKey = `${FLAG.COSTOM_DIFF_PREFIX}object` as const
+const objectDiffKey = `${CONSTANTS.COSTOM_DIFF_PREFIX}object` as const
 const primitive = {
   __Class: proxyHelper({
     constructor: Primitive,
@@ -54,7 +54,7 @@ const primitive = {
   },
   [objectDiffKey]: (n, o) => n === o,
   // {
-  // let { mountedApplyProps, memoizedProps } = instance.__renderInfo;
+  // let { mountedApplyProps, memoizedProps } = instance[CONSTANTS.INFO_KEY];
   // memoizedProps = { ...memoizedProps };
   // delete memoizedProps.object;
   // {
@@ -62,7 +62,7 @@ const primitive = {
   // }
   // instance.__isMouted = true
   // this.__target = prop;
-  // const parent = instance.__renderInfo.parent;
+  // const parent = instance[CONSTANTS.INFO_KEY].parent;
   // if (this.__isMouted) {
   //   for (const element of this.elements) {
   //     hostConfig.appendChild(instance, element);
@@ -81,7 +81,7 @@ const primitive = {
   //   this.removeChild(getActualInstance(element), element);
   // }
   // this.elements = new Set(elements);
-  // const parent = instance.__renderInfo.parent;
+  // const parent = instance[CONSTANTS.INFO_KEY].parent;
   // parent.removeChild(getActualInstance(this), this);
   // }
   // },
@@ -91,7 +91,7 @@ const pass = NormalProp.passWithType()
 const primitiveProxy = new Proxy(primitive, {
   get(target, p: string) {
     if (p in target) return target[p]
-    else if (p.startsWith(FLAG.COSTOM_DIFF_PREFIX)) return undefined
+    else if (p.startsWith(CONSTANTS.COSTOM_DIFF_PREFIX)) return undefined
     else if (p.startsWith('on')) return EventProp.eventSetter
     else return pass
   },

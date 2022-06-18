@@ -2,12 +2,20 @@ import {
   hyphenate,
   isEvent,
   isDiffSet,
-  affixInfo,
+  attachInfo,
   reduceKeysToTarget,
   getActualInstance,
   splitEventKeyToInfo,
   collectContextsFromDom,
-} from '../../src/utils'
+  getRenderInfo,
+  getCurrentEventPriority,
+} from '../../src/index'
+import sinon from 'sinon'
+
+import { DiscreteEventPriority } from 'react-reconciler/constants'
+afterAll(() => {
+  sinon.restore()
+})
 
 describe('isDiffSet', () => {
   expect(isDiffSet({ memoized: {}, changes: [] })).toBeTruthy()
@@ -147,11 +155,16 @@ describe('Get event info from key', () => {
     keys: ['Added'],
     name: 'onAdded',
   })
+
+  sinon.stub(window, 'event').get(() => ({
+    type: 'click',
+  }))
+  expect(getCurrentEventPriority()).toEqual(DiscreteEventPriority)
 })
 
 import React, { createContext } from 'react'
 import { render, screen } from '@testing-library/react'
-import Egreact from '../../src/Egreact'
+import { Egreact } from '../../src/Egreact'
 describe('Get Contexts from Dom which is created by react-dom', () => {
   const myContext = createContext(1)
   it('should return contexts', () => {
@@ -169,9 +182,9 @@ describe('Get Contexts from Dom which is created by react-dom', () => {
   })
 })
 
-describe('Affix RenderInfo', () => {
+describe('Attach RenderInfo', () => {
   it('should have __renderInfo', () => {
-    expect('__renderInfo' in affixInfo({})).toBeTruthy()
-    expect(() => affixInfo(null)).toThrow()
+    expect(getRenderInfo(attachInfo({}))).toBeTruthy()
+    expect(() => attachInfo(null)).toThrow()
   })
 })

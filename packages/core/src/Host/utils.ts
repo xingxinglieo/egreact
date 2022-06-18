@@ -1,4 +1,4 @@
-import { FLAG } from '../type'
+import { CONSTANTS } from '../type'
 import { IPropsHandlers } from '../type'
 
 type ToUnionOfFunction<T> = T extends any ? (x: T) => any : never
@@ -13,10 +13,10 @@ module Mixin {
     [K in keyof T as K extends `${infer P}-__setter` ? P : K]: T[K]
   }
 
-  // 转换 P-__diff 的键为 `${FLAG.COSTOM_DIFF_PREFIX}${P}`
+  // 转换 P-__diff 的键为 `${CONSTANTS.COSTOM_DIFF_PREFIX}${P}`
   type TranslateDiffKey<T extends object> = {
     [K in keyof T as K extends `${infer P}-__diff`
-      ? `${typeof FLAG.COSTOM_DIFF_PREFIX}${P}`
+      ? `${typeof CONSTANTS.COSTOM_DIFF_PREFIX}${P}`
       : K]: T[K]
   }
 
@@ -62,7 +62,7 @@ module Mixin {
         obj[keys.join('-')] = value
       } else if (keys[keys.length - 1] === '__diff') {
         keys.pop()
-        obj[FLAG.COSTOM_DIFF_PREFIX + keys.join('-')] = value
+        obj[CONSTANTS.COSTOM_DIFF_PREFIX + keys.join('-')] = value
       } else {
         obj[keys.join('-')] = value
       }
