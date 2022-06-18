@@ -21,7 +21,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: cd packages/core && npm run test
       - run: cd packages/core && npm run build 
-
-      - run: cd packages/core && npm publish --access public
+      - run: npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_TOKEN}}
+      - run: cd packages/core && npm publish --access public
+        
