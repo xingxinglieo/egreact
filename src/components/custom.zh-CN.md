@@ -65,7 +65,7 @@ export default () => (
 
 ## font
 
-内部实例为`egret.ITextElement`,赋值除 `text` 外属性时，挂载到 font.style 上 
+内部实例为`egret.ITextElement`,赋值除 `text` 外属性时，挂载到 font.style 上
 
 | 属性名      | 类型             | 描述 | 创建 | 清除 |
 | ----------- | ---------------- | :--- | :--- | :--- |
@@ -108,6 +108,7 @@ export default () => (
 实现了 `addChild` 等方法，可以直接编写子组件。
 
 综合 `font,objectContainer,arrayContainer` 的例子
+
 ``` tsx
 /**
  * iframe: 200

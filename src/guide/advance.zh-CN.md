@@ -7,6 +7,7 @@ order: 4
 ## 自定义原生组件
 
 egreact 中定义了一套简单的接口描述一个原生组件，所有原生组件皆由此实现，并且开放了这个接口。如果你想拓展原生组件，你可以通过以下三步完成：
+
 1. 定义组件描述对象
 2. 拓展 JSX 类型
 3. 用 `extend` 函数传入第一步定义的对象
@@ -14,6 +15,7 @@ egreact 中定义了一套简单的接口描述一个原生组件，所有原生
 ### 组件描述对象
 
 此对象接口如下
+
 ``` typescript
 type EventInfo = {
   once: boolean // 是否是 once
@@ -40,6 +42,7 @@ interface IPropHandler{
 ```
 
 以 `shape` 组件定义为例，
+
 ``` typescript
 import { Setters } from 'egreact'
 const shape = {
@@ -71,6 +74,7 @@ const shape = {
   }
 }
 ```
+
 - `...Setters.egret.displayObject` 用于继承其他组件描述对象，对应 egret 的继承关系，如果你需要继承 egreact 的原生组件，也可以采用这种方式。  
   > 为什么不采用类继承？因为类继承`复用和类型`的灵活性太差。  
 
@@ -79,6 +83,7 @@ const shape = {
 - `__diff_graphics`，自定义 `graphics` 的 diffProp，在每次 react 渲染所在组件时都会执行，传入 `newValue` 和 `oldVale`，**返回 `false` 时代表 prop 需要更新（才会执行 Setter）**。
 
 ### 拓展 JSX
+
 ``` typescript
 declare global {
   namespace JSX {
@@ -92,6 +97,7 @@ declare global {
 ```
 
 如果将 `shape` 类型像上面一样一个一个编写，也是件麻烦事，因为除了 `shape` 自己新增的属性外，还有 `displayObject` 的属性需要加上去。好在 egreact 提供了一个工具类型 `TransProp`，它会将你的 Setter 的 `newValue` 类型作为 prop 的类型。
+
 ``` typescript
 import { TransProp } from 'egreact'
 import shape from 'shape.ts'
@@ -103,7 +109,9 @@ declare global {
 ```
 
 ### 使用 extend
+
 使用 `extend` 告诉 egreact 你定义了这个组件
+
 ``` typescript
 extend({
   // 首字符统一大写，使用时首字母需要小写
@@ -116,6 +124,7 @@ extend({
 ### 事件
 
 事件与 prop 没什么区别，只需要 `on` 开头即可，Setter 的参数会多一个 `einfo`
+
 ``` typescript
 const onClick: PropSetter<(e: egret.TouchEvent) => void> = ({ newValue, instance, einfo }) => {
   instance.addEventListener(egret.TouchEvent.TOUCH_TAP, newValue, instance)
@@ -128,7 +137,3 @@ const handler = {
   // ...
 }
 ```
-
-
-
-

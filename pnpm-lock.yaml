@@ -5,10 +5,11 @@ specifiers:
   '@testing-library/jest-dom': ^5.15.1
   '@testing-library/react': ^12.1.5
   '@types/jest': ^27.0.3
+  '@types/react': ^18.0.14
   '@umijs/fabric': ^2.8.1
   '@umijs/test': ^3.0.5
   dumi: ^1.1.42
-  egreact: ^1.0.0-alpha.1
+  egreact: ^1.2.1
   father-build: ^1.17.2
   gh-pages: ^3.2.3
   lint-staged: ^10.0.7
@@ -22,11 +23,12 @@ specifiers:
 
 dependencies:
   '@reduxjs/toolkit': 1.8.2_ctm756ikdwcjcvyfxxwskzbr6q
-  egreact: 1.0.0-alpha.1_llpztq4ob76acwrcz5iyfhrwzm
+  '@types/react': 18.0.14
+  egreact: 1.2.1_llpztq4ob76acwrcz5iyfhrwzm
   react: 18.1.0
   react-dom: 18.1.0_react@18.1.0
   react-reconciler: 0.28.0_react@18.1.0
-  react-redux: 8.0.2_ef5jwxihqo6n7gxfmzogljlgcm
+  react-redux: 8.0.2_iupzlfzo47c7rghj3avw7kmjhq
 
 devDependencies:
   '@testing-library/jest-dom': 5.16.4
@@ -2164,7 +2166,7 @@ packages:
     dependencies:
       immer: 9.0.14
       react: 18.1.0
-      react-redux: 8.0.2_ef5jwxihqo6n7gxfmzogljlgcm
+      react-redux: 8.0.2_iupzlfzo47c7rghj3avw7kmjhq
       redux: 4.2.0
       redux-thunk: 2.4.1_redux@4.2.0
       reselect: 4.1.6
@@ -2562,7 +2564,7 @@ packages:
   /@types/hoist-non-react-statics/3.3.1:
     resolution: {integrity: sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==}
     dependencies:
-      '@types/react': 18.0.12
+      '@types/react': 18.0.14
       hoist-non-react-statics: 3.3.2
     dev: false
 
@@ -2664,7 +2666,7 @@ packages:
     resolution: {integrity: sha512-WOSetDV3YPxbkVJAdv/bqExJjmcdCi/vpCJh3NfQOy1X15vHMSiMioXIcGekXDJJYhqGUMDo9e337mh508foAA==}
     dependencies:
       '@types/history': 5.0.0
-      '@types/react': 18.0.12
+      '@types/react': 18.0.14
       '@types/react-router': 5.1.18
     dev: true
 
@@ -2672,7 +2674,7 @@ packages:
     resolution: {integrity: sha512-db1mx37a1EJDf1XeX8jJN7R3PZABmJQXR8r28yUjVMFSjkmnQo6X6pOEEmNl+Tp2gYQOGPdYbFIipBtdElZ3Yg==}
     dependencies:
       '@types/history': 4.7.11
-      '@types/react': 16.14.26
+      '@types/react': 18.0.14
       '@types/react-router': 5.1.18
     dev: true
 
@@ -2680,7 +2682,7 @@ packages:
     resolution: {integrity: sha512-D5mHD6TbdV/DNHYsnwBTv+y73ei+mMjrkGrla86HthE4/PVvL1J94Bu3qABU+COXzpL23T1EZapVVpwHuBXiUg==}
     dependencies:
       '@types/history': 5.0.0
-      '@types/react': 18.0.12
+      '@types/react': 18.0.14
       '@types/react-router': 5.1.12
     dev: true
 
@@ -2688,14 +2690,14 @@ packages:
     resolution: {integrity: sha512-0bhXQwHYfMeJlCh7mGhc0VJTRm0Gk+Z8T00aiP4702mDUuLs9SMhnd2DitpjWFjdOecx2UXtICK14H9iMnziGA==}
     dependencies:
       '@types/history': 5.0.0
-      '@types/react': 18.0.12
+      '@types/react': 18.0.14
     dev: true
 
   /@types/react-router/5.1.18:
     resolution: {integrity: sha512-YYknwy0D0iOwKQgz9v8nOzt2J6l4gouBmDnWqUUznltOTaon+r8US8ky8HvN0tXvc38U9m6z/t2RsVsnd1zM0g==}
     dependencies:
       '@types/history': 4.7.11
-      '@types/react': 18.0.12
+      '@types/react': 18.0.14
     dev: true
 
   /@types/react/16.14.26:
@@ -2714,8 +2716,8 @@ packages:
       csstype: 3.1.0
     dev: true
 
-  /@types/react/18.0.12:
-    resolution: {integrity: sha512-duF1OTASSBQtcigUvhuiTB1Ya3OvSy+xORCiEf20H0P0lzx+/KeVsA99U5UjLXSbyo1DRJDlLKqTeM1ngosqtg==}
+  /@types/react/18.0.14:
+    resolution: {integrity: sha512-x4gGuASSiWmo0xjDLpm5mPb52syZHJx02VKbqUKdLmKtAwIh63XClGsiTI1K6DO5q7ox4xAsQrU+Gl3+gGXF9Q==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
@@ -5410,12 +5412,13 @@ packages:
     dev: true
     optional: true
 
-  /egreact/1.0.0-alpha.1_llpztq4ob76acwrcz5iyfhrwzm:
-    resolution: {integrity: sha512-0KKJ+VjVpumNR0rhqeFOz6WT45eeqCiOLdWXSFpttB/BlSFKGjsXVoKqxOUK2PSLhLt2/NeaK+ZLZKV1t3EI2g==}
+  /egreact/1.2.1_llpztq4ob76acwrcz5iyfhrwzm:
+    resolution: {integrity: sha512-DWgS4+/NxWi7rrMR0TPX9tzsurgpBaIIJ1178iyGV/nCT9Jlzb5Hy9X69kHbyEnnhNuzdyOF0hr2cQeDGY9CtQ==}
     peerDependencies:
-      react: ^16.8 || ^17.0 || ^18.0
-      react-dom: ^16.8 || ^17.0 || ^18.0
-      react-reconciler: '>=0.26.0'
+      lodash: '*'
+      react: '>=18.0'
+      react-dom: '>=18.0'
+      react-reconciler: '>=0.28.0'
       react-router-dom: '>=5.0'
     peerDependenciesMeta:
       react-router-dom:
@@ -11277,7 +11280,7 @@ packages:
       scheduler: 0.22.0
     dev: false
 
-  /react-redux/8.0.2_ef5jwxihqo6n7gxfmzogljlgcm:
+  /react-redux/8.0.2_iupzlfzo47c7rghj3avw7kmjhq:
     resolution: {integrity: sha512-nBwiscMw3NoP59NFCXFf02f8xdo+vSHT/uZ1ldDwF7XaTpzm+Phk97VT4urYBl5TYAPNVaFm12UHAEyzkpNzRA==}
     peerDependencies:
       '@types/react': ^16.8 || ^17.0 || ^18.0
@@ -11300,6 +11303,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.18.3
       '@types/hoist-non-react-statics': 3.3.1
+      '@types/react': 18.0.14
       '@types/use-sync-external-store': 0.0.3
       hoist-non-react-statics: 3.3.2
       react: 18.1.0

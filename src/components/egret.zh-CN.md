@@ -5,8 +5,9 @@ toc: menu
 ---
 
 ## displayObject
+
 [egret.DisplayObject](https://docs.egret.com/engine/docs/api/engine/egret.DisplayObject)  
-> DisplayObject 类是可放在显示列表中的所有对象的基类。该显示列表管理运行时中显示的所有对象。使用 DisplayObjectContainer 类排列显示列表中的显示对象。DisplayObjectContainer 对象可以有子显示对象，而其他显示对象（如 Shape 和 TextField 对象）是“叶”节点，没有子项，只有父级和同级。DisplayObject 类有一些基本的属性（如确定坐标位置的 x 和 y 属性），也有一些高级的对象属性（如 Matrix 矩阵变换）。   
+> DisplayObject 类是可放在显示列表中的所有对象的基类。该显示列表管理运行时中显示的所有对象。使用 DisplayObjectContainer 类排列显示列表中的显示对象。DisplayObjectContainer 对象可以有子显示对象，而其他显示对象（如 Shape 和 TextField 对象）是“叶”节点，没有子项，只有父级和同级。DisplayObject 类有一些基本的属性（如确定坐标位置的 x 和 y 属性），也有一些高级的对象属性（如 Matrix 矩阵变换）。
 > DisplayObject 类包含若干广播事件。通常，任何特定事件的目标均为一个特定的 DisplayObject 实例。例如，added 事件的目标是已添加到显示列表的目标 DisplayObject 实例。若只有一个目标，则会将事件侦听器限制为只能监听在该目标上（在某些情况下，可监听在显示列表中该目标的祖代上）。但是对于广播事件，目标不是特定的 DisplayObject 实例，而是所有 DisplayObject 实例（包括那些不在显示列表中的实例）。这意味着您可以向任何DisplayObject 实例添加侦听器来侦听广播事件。
 
 | 属性名                | 类型                                                                            | 描述                                                                                                                                       | 创建                                    | 清除                                  |
@@ -48,6 +49,7 @@ toc: menu
 > 有 Touch 事件的实例默认会开启 touchEnable
 
 ## displayObjectContainer
+
 [egret.DisplayObjectContainer](https://docs.egret.com/engine/docs/api/engine/egret.DisplayObjectContainer)  
 
 > DisplayObjectContainer 类是基本显示列表构造块：一个可包含子项的显示列表节点。
@@ -58,6 +60,7 @@ toc: menu
 | childrenSortMode | `string` | 设置子项目的排序方式 | `setChildrenSortMode(newValue)` | `setChildrenSortMode(egret.ChildrenSortMode['DEFAULT'])` |
 
 ## shape
+
 [egret.Shape](https://docs.egret.com/engine/docs/api/engine/egret.Shape)  
   
 > 此类用于使用绘图应用程序编程接口 (API) 创建简单形状。Shape 类含有 graphics 属性，通过该属性您可以访问各种矢量绘图方法。  
@@ -80,6 +83,7 @@ toc: menu
 | graphics | [Graphics](/components#graphics) | 设置一系列 `graphics` 操作 |      |
 
 ## bitmap
+
 [egret.Bitmap](https://docs.egret.com/engine/docs/api/engine/egret.Bitmap)  
 
 > Bitmap 类表示用于显示位图图片的显示对象。利用 Bitmap() 构造函数，可以创建包含对 BitmapData 对象引用的 Bitmap 对象。创建了 Bitmap 对象后，使用父级 DisplayObjectContainer 实例的 addChild() 或 addChildAt() 方法可以将位图放在显示列表中。一个 Bitmap 对象可在若干 Bitmap 对象之中共享其 texture 引用，与缩放或旋转属性无关。由于能够创建引用相同 texture 对象的多个 Bitmap 对象，因此，多个显示对象可以使用相同的 texture 对象，而不会因为每个显示对象实例使用一个 texture 对象而产生额外内存开销。
@@ -95,6 +99,7 @@ toc: menu
 | scale9Grid   | [Rectangle](/components#rectangle) | 被引用的 Texture 对象                  |      |
 
 ## bitmapText
+
 [egret.BitmapText](https://docs.egret.com/engine/docs/api/engine/egret.BitmapText)  
 
 > 位图字体采用了Bitmap+SpriteSheet的方式来渲染文字。
@@ -112,6 +117,7 @@ toc: menu
 | verticalAlign | `string`                 | 文字的垂直对齐方式                                                  |      |
 
 ## textField
+
 [egret.TextField](https://docs.egret.com/engine/docs/api/engine/egret.TextField)  
 
 > TextField是egret的文本渲染类，采用浏览器/设备的API进行渲染，在不同的浏览器/设备中由于字体渲染方式不一，可能会有渲染差异如果开发者希望所有平台完全无差异，请使用BitmapText。

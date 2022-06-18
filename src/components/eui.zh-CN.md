@@ -5,6 +5,7 @@ toc: menu
 ---
 
 ## BaseLayout
+
 > 基类，仅用于混入
 
 | 属性名               | 类型                       | 描述                                               | 创建 | 清除 |
@@ -29,6 +30,7 @@ toc: menu
 | onUiCreationComplete | `(e: eui.UIEvent) => void` | 当UI组件第一次被添加到舞台并完成初始化后调度       |      |
 
 ## UIComponent
+
 > 基类，仅用于混入  
 
 [eui.UIComponent](https://docs.egret.com/uieditor/docs/api/eui/eui.UIComponent)  
@@ -39,6 +41,7 @@ toc: menu
 | ------ | ---- | :--- | :--- | :--- |
 
 ## IViewport
+
 > 基类，仅用于混入  
 
 [eui.IViewport](https://docs.egret.com/uieditor/docs/api/eui/eui.IViewport)  
@@ -77,7 +80,7 @@ toc: menu
 [eui.Group](https://docs.egret.com/uieditor/docs/api/eui/eui.Group)  
 
 > Group 是自动布局的容器基类。如果包含的子项内容太大需要滚动显示，可以在在 Group 外部包裹一层 Scroller 组件(将 Group 实例赋值给 Scroller 组件的 viewport 属性)。Scroller 会为 Group 添加滚动的触摸操作功能，并显示垂直或水平的滚动条。
- 
+
 父类组件混入：[IViewport](/components/eui#iviewport)
 
 | 属性名       | 类型                             | 描述                               | 创建 | 清除 |
@@ -168,4 +171,3 @@ toc: menu
 | verticalScrollBar   | `eui.VScrollBar` | 垂直滚动条                                                                                                   |      |
 
 **`viewport` 需要通过 `attach` 声明**， 点 [这里](/guide/basic#attach) 回顾，里面有一个 `eui-scroller` 的例子。
-

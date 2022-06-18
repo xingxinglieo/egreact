@@ -8,9 +8,10 @@ nav:
 ---
 
 为了提高属性处理的复用率和提供良好的类型定义，在原生组件中有两种复用方式：  
+
 - 父类组件混入，对应 egret 中显示对象类的继承，拥有父类组件的所有属性。
 - 属性接口混入，不同组件上的 prop，拥有相同的接口，且这个接口有子属性，就会采用这种方式。
-      
+
   比如 `Rectangle` 这个接口，在分别是 `displayObject` 的 `scrollRect` 和 `bitmap` 的 `scale9Grid` 的接口，它们都会混入这个接口及子属性，唯一不同的就是前缀名。
 
 ```
@@ -28,6 +29,7 @@ scale9Grid-width
 ```  
 
 > 原生组件是根据 [egret 文档](https://docs.egret.com/engine/docs/api/engine/egret.Base64Util)设置相应的 prop，只要未明确表明是只读属性就会被囊括进来，未全部验证，所以**有些属性可能无法设置**（可能是只读属性，可能不是直接赋值设置）。
+
 ## Graphics
 
 [egret.Graphics](https://docs.egret.com/engine/docs/api/engine/egret.Graphics)
@@ -39,6 +41,7 @@ scale9Grid-width
 | `${name}` | `[string, ...any[]][]\|egret.Graphics\|(graphics:egret.Graphics, instance:any)=> void\|((isRemove: boolean) => void)` |      | 传入序列数组时，执行序列操作；**比较时，将二层数组铺平比较** | `graphics.clear()` |
 
 `[string, ...any[]][]` 第一个 `string` 是执行的函数名，后面的值是传入函数的参数
+
 ``` tsx | pure
 const actions = [
   ['beginFill', 0x000000],
@@ -51,8 +54,8 @@ graphics.drawRect(0, 0, 300, 100)
 graphics.endFill()
 ```
 
-
 ## Point
+
 [egret.Point](https://docs.egret.com/engine/docs/api/engine/egret.Point)
 
 > Point 对象表示二维坐标系统中的某个位置，其中 x 表示水平轴，y 表示垂直轴。
@@ -64,6 +67,7 @@ graphics.endFill()
 | `${name}-y` | `string\|number`            | 该点的垂直坐标 |                                          |
 
 ## Rectangle
+
 [egret.Rectangle](https://docs.egret.com/engine/docs/api/engine/egret.Rectangle)
 
 > Rectangle 对象是按其位置（由它左上角的点 (x, y) 确定）以及宽度和高度定义的区域。Rectangle 类的 x、y、width 和 height 属性相互独立；更改一个属性的值不会影响其他属性。但是，right 和 bottom 属性与这四个属性是整体相关的。例如，如果更改 right 属性的值，则 width属性的值将发生变化；如果更改 bottom 属性，则 height 属性的值将发生变化。
@@ -83,6 +87,7 @@ graphics.endFill()
 | `${name}-topLeft`     | [Point](/components#point)      | 由该点的 x 和 y 坐标确定的 Rectangle 对象左上角的位置          |                                              |
 
 ## Texture
+
 [egret.Texture](https://docs.egret.com/engine/docs/api/engine/egret.Texture)
 
 > 纹理类是对不同平台不同的图片资源的封装在HTML5中，资源是一个HTMLElement对象在OpenGL / WebGL中，资源是一个提交GPU后获取的纹理idTexture类封装了这些底层实现的细节，开发者只需要关心接口即可
@@ -94,12 +99,11 @@ graphics.endFill()
 | `${name}-disposeBitmapData` | `boolean`           | 销毁纹理时是否销毁对应 BitmapData |                                    |
 | `${name}-ktxData`           | `ArrayBuffer`       | 被引用的 KTXData 对象             |                                    |
 
-
 ## LayoutBase
 
 [eui.LayoutBase](http://docs.egret.com/uieditor/docs/api/eui/eui.LayoutBase),[eui.BasicLayout](http://docs.egret.com/uieditor/docs/api/eui/eui.BasicLayout),[eui.TileLayout](http://docs.egret.com/uieditor/docs/api/eui/eui.TileLayout),[eui.VerticalLayout](http://docs.egret.com/uieditor/docs/api/eui/eui.VerticalLayout),[eui.HorizontalLayout](http://docs.egret.com/uieditor/docs/api/eui/eui.HorizontalLayout)
 
->  容器布局基类。若要创建使用 Group 容器的自定义布局，必须扩展 LayoutBase 或其子类之一。子类必须实现 updateDisplayList() 方法（定位 target Group 的子项并调整这些子项的大小）和 measure() 方法（计算 target 的默认大小）。 | 传入字符时，创建对应的实例 
+> 容器布局基类。若要创建使用 Group 容器的自定义布局，必须扩展 LayoutBase 或其子类之一。子类必须实现 updateDisplayList() 方法（定位 target Group 的子项并调整这些子项的大小）和 measure() 方法（计算 target 的默认大小）。 | 传入字符时，创建对应的实例
 
 | 属性名                         | 类型                                                        | 描述                                                                                                                                    | 创建 | 清除 |
 | ------------------------------ | ----------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- | :--- | :--- |
@@ -124,5 +128,3 @@ graphics.endFill()
 | `${name}-rowHeight`            | `number\|string`                                            | 行高（以像素为单位）                                                                                                                    |      |
 | `${name}-verticalGap`          | `number\|string`                                            | 行之间的垂直空间（以像素为单位）                                                                                                        |      |
 | `${name}-useVirtualLayout`     | `boolean`                                                   | 若要配置容器使用虚拟布局，请为与容器关联的布局的 useVirtualLayout 属性设置为 true                                                       |      |
-
-
