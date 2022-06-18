@@ -1,7 +1,7 @@
-import { diffProps, affixInfo } from '../../src/utils'
+import { diffProps, attachInfo } from '../../src/utils'
 import groupHandlers from '../../src/Host/eui/Group'
 import spriteHandlers from '../../src/Host/egret/Sprite'
-import {FLAG} from '../../src/type'
+import {CONSTANTS} from '../../src/type'
 
 describe('diff props', () => {
   describe('when an instance mouted ', () => {
@@ -28,7 +28,7 @@ describe('diff props', () => {
   })
 
   describe('when a prefix prop update and a suffix prop remove', () => {
-    const instance = affixInfo(new eui.Group(), {
+    const instance = attachInfo(new eui.Group(), {
       propsHandlers: groupHandlers,
     })
     it('layout-paddingBottom should before layout, layout-gap should after layout', () => {
@@ -38,7 +38,7 @@ describe('diff props', () => {
           {
             'layout-gap': 10,
             layout: 'vertical',
-            'layout-paddingBottom': FLAG.DEFAULT_REMOVE,
+            'layout-paddingBottom': CONSTANTS.DEFAULT_REMOVE,
           },
           {
             'layout-gap': 10,
@@ -47,7 +47,7 @@ describe('diff props', () => {
           },
         ).changes,
       ).toEqual([
-        ['layout-paddingBottom', FLAG.DEFAULT_REMOVE, false, ['layout', 'paddingBottom']],
+        ['layout-paddingBottom', CONSTANTS.DEFAULT_REMOVE, false, ['layout', 'paddingBottom']],
         ['layout', 'vertical', false, ['layout']],
         ['layout-gap', 10, false, ['layout', 'gap']],
       ])
@@ -55,7 +55,7 @@ describe('diff props', () => {
   })
 
   describe('when a prop hava a custom diff fun', () => {
-    const instance = affixInfo(new egret.Sprite(), {
+    const instance = attachInfo(new egret.Sprite(), {
       propsHandlers: spriteHandlers,
     })
     expect(

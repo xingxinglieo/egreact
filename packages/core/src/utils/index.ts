@@ -1,32 +1,7 @@
-/*
-https://github.com/pmndrs/react-three-fiber/blob/master/packages/fiber/src/core/utils.ts
-
-MIT License
-
-Copyright (c) 2020 Paul Henschel
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
 import { getBoundingClientRect } from '../devtool'
 import { EVENT_CATEGORT_MAP } from '../Host'
 import type { PropSetter, IElementProps, Instance, IRenderInfo, EventInfo } from '../type'
-import { FLAG } from '../type'
+import { CONSTANTS } from '../type'
 const hyphenateRE = /\B([A-Z])/g
 
 /**
@@ -63,6 +38,12 @@ export type EquConfig = {
   /** If true the keys in both a and b must match 1:1 (default), if false a's keys must intersect b's */
   strict?: boolean
 }
+
+/**
+ *
+ * @copyright Copyright (c) 2020 Paul Henschel
+ * @link https://github.com/pmndrs/react-three-fiber/blob/a575409cf872ae11583d9f1a162bef96ee19e6be/packages/fiber/src/core/utils.ts#L85
+ */
 export const is = {
   obj: (a: any) => a === Object(a) && !is.arr(a) && typeof a !== 'function',
   fun: (a: any): a is (...args: any) => any => typeof a === 'function',
@@ -102,16 +83,17 @@ export const is = {
 /**
  * @description 附加 __renderInfo
  */
-export function affixInfo<T = unknown>(
+export function attachInfo<T = unknown>(
   instance: any,
   info: Partial<IRenderInfo> = {},
 ): Instance<T> {
   if (!(is.obj(instance) || is.arr(instance))) {
     throw `instance must be an object`
-  } else if (!instance.__renderInfo) {
-    instance.__renderInfo = {
+  } else if (!instance[CONSTANTS.INFO_KEY]) {
+    instance[CONSTANTS.INFO_KEY] = {
       type: '',
       primitive: false,
+      container: false,
       root: egret.lifecycle.stage,
       fiber: null,
       parent: null,
@@ -139,10 +121,20 @@ export function affixInfo<T = unknown>(
   return instance
 }
 
+export function getRenderInfo(instance: any): IRenderInfo {
+  return instance?.[CONSTANTS.INFO_KEY]
+}
+
+export function detachInfo(instance: any) {
+  if (is.obj(instance) || is.arr(instance)) {
+    delete instance[CONSTANTS.INFO_KEY]
+  }
+}
+
 // 找一个 egret 的祖先（有宽高）。
 export function findEgretAncestor(o: Instance<unknown>): Instance<egret.DisplayObject> | null {
   while (!(getActualInstance(o) instanceof egret.DisplayObject)) {
-    o = o.__renderInfo.fiber.return.stateNode
+    o = o[CONSTANTS.INFO_KEY].fiber.return.stateNode
   }
   return getActualInstance(o)
 }
@@ -156,20 +148,20 @@ export function diffProps(
   instance: Instance,
   { children: cN, key: kN, ref: rN, attach: na, ...props }: IElementProps = {},
   { children: cP, key: kP, ref: rP, attach: oa, ...previous }: IElementProps = {},
-  // remove = false,
 ): DiffSet {
-  if (!instance.__renderInfo) affixInfo(instance)
-  const info = instance.__renderInfo
+  if (!instance[CONSTANTS.INFO_KEY]) attachInfo(instance)
+  const info = instance[CONSTANTS.INFO_KEY]
   const entries = Object.entries(props)
   const changes: DiffSet['changes'] = []
   const previousKeys = Object.keys(previous)
   for (let i = 0; i < previousKeys.length; i++) {
-    if (!props.hasOwnProperty(previousKeys[i])) entries.push([previousKeys[i], FLAG.DEFAULT_REMOVE])
+    if (!props.hasOwnProperty(previousKeys[i]))
+      entries.push([previousKeys[i], CONSTANTS.DEFAULT_REMOVE])
   }
   // 从少key到多key，保证添加的顺序，否则会出错
   entries.sort((a, b) => a[0].split('-').length - b[0].split('-').length)
   entries.forEach(([key, value]) => {
-    const isRemove = value === FLAG.DEFAULT_REMOVE
+    const isRemove = value === CONSTANTS.DEFAULT_REMOVE
     let keys = key.split('-')
     const prefixKeys = [...keys]
     prefixKeys.pop()
@@ -192,14 +184,14 @@ export function diffProps(
     const isPrefixPropChange = prefixPropIndex !== -1
     if (isPrefixPropChange) {
       if (isRemove) {
-        return changes.splice(prefixPropIndex, 0, [key, FLAG.DEFAULT_REMOVE, false, keys])
+        return changes.splice(prefixPropIndex, 0, [key, CONSTANTS.DEFAULT_REMOVE, false, keys])
       } else {
         return changes.splice(prefixPropIndex + 1, 0, [key, value, false, keys])
       }
     }
 
     // 自定义的属性对比，
-    const customDiff = info.propsHandlers[`${FLAG.COSTOM_DIFF_PREFIX}${key}`]
+    const customDiff = info.propsHandlers[`${CONSTANTS.COSTOM_DIFF_PREFIX}${key}`]
     if (customDiff) {
       if (customDiff(value, previous[key])) return
     } else {
@@ -287,15 +279,17 @@ export function splitEventKeyToInfo(key: string): EventInfo {
  * @description 将属性和事件改变应用到实例 This function applies a set of changes to the instance
  */
 export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
-  const info = instance.__renderInfo
+  const info = instance[CONSTANTS.INFO_KEY]
   const oldMemoizedProps = info.memoizedProps
   const { memoized, changes } = isDiffSet(data) ? data : diffProps(instance, data)
 
   // Prepare memoized props
   if (info) info.memoizedProps = memoized
   changes.forEach(([key, newValue, isEvent, keys]) => {
-    const oldValue = oldMemoizedProps.hasOwnProperty(key) ? oldMemoizedProps[key] : FLAG.PROP_MOUNT
-    const isRemove = newValue === FLAG.DEFAULT_REMOVE
+    const oldValue = oldMemoizedProps.hasOwnProperty(key)
+      ? oldMemoizedProps[key]
+      : CONSTANTS.PROP_MOUNT
+    const isRemove = newValue === CONSTANTS.DEFAULT_REMOVE
     if (isEvent) {
       const einfo = splitEventKeyToInfo(key)
       const setter = info.propsHandlers[einfo.name] as PropSetter<any>
@@ -307,11 +301,7 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
 
       info.memoizedResetter[key]?.(isRemove)
 
-      // 如果 propsHandler 存在，则返回值中必须有 set 和 reset 两个函数
-      // if (!is.fun(set))
-      // throw `Return type of EventHandler ${key} must be a function,meaning set event`
       if (isRemove) {
-        // delete info.memoizedEvents[key]
         delete info.memoizedResetter[key]
       } else {
         const resetter = setter({
@@ -323,10 +313,9 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
           keys,
           einfo,
         })
-        // const reset = set()
-        // info.memoizedEvents[key] = newValue
-        if (!is.fun(resetter))
+        if (!is.fun(resetter)) {
           throw `Return type of set of EventHandler ${key} must be a function,meaning remove event`
+        }
         info.memoizedResetter[key] = resetter
       }
     } else {
@@ -383,10 +372,10 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
  * 并从此节点遍历到根结点,收集路径上的 Provider 的 Context
  */
 export function collectContextsFromDom(dom: any) {
-  if (!(dom instanceof HTMLElement)){
+  if (!(dom instanceof HTMLElement)) {
     console.error(`prop is not a HTMLElement`)
     return []
-  } 
+  }
   const fiberKey = Object.keys(dom).find(
     (key) => key.startsWith('__react') && dom[key]?.stateNode === dom,
   )

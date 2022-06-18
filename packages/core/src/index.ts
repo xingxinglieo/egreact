@@ -16,7 +16,7 @@ export { ObjectContainer } from './Host/custom/ObjectContainer'
 
 export { Anchor } from './Host/custom/Anchor'
 
-import Egreact from './Egreact'
+export { Egreact } from './Egreact'
 import egretProps from './Host/egret/index'
 import euiProps from './Host/eui/index'
 import customProps from './Host/custom'
@@ -26,4 +26,3 @@ export const Setters = {
   eui: euiProps,
   custom: customProps,
 }
-export { Egreact }

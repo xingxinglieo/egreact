@@ -1,8 +1,8 @@
 import { getActualInstance, is } from '../utils'
-import { FLAG, DiffHandler, PropSetter, EventSet, PropSetterParameters } from '../type'
+import { CONSTANTS, DiffHandler, PropSetter, EventSet, PropSetterParameters } from '../type'
 
 export interface PropsHandlers {
-  [e: `${typeof FLAG.COSTOM_DIFF_PREFIX}${string}`]: (newProp: any, oldProp: any) => boolean
+  [e: `${typeof CONSTANTS.COSTOM_DIFF_PREFIX}${string}`]: (newProp: any, oldProp: any) => boolean
 }
 
 export interface IProp {
@@ -10,8 +10,8 @@ export interface IProp {
   __Class?: new (...args: any[]) => any
 }
 
-export const isMountProp = (value: any): value is typeof FLAG.PROP_MOUNT =>
-  value === FLAG.PROP_MOUNT
+export const isMountProp = (value: any): value is typeof CONSTANTS.PROP_MOUNT =>
+  value === CONSTANTS.PROP_MOUNT
 
 export module EventProp {
   export type GetEventKey<T extends string> = `${T}${'Once' | ''}${'Capture' | ''}${number}`
@@ -36,7 +36,7 @@ export module EventProp {
       if (isMountEvent) {
         if (
           keys.includes('Touch') &&
-          !('touchEnabled' in instance.__renderInfo.memoizedProps) &&
+          !('touchEnabled' in instance[CONSTANTS.INFO_KEY].memoizedProps) &&
           'touchEnabled' in actualInstance
         ) {
           // 有 touch 事件默认开启 touchEnabled

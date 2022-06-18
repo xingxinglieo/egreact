@@ -1,12 +1,10 @@
-import { Egreact } from '../src/index'
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import sinon from 'sinon'
-import { findEgretAncestor } from '../src/utils'
-import { findFiberByHostInstance } from '../src/renderer'
+import { Egreact,findEgretAncestor } from '../src/index'
+import { findFiberByHostInstance } from '../src/devtool'
 
 import {
-  getBoundingClientRect,
   findMatchEventIndex,
   ProxyEventInfo,
   proxyListener,

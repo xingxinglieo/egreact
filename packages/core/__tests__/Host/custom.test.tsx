@@ -1,4 +1,4 @@
-import Egreact from '../../src/Egreact'
+import { Egreact } from '../../src/Egreact'
 import React, { createRef, useEffect, useRef, useState } from 'react'
 import { render } from '@testing-library/react'
 import { getActualInstance } from '../../src/utils'

@@ -17,6 +17,6 @@
     "noImplicitThis": false,
     "importHelpers": true
   },
-  "include": ["src", "types"],
-  "exclude": ["node_modules", "dist", "__tests__"]
+  "include": ["src", "types", "__tests__"],
+  "exclude": ["node_modules", "dist"]
 }

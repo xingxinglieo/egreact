@@ -1,9 +1,6 @@
-import Egreact from '../src/Egreact'
 import { render } from '@testing-library/react'
 import React, { createRef, useEffect, useRef, useState } from 'react'
-import { getActualInstance } from '../src/utils'
-import { Instance } from '../src/type'
-import { hostConfig } from '../src/renderer'
+import { Egreact, getActualInstance, Instance, hostConfig, createEgreactRoot } from '../src/index'
 import RenderString from '../src/Host/custom/RenderString'
 describe('Egreact', () => {
   it('should throw error when use html element in egreact context', () => {
@@ -136,6 +133,8 @@ describe('Egreact', () => {
     expect(textRef.current.textFlow).toBe(defaultValue)
   })
 
+  it('should reset default value when remove attach child', () => {})
+
   it('should reset text when remove string', () => {
     const container = new egret.DisplayObjectContainer()
     const TestComponent = () => {
@@ -152,20 +151,6 @@ describe('Egreact', () => {
     )
   })
 
-  // it('eui-scroller child should hava a default prop `viewport`', () => {
-  //   const container = new egret.DisplayObjectContainer()
-  //   const scrollerRef = React.createRef<eui.Scroller>()
-  //   const groupRef = React.createRef<eui.Group>()
-  //   render(
-  //     <Egreact container={container}>
-  //       <eui-scroller ref={scrollerRef}>
-  //         <eui-group ref={groupRef}></eui-group>
-  //       </eui-scroller>
-  //     </Egreact>,
-  //   )
-  //   expect(scrollerRef.current.viewport).toBe(groupRef.current)
-  // })
-
   it('text update should call `commitTextUpdate` of hostconfig', () => {
     const container = new egret.DisplayObjectContainer()
     const TestComponent = () => {
@@ -180,6 +165,21 @@ describe('Egreact', () => {
         <TestComponent />
       </Egreact>,
     )
+  })
+
+  it(`can't render after unmouted`, () => {
+    const container = new egret.DisplayObjectContainer()
+    const TestComponent = () => {
+      const [num, setNum] = useState(0)
+      useEffect(() => {
+        setNum(1)
+      }, [])
+      return <textField>{num}</textField>
+    }
+    const root = createEgreactRoot(container)
+    root.render(<TestComponent />)
+    root.unmount()
+    expect(() => root.render(<TestComponent />)).toThrow()
   })
 
   it('another host funs had not called in application', () => {

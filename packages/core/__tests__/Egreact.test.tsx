@@ -1,4 +1,4 @@
-import Egreact from '../src/Egreact'
+import { Egreact } from '../src/Egreact'
 import { render } from '@testing-library/react'
 import React, { useEffect } from 'react'
 
@@ -22,5 +22,25 @@ describe('Egreact', () => {
       return <div ref={divRef}></div>
     }
     render(<TestComponent />)
+  })
+
+  it('should handle ref', () => {
+    const ref = React.createRef<any>()
+    render(<Egreact ref={ref} contentWidth="750" contentHeight="1334" data-testid="div"></Egreact>)
+    expect(ref.current.container).toBeInstanceOf(egret.DisplayObjectContainer)
+  })
+
+  it('should handle renderer options', () => {
+    render(
+      <Egreact
+        rendererOptions={{
+          // @ts-ignore
+          unstable_strictMode: true,
+          unstable_concurrentUpdatesByDefault: true,
+          identifierPrefix: 'egreact',
+          onRecoverableError: console.error,
+          transitionCallbacks: console.log,
+        }}></Egreact>,
+    )
   })
 })

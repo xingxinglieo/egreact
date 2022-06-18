@@ -1,5 +1,5 @@
 import { proxyHelper } from '../utils'
-import { Instance, IContainer } from '../../type'
+import { Instance, IContainer, CONSTANTS } from '../../type'
 export class ArrayContainer extends egret.EventDispatcher implements IContainer {
   __target = []
   addChild(child: any) {
@@ -17,8 +17,8 @@ export class ArrayContainer extends egret.EventDispatcher implements IContainer 
   reAttach() {
     this.__target = [...this.__target]
     const _this = this as unknown as Instance<ArrayContainer>
-    if (_this.__renderInfo.targetInfo) {
-      const [target, targetKey] = _this.__renderInfo.targetInfo
+    if (_this[CONSTANTS.INFO_KEY].targetInfo) {
+      const [target, targetKey] = _this[CONSTANTS.INFO_KEY].targetInfo
       target[targetKey] = this.__target
     }
   }

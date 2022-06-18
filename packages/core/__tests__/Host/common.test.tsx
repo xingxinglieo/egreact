@@ -1,8 +1,8 @@
-import Egreact from '../../src/Egreact'
+import { Egreact } from '../../src/Egreact'
 import { Graphics, isMountProp, NormalProp } from '../../src/Host/common'
 import React, { useEffect, useState } from 'react'
 import { render } from '@testing-library/react'
-import { FLAG } from '../../src/type'
+import { CONSTANTS } from '../../src/type'
 
 describe('Host common', () => {
   describe('NormalProp.passWithType', () => {
@@ -157,7 +157,7 @@ describe('Host common', () => {
     })
 
     describe('isMountProp', () => {
-      expect(isMountProp(FLAG.PROP_MOUNT)).toBe(true)
+      expect(isMountProp(CONSTANTS.PROP_MOUNT)).toBe(true)
     })
   })
 })

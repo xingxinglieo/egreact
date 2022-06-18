@@ -1,4 +1,4 @@
-export namespace FLAG {
+export namespace CONSTANTS {
   /* 第一次挂载标识*/
   export const PROP_MOUNT = '__PROP_MOUNT' as const
 
@@ -8,6 +8,8 @@ export namespace FLAG {
   export const DEFAULT_REMOVE = `${DEFAULT}_remove` as const
   /* 自定义diff函数名前缀标识 */
   export const COSTOM_DIFF_PREFIX = '__diff_' as const
+
+  export const INFO_KEY = '__renderInfo' as const
 }
 
 type ExtensionObj = { [key: string]: any }
@@ -23,7 +25,7 @@ export type EventInfo = {
 export type PropResetter = void | ((removed: boolean) => void)
 export type PropSetter<P, I = Instance, T = P> = (args: {
   newValue: P
-  oldValue: P | typeof FLAG.PROP_MOUNT
+  oldValue: P | typeof CONSTANTS.PROP_MOUNT
   instance: I
   target: T // 实际用于增删操作的实例
   targetKey: string // 实际用于增删操作的实例的key
@@ -31,19 +33,9 @@ export type PropSetter<P, I = Instance, T = P> = (args: {
   [key: string]: any
 }) => PropResetter
 
-// export type Handler<P, I = Instance, T = P> = (args: {
-//   newValue: P
-//   oldValue: P | typeof FLAG.PROP_MOUNT
-//   instance: I
-//   target: T // 实际用于增删操作的实例
-//   targetKey: string // 实际用于增删操作的实例的key
-//   keys: string[] // 被切割的key
-//   [key: string]: any
-// }) => HandlerSetter
-
 export type EventSet<P, I = Instance, T = P> = (args: {
   newValue: P
-  oldValue: P | typeof FLAG.PROP_MOUNT
+  oldValue: P | typeof CONSTANTS.PROP_MOUNT
   instance: I
   target: T // 实际用于增删操作的实例
   targetKey: string // 实际用于增删操作的实例的key
@@ -53,11 +45,6 @@ export type EventSet<P, I = Instance, T = P> = (args: {
 }) => PropResetter
 
 export type PropSetterParameters<P, I = Instance, T = P> = Parameters<PropSetter<P, I, T>>[0]
-// {
-// set
-// ?: () => void;
-// reset?: (isRemove: boolean) => void;
-// } & { value?: any };
 
 export type DiffHandler<T> = (np: T, op: T) => boolean
 
@@ -69,7 +56,7 @@ export type DiffHandler<T> = (np: T, op: T) => boolean
  * @menber args 仅用于描述类传入类的参数
  */
 export type IPropsHandlers = {
-  [key: `${typeof FLAG.COSTOM_DIFF_PREFIX}${string}`]: DiffHandler<unknown>
+  [key: `${typeof CONSTANTS.COSTOM_DIFF_PREFIX}${string}`]: DiffHandler<unknown>
 } & {
   __Class: new (...args: any[]) => any
   args?: (...args: any[]) => any
@@ -93,6 +80,7 @@ export interface IContainer {
   attach?: () => void
 }
 
+import { Fiber } from 'react-reconciler'
 /**
  * @export
  * @interface
@@ -103,6 +91,7 @@ export interface IContainer {
  * @member fiber react 的 fiberNode
  * @member instance 被挂载的实例
  * @member primitive 是否是 primitive 组件
+ * @member container 是否是根组件的实例
  * @member parent 父实例
  * @member attach 如果存在 attach 属性，将不会走 IContainer 的挂载方法，
  * 比如 attach="a.b.c" 将会直接赋值 a.b.c = child
@@ -120,9 +109,10 @@ export interface IContainer {
 export interface IRenderInfo {
   type: string
   root: Instance<egret.DisplayObjectContainer>
-  fiber: any
+  fiber: Fiber
   instance: Instance
   primitive: boolean
+  container: boolean
   parent?: Instance<IContainer>
   attach?: string
   targetInfo?: [any, string, any]
@@ -130,14 +120,13 @@ export interface IRenderInfo {
   mountedApplyProps?: boolean
   memoizedDefualt: { [key: string]: any }
   memoizedProps: { [key: string]: any }
-  // memoizedEvents: { [key: string]: any }
   memoizedResetter: {
     [key: string]: (removed: boolean) => void
   }
 }
 
 export type Instance<I = ExtensionObj> = I & {
-  __renderInfo: IRenderInfo
+  [CONSTANTS.INFO_KEY]: IRenderInfo
   __target?: any // 实际用于增删操作的实例
 }
 
