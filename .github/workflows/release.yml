@@ -16,6 +16,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 14
+          always-auth: true
           cache: 'pnpm'
       - run: npm whoami    
       - run: pnpm install --frozen-lockfile
