@@ -15,14 +15,13 @@ jobs:
           version: 6.32.9
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
-          registry-url: https://registry.npmjs.org
+          node-version: 14
           cache: 'pnpm'
       - run: npm whoami    
       - run: pnpm install --frozen-lockfile
       - run: cd packages/core && npm run test
       - run: cd packages/core && npm run build 
-      - run: cd packages/core && pnpm publish
+      - run: cd packages/core && npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_TOKEN}}
         
