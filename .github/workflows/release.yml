@@ -13,11 +13,12 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 6.32.9
-
       - uses: actions/setup-node@v3
         with:
           node-version: 16
+          registry-url: https://registry.npmjs.org
           cache: 'pnpm'
+      - run: npm whoami    
       - run: pnpm install --frozen-lockfile
       - run: cd packages/core && npm run test
       - run: cd packages/core && npm run build 
