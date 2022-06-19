@@ -86,16 +86,16 @@ export const mixinHelper = {
     obj: T,
     ...name: S
   ) {
-    type C = P extends { store: infer D } ? D : never
-    type SD = S extends [infer U] ? U : never
+    type Store = P extends { store: infer D } ? D : never
+    type Name = S extends [infer N] ? N : never
     return {
       ...this,
-      store: Mixin.mixin(this.store as C, obj as T, name[0] as SD),
+      store: Mixin.mixin(this.store as Store, obj as T, name[0] as Name),
     }
   },
   get<P extends { store: any }>(this: P) {
-    type C = P extends { store: infer D } ? D : never
-    return this.store as C
+    type Store = P extends { store: infer D } ? D : never
+    return this.store as Store
   },
 }
 

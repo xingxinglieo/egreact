@@ -43,9 +43,9 @@ type Props = {
     | 'fixedNarrow'
     | 'fixedWide'
   orientation?: 'auto' | 'portrait' | 'landscape' | 'landscapeFlipped'
-  showFps: 'true' | 'false'
-  showLog: 'true' | 'false'
-  showPaintRect: 'true' | 'false'
+  showFps?: 'true' | 'false'
+  showLog?: 'true' | 'false'
+  showPaintRect?: 'true' | 'false'
 } & {
   egretOptions?: egret.runEgretOptions
 
