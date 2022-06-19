@@ -48,4 +48,5 @@ export default () => (
 
 ## 反馈与共建
 
-[GitHub](https://github.com/xingxinglieo/egreact),[qq 群](https://qm.qq.com/cgi-bin/qm/qr?k=wLVjCrDj27-_GpnyuuVAv5HTWT73p9vb&authKey=uKtOPKgV5S%2FbSQfz%2BSnN%2BdXy55LUtsWcnpUBQU%2FbM5JRlZQJqx1ktBJEsPG7dsUX&noverify=0&group_code=468344181)
+[GitHub](https://github.com/xingxinglieo/egreact)期待你的 start！
+[qq 群](https://qm.qq.com/cgi-bin/qm/qr?k=wLVjCrDj27-_GpnyuuVAv5HTWT73p9vb&authKey=uKtOPKgV5S%2FbSQfz%2BSnN%2BdXy55LUtsWcnpUBQU%2FbM5JRlZQJqx1ktBJEsPG7dsUX&noverify=0&group_code=468344181)

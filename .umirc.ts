@@ -12,8 +12,12 @@ export default defineConfig({
   navs: [
     null, // null 值代表保留约定式生成的导航，只做增量配置
     {
-      title: "GitHub",
-      path: "https://github.com/xingxinglieo/egreact",
+      title: "问题反馈",
+      path: "https://github.com/xingxinglieo/egreact/issues",
+    },
+    {
+      title: "更新日志",
+      path: "https://github.com/xingxinglieo/egreact/releases",
     },
   ],
   // more config: https://d.umijs.org/config

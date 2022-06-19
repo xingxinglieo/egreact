@@ -25,10 +25,10 @@ type EventInfo = {
 type PropResetter = void | ((removed: boolean) => void) // removed 代表是否是移除属性
 type PropSetter<P, I = Instance, T = P> = (args: {
   newValue: P // 新值
-  oldValue: P | typeof FLAG.PROP_MOUNT // 旧值，FLAG.PROP_MOUNT 代表属性挂载
+  oldValue: P | typeof CONSTANTS.PROP_MOUNT // 旧值，CONSTANTS.PROP_MOUNT 代表属性挂载
   instance: I // 创建的实例
-  target: T // 实际用于增删操作的实例
-  targetKey: string // 实际用于增删操作的实例的key
+  target: T // 实际用于增删操作的实例，比如 layout-gap 就是 instance["layout"]
+  targetKey: string // 实际用于增删操作的实例的key，比如 layout-gap 就是 "gap"
   keys: string[] // 被切割的key
   einfo?: EventInfo // 在符合事件格式的 prop 将被传入
 }) => PropResetter
