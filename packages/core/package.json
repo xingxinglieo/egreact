@@ -1,6 +1,6 @@
 {
   "name": "egreact",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A react render for egret 一个为 egret 而生的 react 渲染器",
   "keywords": [
     "react",
