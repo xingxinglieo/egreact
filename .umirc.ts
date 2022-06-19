@@ -38,5 +38,8 @@ export default defineConfig({
   chainWebpack: (memo, { env, webpack }) => {
     memo.module.rule("js").include.add(path.resolve("../core/dist")).end();
     memo.mode('development')
+    memo.plugin('env').use(webpack.EnvironmentPlugin,[{
+      'process.env.NODE_ENV': JSON.stringify('development')
+    }])
   },
 });
