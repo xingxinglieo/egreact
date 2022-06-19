@@ -158,13 +158,11 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
 
     const [error, setError] = React.useState<any>(false)
     if (error) throw error
-
     useEffect(() => {
       if (mouted) {
         if (!egreactRoot.current) {
           egreactRoot.current = createEgreactRoot(containerInstance.current, rendererOptions)
         }
-
         egreactRoot.current.render(
           contextsFrom === false ? (
             children
