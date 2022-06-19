@@ -18,6 +18,7 @@ jobs:
           node-version: 14
           cache: 'pnpm'
       - run: pnpm install
+      - run: cd packages/core && pnpm run test
       - uses: mikeal/merge-release@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
