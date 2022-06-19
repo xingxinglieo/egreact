@@ -18,10 +18,11 @@ jobs:
           node-version: 14
           cache: 'pnpm'
       - run: pnpm install
-      - run: cd packages/core && npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
-      - run: cd packages/core && npm run build 
-      - run: cd packages/core && npm publish --verbose
+      - uses: mikeal/merge-release@master
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_TOKEN}}
+          DEPLOY_DIR: packages/core
+          SRC_PACKAGE_DIR: packages/core
           NODE_TOKEN: ${{secrets.NPM_ACCESS_TOKEN}}
         
