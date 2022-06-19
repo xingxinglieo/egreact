@@ -33,9 +33,24 @@ const DomEgretPropsName = [
 type Props = {
   [key in typeof DomEgretPropsName[number]]?: string
 } & {
+  scaleMode?:
+    | 'showAll'
+    | 'noScale'
+    | 'noBorder'
+    | 'exactFit'
+    | 'fixedWidth'
+    | 'fixedHeight'
+    | 'fixedNarrow'
+    | 'fixedWide'
+  orientation?: 'auto' | 'portrait' | 'landscape' | 'landscapeFlipped'
+  showFps: 'true' | 'false'
+  showLog: 'true' | 'false'
+  showPaintRect: 'true' | 'false'
+} & {
   egretOptions?: egret.runEgretOptions
 
   rendererOptions?: RootOptions
+
   container?: egret.DisplayObjectContainer
 
   // 是否执行 runEgret
@@ -53,6 +68,7 @@ interface EgreactRef {
   container: egret.DisplayObjectContainer
   root: EgreactRoot
   dom: HTMLDivElement
+  contexts: Context<any>[]
 }
 
 const entryClass = '__Main'
@@ -106,9 +122,14 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
         window[entryClass] = egret.DisplayObjectContainer
         egret.runEgret(egretOptions)
       }
+
       if (container) {
         containerInstance.current = container
-      } else containerInstance.current = egret.lifecycle.stage
+      } else {
+        containerInstance.current = new egret.DisplayObjectContainer()
+        egret.lifecycle.stage.addChild(containerInstance.current)
+      }
+
       if (contextsFrom === true) {
         setContexts(collectContextsFromDom(divRef.current))
       } else if (contextsFrom instanceof HTMLElement) {
@@ -116,13 +137,15 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
       } else if (is.arr(contextsFrom)) {
         setContexts(contextsFrom)
       }
-      setMouted(true)
 
+      setMouted(true)
       moutedCount++
+
       if (process.env.NODE_ENV !== 'production' && moutedCount === 1) {
         proxyGetComputedStyle()
         proxyListener()
       }
+
       return () => {
         moutedCount--
         if (process.env.NODE_ENV !== 'production' && moutedCount === 0) {
@@ -135,11 +158,13 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
 
     const [error, setError] = React.useState<any>(false)
     if (error) throw error
+
     useEffect(() => {
       if (mouted) {
         if (!egreactRoot.current) {
           egreactRoot.current = createEgreactRoot(containerInstance.current, rendererOptions)
         }
+
         egreactRoot.current.render(
           contextsFrom === false ? (
             children
