@@ -12,8 +12,8 @@ export default defineConfig({
   navs: [
     null, // null 值代表保留约定式生成的导航，只做增量配置
     {
-      title: 'GitHub',
-      path: 'https://github.com/xingxinglieo/egreact',
+      title: "GitHub",
+      path: "https://github.com/xingxinglieo/egreact",
     },
   ],
   // more config: https://d.umijs.org/config
@@ -37,5 +37,6 @@ export default defineConfig({
   ],
   chainWebpack: (memo, { env, webpack }) => {
     memo.module.rule("js").include.add(path.resolve("../core/dist")).end();
+    memo.mode('development')
   },
 });

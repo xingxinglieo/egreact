@@ -23,14 +23,24 @@ features:
 
 ``` tsx
 /**
- * iframe: true
+ * iframe: 750
  * defaultShowCode: false
  */
 import React from "react"
 import { Egreact } from "egreact";
-import FriendList from './FriendList.tsx' 
+import FriendList from './friend-list/index.tsx' 
 export default () => (
-  <Egreact>
+  <Egreact 
+    style={{
+      margin: "auto",
+      width: "100%",
+      height: "100%"
+    }}
+    orientation="auto"
+    scaleMode="fixedHeight"
+    contentWidth="750" 
+    contentHeight="1334"
+  >
     <FriendList />
   </Egreact>
 );
