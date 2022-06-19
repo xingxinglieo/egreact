@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo } from "react";
-import { useState, useRef } from "react";
-import { EventProp } from "egreact";
-console.log(EventProp.eventSetter);
+import React, { useMemo } from "react";
+import { useState } from "react";
+
 export default function Test() {
   const [medias, setMedias] = useState([
     {
@@ -68,13 +67,7 @@ export default function Test() {
     ],
     []
   );
-  const scroller = useRef<eui.Scroller>(null!);
 
-  // const scrollerBar = useRef<eui.HScrollBar>(null!);
-  useEffect(() => {
-    // scroller.current.addChild(scrollerBar.current);
-    console.log(scroller.current.getBounds())
-  }, []);
   return (
     <eui-scroller width={750} height={1334}>
       <eui-group width="100%">
@@ -116,7 +109,6 @@ export default function Test() {
               <eui-rect width="100%" height="1" fillColor="0xD8D8D8" />
 
               <eui-scroller
-                ref={scroller}
                 width="100%"
                 onTouchTap={() => {
                   setMedias([...medias.reverse()]);

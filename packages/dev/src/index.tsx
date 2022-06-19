@@ -44,8 +44,8 @@ function App() {
           width: "100%",
           height: "100%"
         }}
+        scaleMode="fixedHeight"
         orientation="auto"
-        scaleMode="noScale"
         frameRate="60"
         contentWidth="750"
         contentHeight="1334"
