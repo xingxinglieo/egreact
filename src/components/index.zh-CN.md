@@ -62,7 +62,7 @@ graphics.endFill()
 
 | 属性名      | 类型                        | 描述           | 创建                                     | 清除 |
 | ----------- | --------------------------- | :------------- | :--------------------------------------- | :--- |
-| `${name}`   | `[]\|number[]\|egret.Point` |                | 传入数组时， `new egret.Ponit(...value)` |
+| `${name}`   | `[]\|number[]\|egret.Point` |                | 传入数组时， `new egret.Point(...value)` |
 | `${name}-x` | `string\|number`            | 该点的水平坐标 |                                          |
 | `${name}-y` | `string\|number`            | 该点的垂直坐标 |                                          |
 

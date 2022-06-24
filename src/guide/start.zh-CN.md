@@ -8,7 +8,7 @@ toc: menu
 
 ## webpack 配置
 
-你可能不懂如何使用 webpack 启动一个 egret 应用，本节将配置一个最简单的 webpack egreact 开发环境。
+你可能不了解如何使用 webpack 启动一个 egret 应用，本节将配置一个最简单的 webpack egreact 开发环境。
 
 ### 准备 egret 库
 

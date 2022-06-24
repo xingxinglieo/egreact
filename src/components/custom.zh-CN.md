@@ -120,7 +120,7 @@ export default function TestFont() {
   const [count, setCount] = useState(0);
   const arrayContainer = useRef<ArrayContainer>(null);
   useEffect(() => {
-    // textfield 的 textflow 属性，在每次数组有更新都需要 reAttach 一下才能生效
+    // TextField 的 textflow 属性，在每次数组有更新都需要 reAttach 一下才能生效
     arrayContainer.current.reAttach();
   },[count]);
 

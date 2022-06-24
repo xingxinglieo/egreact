@@ -9,14 +9,14 @@ nav:
 
 ## 什么是 egreact ？
 
-egreact 是一个为 [egret](https://www.egret.com/products) 引擎而生的 React 渲染器，它让你可以使用 React 编写 UI 界面。
+egreact 是一个为 [egret](https://www.egret.com/products) 引擎而生的 React 渲染器，它让你可以使用 React 编写 egret UI 界面。
 
 ## 为什么？
 
 虽然 egret 提出了 exml 作为官方的 UI 描述语言，可以一定程度上提高编写 UI 的效率，但以当前的前端开发视角来看，exml 糟糕的编写体验和孤立的生态已经落后于主流了。egreact 正是为解决这些问题而诞生：
 
 1. tsx 编写组件，内置组件提供详尽的类型提示。
-2. 接洽 React 生态，可以使用 hooks 复用逻辑，也可以使用 Redux、react-router 等库进行状态管理和路由管理。
+2. 接洽 React 生态，可以使用 hooks 复用逻辑，也可以使用 redux、react-router 等库进行状态管理和路由管理。
 
 ### egreact 有什么限制吗？
 

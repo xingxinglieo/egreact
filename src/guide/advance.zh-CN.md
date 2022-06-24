@@ -30,7 +30,7 @@ type PropSetter<P, I = Instance, T = P> = (args: {
   target: T // 实际用于增删操作的实例，比如 layout-gap 就是 instance["layout"]
   targetKey: string // 实际用于增删操作的实例的key，比如 layout-gap 就是 "gap"
   keys: string[] // 被切割的key
-  einfo?: EventInfo // 在符合事件格式的 prop 将被传入
+  eInfo?: EventInfo // 在符合事件格式的 prop 将被传入
 }) => PropResetter
 export type DiffHandler<T> = (newValue: T, oldValue: T) => boolean
 
@@ -114,7 +114,7 @@ declare global {
 
 ``` typescript
 extend({
-  // 首字符统一大写，使用时首字母需要小写
+  // 首字符统一大写，jsx 中首字母需要小写
   Shape: shape
 })
 ```
@@ -123,10 +123,10 @@ extend({
 
 ### 事件
 
-事件与 prop 没什么区别，只需要 `on` 开头即可，Setter 的参数会多一个 `einfo`
+事件与 prop 没什么区别，只需要 `on` 开头即可，Setter 的参数会多一个 `eInfo`
 
 ``` typescript
-const onClick: PropSetter<(e: egret.TouchEvent) => void> = ({ newValue, instance, einfo }) => {
+const onClick: PropSetter<(e: egret.TouchEvent) => void> = ({ newValue, instance, eInfo }) => {
   instance.addEventListener(egret.TouchEvent.TOUCH_TAP, newValue, instance)
   instance.touchEnabled = true
   return () => instance.removeEventListener(egret.TouchEvent.TOUCH_TAP, newValue, instance)

@@ -28,15 +28,15 @@ export default () => (
 
 <API hideTitle src="./Props/Egreact.tsx"></API>
 
-egret 配置项和 `options` 详见[入口文件说明](https://docs.egret.com/engine/docs/projectConfig/indexFile)。  
+egret 配置项和 `egretOptions` 详见[入口文件说明](https://docs.egret.com/engine/docs/projectConfig/indexFile)。  
   
 `contextsFrom` 见 [ContextBridge](/guide/basic#contextbridge)
 
-ref
+ref 暴露了这些内部生成的对象。
 
 ``` tsx | pure
 interface EgreactRef {
-  container: egret.DisplayObjectContainer // 根容器，传入或者未传入时创建的
+  container: egret.DisplayObjectContainer // 传入或创建的根容器
   root: EgreactRoot // 渲染器根实例，见下方类型定义
   contexts: Context<any>[] // 传入或收集的 contexts
   dom?: HTMLDivElement // 若 renderDom 为真，则为渲染的 dom
@@ -82,7 +82,7 @@ function createEgreactRoot(
 ): EgreactRoot
 ```
 
-## props
+## prop
 
 以 `eui-group` 最常用的属性 `layout` 说明在 egreact 中是如何处理 prop 的。
 
@@ -106,7 +106,7 @@ group['layout']['gap'] = 10
 
 会新创建一个 `new eui.VerticalLayout()` 并重新赋值，其子属性也会重新赋值一遍。
 
-### diffProp
+### 如何判断 prop 更新？
 
 每次渲染，prop 是否需要更新，需要经由 `diffProp` 算法进行判断。  
 若无特殊说明，prop 的 `newValue` 和 `oldValue` 的判断大概逻辑如下：  
@@ -126,7 +126,7 @@ group['layout']['gap'] = 10
 <bitmap scale9Grid={[0,0,0,0]}></bitmap>
 ```
 
-### attach
+### attach 改变加入父实例的方式
 
 `attach` 是用于声明以赋值的方式加入父组件的 prop，每个 egreact 组件都支持这个 prop，声明了 `attach` 的组件被称为 attach component。以 `eui-scroll` 为例：
 
@@ -186,7 +186,7 @@ const Test = () => {
   
 除此之外，即使没有子组件插入，也应该遵循此规则：attach component 在前面统一明确地声明，避免渲染结果“看似”与组件编排不一致的情况。
 
-### args
+### args 构造函数参数
 
 `args` 是用于传递构造函数参数的 prop，每个 egreact 组件都支持这个 prop，仅在执行构造函数时作用一次，后续也不会影响更新。
 
@@ -202,7 +202,7 @@ const texture = new egret.Texture();
 new Bitmap(...args);
 ```
 
-### mountedApplyProps
+### mountedApplyProps 挂载后应用属性
 
 `mountedApplyProps` 是用于声明是否在挂载后才更新属性的 prop，仅在挂载时作用一次。
 
@@ -226,7 +226,7 @@ parent.addChild(child)
 child['x'] = 100;
 ```
 
-## events
+## event
 
 以 `on` 开头的 prop 会被识别是事件，如 `onTouchTap`  
 
@@ -274,7 +274,7 @@ onTouchTapCaptureOnce12
 
 ## ContextBridge
 
-`ContextBridge` 是用于继承上文渲染器的 `contetxs` 的组件，在 `Egreact` 中内置，通过 `contextsFrom` 控制是否开启或者 `contetxs` 的来源。以 `redux` 为例说明为什么需要这个机制。
+`ContextBridge` 是用于继承上文渲染器的 `contexts` 的组件，在 `Egreact` 中内置，通过 `contextsFrom` 控制是否开启或者 `contexts` 的来源。以 `redux` 为例说明为什么需要这个机制。
 
 ``` tsx
 /**
