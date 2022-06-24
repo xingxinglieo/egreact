@@ -7,12 +7,10 @@ import { Reconciler } from 'react-reconciler'
 /**
  * @description dom px 和 egret 坐标值换算比例
  */
-function caculateScale() {
-  return (
-    // TODO: showAll 模式有问题，需要更准确的公式
-    Math.ceil(+(document.body.clientWidth / egret.lifecycle.stage.stageWidth).toFixed(3) * 100) /
-    100
-  )
+function calculateScale() {
+  const canvas = getCanvas()
+  const rect = canvas.getBoundingClientRect()
+  return rect.width / egret.lifecycle.stage.stageWidth
 }
 
 const getComputedStyle = window.getComputedStyle
@@ -42,7 +40,7 @@ export function getBoundingClientRect(instance: Instance<unknown>) {
   const canvasRect = getCanvas().getBoundingClientRect()
   const point = egretInstance.localToGlobal(0, 0)
   // 因为 egret 中的坐标系比例与dom中不同，所以需要换算
-  const scale = caculateScale()
+  const scale = calculateScale()
   const x = point.x * scale + canvasRect.left
   const y = point.y * scale + canvasRect.top
   const width = egretInstance.width * scale
@@ -143,18 +141,20 @@ export function proxyListener() {
         r.y += window.scrollY
         // 判断点击点是否处于画布中
         if (x > r.x && x < r.x + r.width && y > r.y && y < r.y + r.height) {
-          const scale = caculateScale()
+          const scale = calculateScale()
           const target = findTargetByPosition(
             egret.lifecycle.stage,
             (x - r.x) / scale,
             (y - r.y) / scale,
           ) as any
           // 模拟一个新的 event，目的是改变 target
-          e = {
-            ...e,
-            preventDefault: e.preventDefault.bind(e),
-            stopPropagation: e.stopPropagation.bind(e),
-            target,
+          if (target) {
+            e = {
+              ...e,
+              preventDefault: e.preventDefault.bind(e),
+              stopPropagation: e.stopPropagation.bind(e),
+              target,
+            }
           }
         }
         listener.call(this, e)
@@ -166,11 +166,11 @@ export function proxyListener() {
         if (type === 'pointerover') {
           // 特殊处理，react devtool 没有监听 pointermove，但是进入画布的话，只有一次 pointerover
           // 为了鼠标移动就能判断，在 canvas 上监听 pointermove
-          const throllerProxyHandler = throttle(proxyHandler, 150)
+          const throttlerProxyHandler = throttle(proxyHandler, 150)
           const canvas = getCanvas()
-          canvas.addEventListener('pointermove', throllerProxyHandler, options)
+          canvas.addEventListener('pointermove', throttlerProxyHandler, options)
           // 保存一下最后这个参数
-          info.push(throllerProxyHandler)
+          info.push(throttlerProxyHandler)
         }
         eventInfoCollection.push(info)
       }
@@ -207,13 +207,13 @@ export function unProxyListener() {
 export function findFiberByHostInstance(instance: Instance) {
   return instance?.[CONSTANTS.INFO_KEY]?.fiber ?? null
 }
-import packagejson from '../package.json'
+import packageJson from '../package.json'
 export function injectIntoDevTools(reconciler: Reconciler<any, any, any, any, any>) {
   if (process.env.NODE_ENV !== 'production') {
     reconciler.injectIntoDevTools({
       bundleType: 0,
       rendererPackageName: 'egreact',
-      version: packagejson.version,
+      version: packageJson.version,
       findFiberByHostInstance,
     })
   }
