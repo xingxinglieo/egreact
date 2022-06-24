@@ -36,7 +36,7 @@ export class Primitive extends egret.EventDispatcher implements IContainer {
   }
 }
 
-const objectDiffKey = `${CONSTANTS.COSTOM_DIFF_PREFIX}object` as const
+const objectDiffKey = `${CONSTANTS.CUSTOM_DIFF_PREFIX}object` as const
 const primitive = {
   __Class: proxyHelper({
     constructor: Primitive,
@@ -49,13 +49,12 @@ const primitive = {
   [objectDiffKey]: (n, o) => n === o,
 }
 
-const pass = NormalProp.passWithType()
 const primitiveProxy = new Proxy(primitive, {
   get(target, p: string) {
     if (p in target) return target[p]
-    else if (p.startsWith(CONSTANTS.COSTOM_DIFF_PREFIX)) return undefined
+    else if (p.startsWith(CONSTANTS.CUSTOM_DIFF_PREFIX)) return undefined
     else if (isEvent(p)) return EventProp.eventSetter
-    else return pass
+    else return NormalProp.pass
   },
 })
 export default primitiveProxy

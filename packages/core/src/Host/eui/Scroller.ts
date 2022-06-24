@@ -1,10 +1,10 @@
-import componentPropsHandlers from "./Component";
-import { NormalProp, EventProp } from "../common";
+import componentPropsHandlers from './Component'
+import { NormalProp, EventProp } from '../common'
 
 const scrollerUiEventTypeSets = {
   onUiChangeStart: EventProp.uiEventSetter,
-  onUiChangeEnd: EventProp.uiEventSetter
-};
+  onUiChangeEnd: EventProp.uiEventSetter,
+}
 
 const scrollerHandlers = {
   ...componentPropsHandlers,
@@ -15,8 +15,8 @@ const scrollerHandlers = {
   scrollPolicyV: NormalProp.str,
   scrollThreshold: NormalProp.num,
   throwSpeed: NormalProp.num,
-  viewport: NormalProp.passWithType<eui.IViewport>(),
-  horizontalScrollBar: NormalProp.passWithType<eui.HScrollBar>(),
-  verticalScrollBar: NormalProp.passWithType<eui.VScrollBar>()
-};
-export default scrollerHandlers;
+  viewport: NormalProp.pass<eui.IViewport | void>,
+  horizontalScrollBar: NormalProp.pass<eui.HScrollBar | void>,
+  verticalScrollBar: NormalProp.pass<eui.VScrollBar | void>,
+}
+export default scrollerHandlers

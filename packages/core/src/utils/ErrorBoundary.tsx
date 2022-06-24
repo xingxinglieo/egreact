@@ -1,7 +1,7 @@
 import React from 'react'
 
 export class ErrorBoundary extends React.Component<
-  { set: React.Dispatch<any>; children: React.ReactNode },
+  { set: React.Dispatch<Error>; children: React.ReactNode },
   { error: boolean }
 > {
   state = { error: false }

@@ -2,7 +2,7 @@ import { getActualInstance, is } from '../utils'
 import { CONSTANTS, DiffHandler, PropSetter, EventSet, PropSetterParameters } from '../type'
 
 export interface PropsHandlers {
-  [e: `${typeof CONSTANTS.COSTOM_DIFF_PREFIX}${string}`]: (newProp: any, oldProp: any) => boolean
+  [e: `${typeof CONSTANTS.CUSTOM_DIFF_PREFIX}${string}`]: (newProp: any, oldProp: any) => boolean
 }
 
 export interface IProp {
@@ -14,12 +14,11 @@ export const isMountProp = (value: any): value is typeof CONSTANTS.PROP_MOUNT =>
   value === CONSTANTS.PROP_MOUNT
 
 export module EventProp {
-  export type GetEventKey<T extends string> = `${T}${'Once' | ''}${'Capture' | ''}${number}`
   export type GetEventKeyWithoutNum<T extends string> = `${T}${'Once' | ''}${'Capture' | ''}`
   // export type
   export const eventSetterWithType = <T extends egret.Event>() => {
     const eventHandler: EventSet<(event: T) => any> = (props) => {
-      const { newValue, instance: _instance, targetKey, einfo } = props
+      const { newValue, instance: _instance, targetKey, eInfo } = props
       type InnerListener = Function
       type OuterListener = Function
       const instance = _instance as typeof _instance & {
@@ -31,7 +30,7 @@ export module EventProp {
       }
       const memorizedListeners = instance.memorizedListeners
       const isMountEvent = !(targetKey in memorizedListeners)
-      const { type, once, capture, priority, keys } = einfo
+      const { type, once, capture, priority, keys } = eInfo
       const actualInstance = getActualInstance(instance) as egret.DisplayObject
       if (isMountEvent) {
         if (
@@ -42,7 +41,7 @@ export module EventProp {
           // 有 touch 事件默认开启 touchEnabled
           actualInstance.touchEnabled = true
         }
-        // 通过引用来改变调用，无需多次调用 addListener 和 removeLisnstner
+        // 通过引用来改变调用，无需多次调用 addListener 和 removeListener
         const innerListener = function (...args: any[]) {
           // 最新的属性值
           memorizedListeners[targetKey][1].apply(this, args)
@@ -97,7 +96,8 @@ export module NormalProp {
     (target[targetKey] = String(newValue)), void 0
   )
 
-  export const pass = <T>({ newValue, target, targetKey }: PropSetterParameters<T>) => (
+  export const pass = <T = any>({ newValue, target, targetKey }: PropSetterParameters<T>) => (
+    /* ts 4.7 不调用可以传入范型 */
     (target[targetKey] = newValue), void 0
   )
 
@@ -260,9 +260,11 @@ export const textureProp = {
   __Class: egret.Texture,
   __setter: Texture.setter,
   __diff: Texture.diff,
-  bitmapData: NormalProp.passWithType<egret.Bitmap>(),
+  bitmapData: NormalProp.pass<egret.Bitmap | void>,
+  // WithType
+  // <egret.Bitmap>(),
   disposeBitmapData: NormalProp.boo,
-  ktxData: NormalProp.passWithType<ArrayBuffer>(),
+  ktxData: NormalProp.pass<ArrayBuffer | void>,
 }
 
 export module LayoutBase {

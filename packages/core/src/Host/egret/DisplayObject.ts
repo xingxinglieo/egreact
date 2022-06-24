@@ -46,21 +46,19 @@ const touchEventTypeSets = touchEventType.reduce(
 )
 
 // extends PropsSets
-type TypeWithPriority = EventProp.GetEventKey<TouchEventType>
+// type TypeWithPriority = EventProp.GetEventKey<TouchEventType>
 type TypeWithoutPriority = EventProp.GetEventKeyWithoutNum<TouchEventType>
 
-type TouchEventTypeSetsWithPriority = {
-  [key in TypeWithPriority]: TouchEventSetter
-}
 // type c = TouchEventTypeSetsWithPriority["onTouchEnd2"]
-type TouchEventTypeSetsWithoutPriority = {
+type TouchEventTypeSets = {
+  // [key in TypeWithoutPriority | TypeWithPriority]: TouchEventSetter
   [key in TypeWithoutPriority]: TouchEventSetter
 }
-const _displayObjectPropsHandlers = mixinHelper
+const displayObjectPropsHandlers = mixinHelper
   .set({
     ...touchEventTypeSets,
     ...normalEventTypeSets,
-    ...({} as TouchEventTypeSetsWithoutPriority),
+    ...({} as TouchEventTypeSets),
     __Class: egret.DisplayObject,
     width: ({ newValue, instance }: PropSetterParameters<number | string, eui.UIComponent>) => {
       const isPercent = typeof newValue === 'string' && newValue[newValue.length - 1] === '%'
@@ -106,14 +104,12 @@ const _displayObjectPropsHandlers = mixinHelper
     cacheAsBitmap: NormalProp.boo,
     blendMode: NormalProp.str,
     name: NormalProp.str,
-    matrix: NormalProp.passWithType<egret.Matrix>(),
-    filters: NormalProp.passWithType<(egret.CustomFilter | egret.Filter)[]>(),
-    mask: NormalProp.passWithType<egret.DisplayObject | egret.Rectangle | void>(),
+    matrix: NormalProp.pass<egret.Matrix | void>,
+    filters: NormalProp.pass<(egret.CustomFilter | egret.Filter)[]>,
+    mask: NormalProp.pass<egret.DisplayObject | egret.Rectangle | void>,
   })
   .mixin(rectangleProp, 'mask')
   .mixin(rectangleProp, 'scrollRect')
   .get()
 
-const displayObjectPropsHandlers =
-  _displayObjectPropsHandlers as typeof _displayObjectPropsHandlers & TouchEventTypeSetsWithPriority
 export default displayObjectPropsHandlers

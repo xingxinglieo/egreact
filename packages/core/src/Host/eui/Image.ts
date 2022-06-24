@@ -4,7 +4,7 @@ const image = {
   ...bitmap,
   ...euiBaseLayoutProp,
   __Class: eui.Image,
-  source: NormalProp.passWithType<string | egret.Texture>(),
+  source: NormalProp.pass<string | egret.Texture | void>,
   onComplete: EventProp.eventSetter,
 }
 export default image

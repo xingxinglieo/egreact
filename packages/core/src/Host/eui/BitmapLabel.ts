@@ -4,7 +4,7 @@ const bitmapLabel = {
   ...displayObjectPropsHandlers,
   ...euiBaseLayoutProp,
   __Class: eui.BitmapLabel,
-  font: NormalProp.passWithType<Object>(),
+  font: NormalProp.pass,
   letterSpacing: NormalProp.num,
   lineSpacing: NormalProp.num,
   smoothing: NormalProp.boo,

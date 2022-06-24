@@ -43,9 +43,9 @@ type Props = {
     | 'fixedNarrow'
     | 'fixedWide'
   orientation?: 'auto' | 'portrait' | 'landscape' | 'landscapeFlipped'
-  showFps?: 'true' | 'false'
-  showLog?: 'true' | 'false'
-  showPaintRect?: 'true' | 'false'
+  showFps?: boolean | `${boolean}`
+  showLog?: boolean | `${boolean}`
+  showPaintRect?: boolean | `${boolean}`
 } & {
   egretOptions?: egret.runEgretOptions
 
@@ -59,7 +59,7 @@ type Props = {
   // 是否渲染 egret 的 canvas div 容器
   renderDom?: boolean
 
-  // boolean: 是否从dom中提取context, 为 true 时 renderDom 必须为 ture;
+  // boolean: 是否从dom中提取context, 为 true 时 renderDom 必须为 true;
   // Context: 直接传入 Context ; Html: 从 dom 向上搜寻;
   contextsFrom?: boolean | React.Context<any>[] | HTMLElement
 } & JSX.IntrinsicElements['div']
@@ -72,7 +72,7 @@ interface EgreactRef {
 }
 
 const entryClass = '__Main'
-let moutedCount = 0
+let mountedCount = 0
 
 function hyphenateEgretConfig(p: any) {
   return Object.keys(p).reduce((obj, key) => {
@@ -114,7 +114,7 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
     const containerInstance = useRef<egret.DisplayObjectContainer>(container!)
     const values = useRef(new CallBackArray())
     const [contexts, setContexts] = useState<Context<any>[]>([])
-    const [mouted, setMouted] = useState(false)
+    const [mounted, setMounted] = useState(false)
     const egreactRoot = useRef<EgreactRoot>(null)
 
     useEffect(() => {
@@ -138,17 +138,17 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
         setContexts(contextsFrom)
       }
 
-      setMouted(true)
-      moutedCount++
+      setMounted(true)
+      mountedCount++
 
-      if (process.env.NODE_ENV !== 'production' && moutedCount === 1) {
+      if (process.env.NODE_ENV !== 'production' && mountedCount === 1) {
         proxyGetComputedStyle()
         proxyListener()
       }
 
       return () => {
-        moutedCount--
-        if (process.env.NODE_ENV !== 'production' && moutedCount === 0) {
+        mountedCount--
+        if (process.env.NODE_ENV !== 'production' && mountedCount === 0) {
           unProxyGetComputedStyle()
           unProxyListener()
         }
@@ -156,10 +156,10 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
       }
     }, [])
 
-    const [error, setError] = React.useState<any>(false)
+    const [error, setError] = React.useState<Error | null>(null)
     if (error) throw error
     useEffect(() => {
-      if (mouted) {
+      if (mounted) {
         if (!egreactRoot.current) {
           egreactRoot.current = createEgreactRoot(containerInstance.current, rendererOptions)
         }

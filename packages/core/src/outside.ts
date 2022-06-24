@@ -22,7 +22,7 @@ export function findTargetByPosition(
     return null
   }
   const children = displayObject.$children
-  let notpTouchThrough = false
+  let notTouchThrough = false
   if (children) {
     for (let index = children.length - 1; index >= 0; index--) {
       const child = children[index]
@@ -32,7 +32,7 @@ export function findTargetByPosition(
       var target = findTargetByPosition(child, stageX, stageY)
       // @ts-ignore
       if (target && target.ispTouchThrough !== true) {
-        notpTouchThrough = true
+        notTouchThrough = true
         break
       }
     }
@@ -40,7 +40,7 @@ export function findTargetByPosition(
   if (target) {
     return target
   }
-  if (notpTouchThrough) {
+  if (notTouchThrough) {
     return displayObject
   }
   return displayObject.$hitTest(stageX, stageY)

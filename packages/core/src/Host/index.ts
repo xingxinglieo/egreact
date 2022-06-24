@@ -9,6 +9,7 @@ export interface NodeProps<T> {
   mountedApplyProps?: boolean
   args?: any
   attach?: string
+  [key: string]: any
 }
 
 type InferClass<T> = T extends {
@@ -70,12 +71,12 @@ export const extend = (newCatalogue: Catalogue) => {
   return (catalogueMap = { ...catalogueMap, ...newCatalogue })
 }
 
-export type EventCategortInfo = {
+export type EventCategoryInfo = {
   category: any
   withPrefix: boolean // 是否去除前缀
 }
-export const EVENT_CATEGORT_MAP: {
-  [key: string]: EventCategortInfo
+export const EVENT_CATEGORY_MAP: {
+  [key: string]: EventCategoryInfo
 } = {
   Touch: {
     category: egret.TouchEvent,

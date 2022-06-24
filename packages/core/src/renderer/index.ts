@@ -20,7 +20,7 @@ type HostConfig = Reconciler.HostConfig<
   string, // host type
   IElementProps, // pass props
   Instance<IContainer>, // container
-  Instance<any>, // egret instance creacted by egreact
+  Instance<any>, // egret instance created by egreact
   Instance<RenderString>, // textInstance
   any, // SuspenseInstance
   any, // HydratableInstance
@@ -31,7 +31,7 @@ type HostConfig = Reconciler.HostConfig<
   any, // TimeoutHandle
   any // NoTimeout
 > & {
-  // types is not defined in react-recoil@0.28.0 but use atually
+  // types is not defined in react-recoil@0.28.0 but use actually
   detachDeletedInstance: (instance: Instance) => void
   getCurrentEventPriority: () => number
 }
@@ -187,9 +187,9 @@ const commitUpdate: HostConfig['commitUpdate'] = function (
       //   instance[CONSTANTS.INFO_KEY].memoizedReset['attach'] = detach
       // }
     } else {
-      // 清除前一个 attch 副作用
-      const [otarget, otargetKey, defaultValue] = instance[CONSTANTS.INFO_KEY].targetInfo
-      otarget[otargetKey] = defaultValue
+      // 清除前一个 attach 副作用
+      const [oTarget, oTargetKey, defaultValue] = instance[CONSTANTS.INFO_KEY].targetInfo
+      oTarget[oTargetKey] = defaultValue
 
       instance[CONSTANTS.INFO_KEY].targetInfo = [target, targetKey, target[targetKey]]
       target[targetKey] = getActualInstance(instance)

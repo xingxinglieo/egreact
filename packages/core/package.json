@@ -31,7 +31,8 @@
     "react": ">=18.0",
     "react-dom": ">=18.0",
     "react-reconciler": ">=0.28.0",
-    "react-router-dom": ">=5.0"
+    "react-router-dom": ">=5.0",
+    "typescript": ">=4.7"
   },
   "peerDependenciesMeta": {
     "react-router-dom": {
