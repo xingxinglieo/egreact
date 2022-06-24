@@ -4,11 +4,11 @@ const componentHandlers = {
   ...displayObjectContainerPropsHandlers,
   ...euiBaseLayoutProp,
   __Class: eui.Component,
-  skinName: NormalProp.passWithType<any>(),
+  skinName: NormalProp.pass,
   currentState: NormalProp.str,
   hostComponentKey: NormalProp.str,
   enabled: NormalProp.boo,
-  skin: NormalProp.passWithType<eui.Skin>(),
+  skin: NormalProp.pass<eui.Skin | void>,
   onComplete: EventProp.eventSetter,
 }
 export default componentHandlers

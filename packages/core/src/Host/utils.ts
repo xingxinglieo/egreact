@@ -13,14 +13,14 @@ module Mixin {
     [K in keyof T as K extends `${infer P}-__setter` ? P : K]: T[K]
   }
 
-  // 转换 P-__diff 的键为 `${CONSTANTS.COSTOM_DIFF_PREFIX}${P}`
+  // 转换 P-__diff 的键为 `${CONSTANTS.CUSTOM_DIFF_PREFIX}${P}`
   type TranslateDiffKey<T extends object> = {
     [K in keyof T as K extends `${infer P}-__diff`
-      ? `${typeof CONSTANTS.COSTOM_DIFF_PREFIX}${P}`
+      ? `${typeof CONSTANTS.CUSTOM_DIFF_PREFIX}${P}`
       : K]: T[K]
   }
 
-  // 铺平对象，比如 {a:{b:string},b:number} 会转换为 { a-b:sring,b:number }
+  // 铺平对象，比如 {a:{b:string},b:number} 会转换为 { a-b:string,b:number }
   type _FlattenObject<T extends IPropsHandlers, S extends string> = {
     [K in Exclude<keyof T, Symbol>]: T[K] extends IPropsHandlers
       ? _FlattenObject<T[K], `${S}${K}-`>
@@ -62,7 +62,7 @@ module Mixin {
         obj[keys.join('-')] = value
       } else if (keys[keys.length - 1] === '__diff') {
         keys.pop()
-        obj[CONSTANTS.COSTOM_DIFF_PREFIX + keys.join('-')] = value
+        obj[CONSTANTS.CUSTOM_DIFF_PREFIX + keys.join('-')] = value
       } else {
         obj[keys.join('-')] = value
       }

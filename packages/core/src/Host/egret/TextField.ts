@@ -38,7 +38,7 @@ const textFieldHandlers = {
   textAlign: NormalProp.str,
   verticalAlign: NormalProp.str,
   type: NormalProp.str,
-  textFlow: NormalProp.passWithType<egret.ITextElement[]>(),
+  textFlow: NormalProp.pass<egret.ITextElement[]>,
   onChange: EventProp.eventSetter,
   ...focusEventTypeSetters,
 }

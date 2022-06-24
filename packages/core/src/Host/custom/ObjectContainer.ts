@@ -25,12 +25,11 @@ const ObjectContainerProxy = proxyHelper({
 const objectContainer = {
   __Class: ObjectContainerProxy,
 }
-const pass = NormalProp.passWithType()
 const objectContainerProxy = new Proxy(objectContainer, {
   get(target, p: string) {
     if (p in target) return target[p]
-    else if (p.startsWith(CONSTANTS.COSTOM_DIFF_PREFIX)) return undefined
-    else return pass
+    else if (p.startsWith(CONSTANTS.CUSTOM_DIFF_PREFIX)) return undefined
+    else return NormalProp.pass
   },
 })
 export default objectContainerProxy

@@ -7,7 +7,7 @@ export namespace CONSTANTS {
 
   export const DEFAULT_REMOVE = `${DEFAULT}_remove` as const
   /* 自定义diff函数名前缀标识 */
-  export const COSTOM_DIFF_PREFIX = '__diff_' as const
+  export const CUSTOM_DIFF_PREFIX = '__diff_' as const
 
   export const INFO_KEY = '__renderInfo' as const
 }
@@ -40,7 +40,7 @@ export type EventSet<P, I = Instance, T = P> = (args: {
   target: T // 实际用于增删操作的实例
   targetKey: string // 实际用于增删操作的实例的key
   keys: string[] // 被切割的key
-  einfo: EventInfo
+  eInfo: EventInfo
   [key: string]: any
 }) => PropResetter
 
@@ -56,7 +56,7 @@ export type DiffHandler<T> = (np: T, op: T) => boolean
  * @menber args 仅用于描述类传入类的参数
  */
 export type IPropsHandlers = {
-  [key: `${typeof CONSTANTS.COSTOM_DIFF_PREFIX}${string}`]: DiffHandler<unknown>
+  [key: `${typeof CONSTANTS.CUSTOM_DIFF_PREFIX}${string}`]: DiffHandler<unknown>
 } & {
   __Class: new (...args: any[]) => any
   args?: (...args: any[]) => any
@@ -101,10 +101,10 @@ import { Fiber } from 'react-reconciler'
  * @member propsHandlers 此实例对应的 IPropsHandlers
  * @member mountedApplyProps = false 存储 mountedApplyProps 属性，
  * 如果为真，将在加入父级后再应用 props
- * @member memoizedDefualt 保存赋值属性的初始值，用于属性移除或实例移除的属性重置
+ * @member memoizedDefault 保存赋值属性的初始值，用于属性移除或实例移除的属性重置
  * @member memoizedProps 保存上一次更新时 props，将用于下一次更新的对比
  * @member memoizedResetter 保存清除副作用的方法，用于属性移除或实例移除的属性重置，
- * 如果某个属性 reset 方法存在，将替代 memoizedDefualt 直接清除转而执行 reset 方法
+ * 如果某个属性 reset 方法存在，将替代 memoizedDefault 直接清除转而执行 reset 方法
  */
 export interface IRenderInfo {
   type: string
@@ -118,7 +118,7 @@ export interface IRenderInfo {
   targetInfo?: [any, string, any]
   propsHandlers: IPropsHandlers
   mountedApplyProps?: boolean
-  memoizedDefualt: { [key: string]: any }
+  memoizedDefault: { [key: string]: any }
   memoizedProps: { [key: string]: any }
   memoizedResetter: {
     [key: string]: (removed: boolean) => void

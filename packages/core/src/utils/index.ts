@@ -1,5 +1,5 @@
 import { getBoundingClientRect } from '../devtool'
-import { EVENT_CATEGORT_MAP } from '../Host'
+import { EVENT_CATEGORY_MAP } from '../Host'
 import type { PropSetter, IElementProps, Instance, IRenderInfo, EventInfo } from '../type'
 import { CONSTANTS } from '../type'
 const hyphenateRE = /\B([A-Z])/g
@@ -98,7 +98,7 @@ export function attachInfo<T = unknown>(
       fiber: null,
       parent: null,
       propsHandlers: {},
-      memoizedDefualt: {},
+      memoizedDefault: {},
       memoizedProps: {},
       memoizedResetter: {},
       ...info,
@@ -191,7 +191,7 @@ export function diffProps(
     }
 
     // 自定义的属性对比，
-    const customDiff = info.propsHandlers[`${CONSTANTS.COSTOM_DIFF_PREFIX}${key}`]
+    const customDiff = info.propsHandlers[`${CONSTANTS.CUSTOM_DIFF_PREFIX}${key}`]
     if (customDiff) {
       if (customDiff(value, previous[key])) return
     } else {
@@ -225,7 +225,7 @@ export function reduceKeysToTarget(target: any, key: string, separator = '-') {
   }
 }
 
-export const DEFAULT_EVENT_CATEGORT = egret.Event
+export const DEFAULT_EVENT_CATEGORY = egret.Event
 const eventReg = /(([A-Z][a-z]+)|([0-9]+))/g
 /**
  * @description 将 event 的 key 转换为 type,once,capture,priority 4个部分
@@ -264,12 +264,12 @@ export function splitEventKeyToInfo(key: string): EventInfo {
   }
   info.name = `on${words.join('')}`
   let category: any
-  if (Object.keys(EVENT_CATEGORT_MAP).includes(words[0]) && EVENT_CATEGORT_MAP[words[0]]) {
-    const categoryInfo = EVENT_CATEGORT_MAP[words[0]]
+  if (Object.keys(EVENT_CATEGORY_MAP).includes(words[0]) && EVENT_CATEGORY_MAP[words[0]]) {
+    const categoryInfo = EVENT_CATEGORY_MAP[words[0]]
     if (!categoryInfo.withPrefix) words.shift()
     category = categoryInfo.category
   } else {
-    category = DEFAULT_EVENT_CATEGORT
+    category = DEFAULT_EVENT_CATEGORY
   }
   info.type = category[words.join('_').toUpperCase()]
   return info
@@ -291,8 +291,8 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
       : CONSTANTS.PROP_MOUNT
     const isRemove = newValue === CONSTANTS.DEFAULT_REMOVE
     if (isEvent) {
-      const einfo = splitEventKeyToInfo(key)
-      const setter = info.propsHandlers[einfo.name] as PropSetter<any>
+      const eInfo = splitEventKeyToInfo(key)
+      const setter = info.propsHandlers[eInfo.name] as PropSetter<any>
       if (!is.fun(setter)) {
         return console.error(`\`${key}\` maybe not a valid event`)
       }
@@ -311,7 +311,7 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
           target: instance,
           targetKey: key,
           keys,
-          einfo,
+          eInfo,
         })
         if (!is.fun(resetter)) {
           throw `Return type of set of EventHandler ${key} must be a function,meaning remove event`
@@ -322,8 +322,8 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
       const [target, targetKey] = reduceKeysToTarget(instance, keys.join('-'))
 
       // 存储一下初始值
-      if (!info.memoizedDefualt.hasOwnProperty(key)) {
-        info.memoizedDefualt[key] = target[targetKey]
+      if (!info.memoizedDefault.hasOwnProperty(key)) {
+        info.memoizedDefault[key] = target[targetKey]
       }
 
       if (!is.fun(info.propsHandlers[key])) {
@@ -352,10 +352,10 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
         } else {
           // 否则用储存的默认值
           target[targetKey]?.dispose?.()
-          target[targetKey] = info.memoizedDefualt[key]
+          target[targetKey] = info.memoizedDefault[key]
         }
         delete info.memoizedResetter[key]
-        delete info.memoizedDefualt[key]
+        delete info.memoizedDefault[key]
       } else {
         // 如果需要清除副作用需要清除
         if (lastResetter) lastResetter(false)
