@@ -10,6 +10,7 @@ import {
 } from './utils'
 import { createEgreactRoot, EgreactRoot } from './renderer'
 import { RootOptions } from 'react-dom/client'
+import { isProduction } from './constants'
 import {
   proxyGetComputedStyle,
   proxyListener,
@@ -141,14 +142,14 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
       setMounted(true)
       mountedCount++
 
-      if (process.env.NODE_ENV !== 'production' && mountedCount === 1) {
+      if (!isProduction && mountedCount === 1) {
         proxyGetComputedStyle()
         proxyListener()
       }
 
       return () => {
         mountedCount--
-        if (process.env.NODE_ENV !== 'production' && mountedCount === 0) {
+        if (!isProduction && mountedCount === 0) {
           unProxyGetComputedStyle()
           unProxyListener()
         }

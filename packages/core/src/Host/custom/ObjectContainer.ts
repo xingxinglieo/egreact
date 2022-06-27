@@ -1,7 +1,7 @@
 import { NormalProp } from '../common'
 import { proxyHelper } from '../utils'
 import { Instance } from '../../type'
-import { CONSTANTS } from '../../type'
+import { CONSTANTS } from '../../constants'
 
 const errorTip = `objectContainer can't add child directly. Please add \`attach\` prop to child`
 export class ObjectContainer extends egret.EventDispatcher {
@@ -26,9 +26,10 @@ const objectContainer = {
   __Class: ObjectContainerProxy,
 }
 const objectContainerProxy = new Proxy(objectContainer, {
-  get(target, p: string) {
-    if (p in target) return target[p]
-    else if (p.startsWith(CONSTANTS.CUSTOM_DIFF_PREFIX)) return undefined
+  get(target, key: string | symbol) {
+    if (key in target) return target[key]
+    else if (typeof key === 'symbol') return undefined
+    else if (key.startsWith(CONSTANTS.CUSTOM_DIFF_PREFIX)) return undefined
     else return NormalProp.pass
   },
 })

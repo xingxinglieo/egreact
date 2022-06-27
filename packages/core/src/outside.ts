@@ -2,6 +2,7 @@
 /**
  *
  * @copyright Copyright egret inject.
+ * @description 寻找显示对象中符合舞台位置的最深的子显示对象（包含自身）
  */
 export function findTargetByPosition(
   displayObject: egret.DisplayObject,
@@ -140,32 +141,17 @@ export function getEventPriority(domEventName: string) {
     case 'pointerenter':
     case 'pointerleave':
       return ContinuousEventPriority
-    // case 'message': {
-    //   // We might be in the Scheduler callback.
-    //   // Eventually this mechanism will be replaced by a check
-    //   // of the current priority on the native scheduler.
-    //   const schedulerPriority = getCurrentSchedulerPriorityLevel();
-    //   switch (schedulerPriority) {
-    //     case ImmediateSchedulerPriority:
-    //       return DiscreteEventPriority;
-    //     case UserBlockingSchedulerPriority:
-    //       return ContinuousEventPriority;
-    //     case NormalSchedulerPriority:
-    //     case LowSchedulerPriority:
-    //       // TODO: Handle LowSchedulerPriority, somehow. Maybe the same lane as hydration.
-    //       return DefaultEventPriority;
-    //     case IdleSchedulerPriority:
-    //       return IdleEventPriority;
-    //     default:
-    //       return DefaultEventPriority;
-    //   }
-    // }
     default:
       return DefaultEventPriority
   }
 }
 
-/* global reportError */
+/**
+ *
+ * @copyright Copyright (c) Facebook, Inc. and its affiliates.
+ * @link https://github.com/facebook/react/blob/12a738f1a87889bb5f7c4159641573fd04140664/packages/react-dom/src/events/ReactDOMEventListener.js#L410
+ * @description global reportError
+ */
 export const defaultOnRecoverableError =
   typeof reportError === 'function'
     ? // In modern browsers, reportError will dispatch an error event,

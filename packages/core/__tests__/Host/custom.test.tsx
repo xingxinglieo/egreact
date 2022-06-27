@@ -1,10 +1,17 @@
 import { Egreact } from '../../src/Egreact'
-import React, { createRef, useEffect, useRef, useState } from 'react'
+import React, { createRef, useEffect, useState } from 'react'
 import { render } from '@testing-library/react'
 import { getActualInstance } from '../../src/utils'
 import { ArrayContainer } from '../../src/Host/custom/ArrayContainer'
+import objectContainer from '../../src/Host/custom/ObjectContainer'
 import { BrowserRouter } from 'react-router-dom'
 import { EgreactLink } from '../../src/Host'
+
+describe('objectContainer', () => {
+  it('should be undefined when getting symbol', () => {
+    expect(objectContainer[Symbol('123')]).toEqual(undefined)
+  })
+})
 
 function Test() {
   const textFieldRef = createRef<any>()
@@ -45,7 +52,7 @@ function Test() {
     <>
       <textField ref={textFieldRef}>
         <arrayContainer attach="textFlow" ref={arrayContainerRef} mountedApplyProps>
-          {/* insertbefore */}
+          {/* insertBefore */}
           {show ? null : (
             <font ref={font2Ref} textColor="0x336699" size="60" strokeColor={0x6699cc} stroke="2">
               Egret
@@ -55,7 +62,7 @@ function Test() {
           <font ref={font1Ref} textColor="0x000000" size="20">
             {num}
           </font>
-          {/* removechild */}
+          {/* removeChild */}
           {show ? (
             <font ref={font2Ref} textColor="0x336699" size="60" strokeColor={0x6699cc} stroke="2">
               Egret
@@ -88,7 +95,7 @@ function Test() {
 describe('arrayContainer font objectContainer primitive', () => {
   const container = new egret.DisplayObjectContainer()
   it(`
-    arrayContainer should add remove splice corretly, reAttach will reset __target;
+    arrayContainer should add remove splice correctly, reAttach will reset __target;
     objectContainer should have prop value correctly,add child will throw error,reAttach will reset __target;
     font should have format like {text:'',style:{}} and have prop value correctly;
     primitive should handle add and remove correctly
@@ -99,7 +106,7 @@ describe('arrayContainer font objectContainer primitive', () => {
       </Egreact>,
     )
   })
-  it('should throw error when objectContainer addchild( it only support child attach)', () => {
+  it('should throw error when objectContainer addChild( it only support child attach)', () => {
     expect(() =>
       render(
         <Egreact container={container}>

@@ -1,6 +1,6 @@
 import Reconciler from 'react-reconciler'
 import { catalogueMap } from '../Host/index'
-import { ConcurrentRoot, DefaultEventPriority } from 'react-reconciler/constants'
+import { DefaultEventPriority } from 'react-reconciler/constants'
 import RenderString from '../Host/custom/RenderString'
 import {
   getActualInstance,
@@ -10,11 +10,13 @@ import {
   is,
   attachInfo,
   reduceKeysToTarget,
-  detachInfo
+  detachInfo,
+  getRenderInfo,
 } from '../utils'
+import { Pool } from '../utils/Pool'
 import { getEventPriority } from '../outside'
-import { CONSTANTS, IContainer, IElementProps, Instance } from '../type'
-
+import { IContainer, IElementProps, Instance } from '../type'
+import { CONSTANTS } from '../constants'
 
 type HostConfig = Reconciler.HostConfig<
   string, // host type
@@ -49,7 +51,7 @@ const createInstance: HostConfig['createInstance'] = function (
   internalInstanceHandle,
 ) {
   const isPrimitive = type === 'primitive'
-  let { args = [], attach, mountedApplyProps = false, ...props } = newProps
+  const { attach, mountedApplyProps = false, noUsePool = false, ...props } = newProps
   const name = `${type[0].toUpperCase()}${type.slice(1)}` // 首字母大写
 
   const instanceProp = catalogueMap[name]
@@ -57,54 +59,51 @@ const createInstance: HostConfig['createInstance'] = function (
     throw `\`${name}\` is not host component! Did you forget to extend it?`
   }
   // args = is.fun(instanceProp.args) ? instanceProp.args(args) : args
-  if (!is.arr(args)) args = [args] // 最外层不是数组转为数组
-  const instance: Instance = attachInfo(new instanceProp.__Class(...args, props), {
-    root: rootContainerInstance,
-    fiber: internalInstanceHandle,
-    propsHandlers: instanceProp,
-    primitive: isPrimitive,
-    mountedApplyProps,
-    attach,
-  })
+  let args = []
+  if (!is.und(newProps.args)) {
+    // 最外层不是数组转为数组
+    args = is.arr(newProps.args) ? newProps.args : [newProps.args]
+  }
+
+  const hasArgs = args.length > 0
+  const instance: Instance = attachInfo(
+     hasArgs || noUsePool || !Pool.isRegisteredClass(instanceProp.__Class)
+      ? new instanceProp.__Class(...args, props)
+      : Pool.get(instanceProp.__Class),
+    {
+      type,
+      root: rootContainerInstance,
+      fiber: internalInstanceHandle,
+      propsHandlers: instanceProp,
+      primitive: isPrimitive,
+      args:hasArgs,
+      mountedApplyProps,
+      noUsePool,
+      attach,
+    },
+  )
+
   if (!mountedApplyProps) applyProps(instance, props)
   else {
     // mountedApplyProps 为真时，不在创建时应用 props，而是在挂载时应用 props
     instance[CONSTANTS.INFO_KEY].memoizedProps = { ...props }
   }
+
   return instance
 }
 
 const appendChild: HostConfig['appendChild'] = function (parentInstance, child) {
-  // if (
-  //   !child[CONSTANTS.INFO_KEY].attach &&
-  //   parentInstance instanceof eui.Scroller &&
-  //   !parentInstance.viewport
-  // ) {
-  //   child[CONSTANTS.INFO_KEY].attach = 'viewport'
-  // }
-  child[CONSTANTS.INFO_KEY].parent = parentInstance
-  const attach = child[CONSTANTS.INFO_KEY].attach
+  const info = getRenderInfo(child)
+  info.parent = parentInstance
+
+  const attach = info.attach
   const isAttach = is.str(attach)
+
   if (isAttach) {
-    // const [target, targetKey, keys] = reduceKeysToTarget(parent, attach)
-    if (is.fun(child.attach)) {
-      // const detach = child.attach({
-      //   newValue: child,
-      //   oldValue: CONSTANTS.PROP_MOUNT,
-      //   instance: parent,
-      //   target,
-      //   targetKey,
-      //   keys,
-      // })
-      // if (is.fun(detach)) {
-      //   child[CONSTANTS.INFO_KEY].memoizedReset['attach'] = detach
-      // }
-    } else {
-      const attach = child[CONSTANTS.INFO_KEY].attach
-      const [target, targetKey] = reduceKeysToTarget(parentInstance, attach)
-      child[CONSTANTS.INFO_KEY].targetInfo = [target, targetKey, target[targetKey]]
-      target[targetKey] = getActualInstance(child)
-    }
+    const attach = info.attach
+    const [target, targetKey] = reduceKeysToTarget(parentInstance, attach)
+    info.targetInfo = [target, targetKey, target[targetKey]]
+    target[targetKey] = getActualInstance(child)
   } else if (child instanceof RenderString) {
     if ('text' in parentInstance) {
       child.setParent(parentInstance)
@@ -114,9 +113,9 @@ const appendChild: HostConfig['appendChild'] = function (parentInstance, child) 
   } else {
     parentInstance.addChild(getActualInstance(child), child)
   }
-  // }
-  if (child[CONSTANTS.INFO_KEY].mountedApplyProps) {
-    applyProps(child, child[CONSTANTS.INFO_KEY].memoizedProps)
+
+  if (info.mountedApplyProps) {
+    applyProps(child, info.memoizedProps)
   }
 }
 
@@ -137,21 +136,60 @@ const removeChild: HostConfig['removeChild'] = function (
   child: Instance<egret.DisplayObject>,
 ) {
   if (child) {
-    for (let [_key, reset] of Object.entries(child[CONSTANTS.INFO_KEY].memoizedResetter)) {
-      // if (isEvent(key))
-      reset(true)
-    }
-
-    if (child[CONSTANTS.INFO_KEY].targetInfo) {
-      const [target, targetKey, defaultValue] = child[CONSTANTS.INFO_KEY].targetInfo
-      target[targetKey] = defaultValue
-    } else if (child instanceof RenderString) {
-      child.text = ''
-      child.setParent(null)
+    const info = getRenderInfo(child)
+    // detachDeletedInstance 中处理
+    if (info.targetInfo) return
+    else if (child instanceof RenderString) {
+      child.removeParent()
     } else {
       parentInstance.removeChild(getActualInstance(child))
     }
   }
+}
+// 用于移除实例后的清理引用
+const detachDeletedInstance: HostConfig['detachDeletedInstance'] = (instance) => {
+  const info = getRenderInfo(instance)
+  if (!info) return
+
+  if (info.targetInfo) {
+    const [target, targetKey, defaultValue] = info.targetInfo
+    target[targetKey] = defaultValue
+  }
+
+  if (!info.noUsePool && !info.args && Pool.isRegisteredClass(instance.constructor)) {
+    for (let [, reset] of Object.entries(info.memoizedResetter)) {
+      reset(true)
+    }
+
+    if (is.fun(instance.removeChildren)) {
+      instance.removeChildren()
+    }
+    Pool.recover(instance)
+  }
+
+  detachInfo(instance)
+}
+
+const prepareUpdate: HostConfig['prepareUpdate'] = (instance, _type, oldProps, newProps) => {
+  const {
+    args: argsN = [],
+    attach: attachN,
+    mountedApplyProps: nm,
+    children: cN,
+    ...restNew
+  } = newProps
+  const {
+    args: argsO = [],
+    attach: attachO,
+    mountedApplyProps: om,
+    children: cO,
+    ...restOld
+  } = oldProps
+
+  const diff = diffProps(instance, restNew, restOld)
+  if (diff.changes.length || oldProps.attach !== newProps.attach) return diff
+
+  return null
 }
 
 const commitUpdate: HostConfig['commitUpdate'] = function (
@@ -161,39 +199,27 @@ const commitUpdate: HostConfig['commitUpdate'] = function (
   oldProps,
   newProps,
 ) {
+  const info = getRenderInfo(instance)
+
   if (diff.changes.length) applyProps(instance, diff)
 
   if (oldProps.attach !== newProps.attach) {
     if (oldProps.attach === undefined || newProps.attach === undefined) {
-      throw `please keep prop \`attach\` state of existence, because it determined how to add into parent instance when this instance created`
+      throw `please keep prop \`attach\` state of existence, because it determined how to add into parent instance when child instance created`
     }
 
     const attach = newProps.attach
-    const parent = instance[CONSTANTS.INFO_KEY].parent
-    instance[CONSTANTS.INFO_KEY].attach = attach
+    const parent = info.parent
+    info.attach = attach
 
-    const [target, targetKey, keys] = reduceKeysToTarget(parent, attach)
-    if (is.fun(instance.attach)) {
-      // instance[CONSTANTS.INFO_KEY].memoizedReset['attach'](false)
-      // const detach = instance.attach({
-      //   newValue: instance,
-      //   oldValue: instance,
-      //   instance: parent,
-      //   target,
-      //   targetKey,
-      //   keys,
-      // })
-      // if (is.fun(detach)) {
-      //   instance[CONSTANTS.INFO_KEY].memoizedReset['attach'] = detach
-      // }
-    } else {
-      // 清除前一个 attach 副作用
-      const [oTarget, oTargetKey, defaultValue] = instance[CONSTANTS.INFO_KEY].targetInfo
-      oTarget[oTargetKey] = defaultValue
+    const [target, targetKey] = reduceKeysToTarget(parent, attach)
 
-      instance[CONSTANTS.INFO_KEY].targetInfo = [target, targetKey, target[targetKey]]
-      target[targetKey] = getActualInstance(instance)
-    }
+    // 清除前一个 attach 副作用
+    const [oTarget, oTargetKey, defaultValue] = info.targetInfo
+    oTarget[oTargetKey] = defaultValue
+
+    info.targetInfo = [target, targetKey, target[targetKey]]
+    target[targetKey] = getActualInstance(instance)
   }
 }
 
@@ -211,9 +237,8 @@ export const hostConfig: HostConfig = {
     const instance = new RenderString(text)
     return attachInfo(instance)
   },
-  // 用于移除实例后的清理引用
-  detachDeletedInstance: detachInfo,
   removeChild,
+  detachDeletedInstance,
   appendChild,
   appendInitialChild: appendChild,
   insertBefore,
@@ -226,27 +251,7 @@ export const hostConfig: HostConfig = {
   getRootHostContext: () => null,
   getChildHostContext: (parentHostContext: any) => parentHostContext,
   finalizeInitialChildren: () => false,
-  prepareUpdate(instance, _type, oldProps, newProps) {
-    const {
-      args: argsN = [],
-      attach: attachN,
-      mountedApplyProps: nm,
-      children: cN,
-      ...restNew
-    } = newProps
-    const {
-      args: argsO = [],
-      attach: attachO,
-      mountedApplyProps: om,
-      children: cO,
-      ...restOld
-    } = oldProps
-
-    const diff = diffProps(instance, restNew, restOld)
-    if (diff.changes.length || oldProps.attach !== newProps.attach) return diff
-
-    return null
-  },
+  prepareUpdate,
   commitUpdate,
   commitTextUpdate(instance, oldText, newText) {
     instance.text = newText

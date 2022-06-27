@@ -1,6 +1,7 @@
 import displayObjectPropsHandlers from './DisplayObject'
 import { rectangleProp, textureProp, NormalProp } from '../common'
 import { mixinHelper } from '../utils'
+
 const bitmapPropsHandlers = mixinHelper
   .set({
     ...displayObjectPropsHandlers,

@@ -133,8 +133,6 @@ describe('Egreact', () => {
     expect(textRef.current.textFlow).toBe(defaultValue)
   })
 
-  it('should reset default value when remove attach child', () => {})
-
   it('should reset text when remove string', () => {
     const container = new egret.DisplayObjectContainer()
     const TestComponent = () => {
@@ -151,7 +149,7 @@ describe('Egreact', () => {
     )
   })
 
-  it('text update should call `commitTextUpdate` of hostconfig', () => {
+  it('text update should call `commitTextUpdate` of hostConfig', () => {
     const container = new egret.DisplayObjectContainer()
     const TestComponent = () => {
       const [num, setNum] = useState(0)
@@ -167,7 +165,7 @@ describe('Egreact', () => {
     )
   })
 
-  it(`can't render after unmouted`, () => {
+  it(`can't render after unmounted`, () => {
     const container = new egret.DisplayObjectContainer()
     const TestComponent = () => {
       const [num, setNum] = useState(0)
@@ -182,7 +180,7 @@ describe('Egreact', () => {
     expect(() => root.render(<TestComponent />)).toThrow()
   })
 
-  it('another host funs had not called in application', () => {
+  it('another host functions had not called in application', () => {
     const displayObjectContainer =
       new egret.DisplayObjectContainer() as Instance<egret.DisplayObjectContainer>
     const renderString = new RenderString('e') as Instance<RenderString>
@@ -204,5 +202,26 @@ describe('Egreact', () => {
     expect(renderString.text).toBe('')
 
     hostConfig.preparePortalMount(displayObjectContainer)
+  })
+
+  it('prepareUpdate should return null when diff success', () => {
+    const container = new egret.DisplayObjectContainer()
+    const TestComponent = () => {
+      const [actions, setActions] = useState([
+        ['beginFill', 0x000000],
+        ['drawRect', 0, 0, 300, 100],
+        ['endFill'],
+      ])
+      useEffect(() => {
+        setActions([['beginFill', 0x000000], ['drawRect', 0, 0, 300, 100], ['endFill']])
+      }, [])
+      // @ts-ignore
+      return <shape graphics={actions}></shape>
+    }
+    render(
+      <Egreact container={container}>
+        <TestComponent />
+      </Egreact>,
+    )
   })
 })

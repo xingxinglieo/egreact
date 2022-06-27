@@ -1,5 +1,6 @@
 import { getActualInstance, is } from '../utils'
-import { CONSTANTS, DiffHandler, PropSetter, EventSet, PropSetterParameters } from '../type'
+import { CONSTANTS } from '../constants'
+import { DiffHandler, PropSetter, EventSet, PropSetterParameters } from '../type'
 
 export interface PropsHandlers {
   [e: `${typeof CONSTANTS.CUSTOM_DIFF_PREFIX}${string}`]: (newProp: any, oldProp: any) => boolean
@@ -18,29 +19,28 @@ export module EventProp {
   // export type
   export const eventSetterWithType = <T extends egret.Event>() => {
     const eventHandler: EventSet<(event: T) => any> = (props) => {
-      const { newValue, instance: _instance, targetKey, eInfo } = props
       type InnerListener = Function
       type OuterListener = Function
-      const instance = _instance as typeof _instance & {
+      const { newValue, targetKey, eInfo } = props
+      const instance = props.instance as typeof props.instance & {
         // 内部的监听器集合 addListener 实际传入的监听器
         memorizedListeners: { [k in string]: [InnerListener, OuterListener] }
       }
-      if (!instance.memorizedListeners) {
-        instance.memorizedListeners = {}
-      }
-      const memorizedListeners = instance.memorizedListeners
-      const isMountEvent = !(targetKey in memorizedListeners)
-      const { type, once, capture, priority, keys } = eInfo
+      const memorizedListeners = instance.memorizedListeners || (instance.memorizedListeners = {})
       const actualInstance = getActualInstance(instance) as egret.DisplayObject
+      const { type, once, capture, priority, keys } = eInfo
+      const isMountEvent = !(targetKey in memorizedListeners)
+      const canDefaultTouchEnabled =
+        keys.includes('Touch') &&
+        !('touchEnabled' in instance[CONSTANTS.INFO_KEY].memoizedProps) &&
+        'touchEnabled' in actualInstance
+
       if (isMountEvent) {
-        if (
-          keys.includes('Touch') &&
-          !('touchEnabled' in instance[CONSTANTS.INFO_KEY].memoizedProps) &&
-          'touchEnabled' in actualInstance
-        ) {
+        if (canDefaultTouchEnabled) {
           // 有 touch 事件默认开启 touchEnabled
           actualInstance.touchEnabled = true
         }
+
         // 通过引用来改变调用，无需多次调用 addListener 和 removeListener
         const innerListener = function (...args: any[]) {
           // 最新的属性值
@@ -58,11 +58,16 @@ export module EventProp {
       } else {
         memorizedListeners[targetKey][1] = newValue
       }
+
       return (isRemove) => {
         if (isRemove) {
+          if (canDefaultTouchEnabled) {
+            actualInstance.touchEnabled = false
+          }
+
           const innerListener = memorizedListeners[targetKey][0]
           actualInstance.removeEventListener(type, innerListener, instance, capture)
-          delete innerListener[targetKey]
+          delete memorizedListeners[targetKey]
         }
       }
     }

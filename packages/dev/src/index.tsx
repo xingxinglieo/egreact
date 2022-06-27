@@ -1,10 +1,5 @@
-import React, { useEffect, useState, useContext } from "react";
-import {
-  Provider,
-  useSelector,
-  ReactReduxContext,
-  useDispatch
-} from "react-redux";
+import React from "react";
+import { Provider, useSelector, useDispatch } from "react-redux";
 import { RootState, store } from "./store";
 import { createRoot } from "react-dom/client";
 import { Egreact, EgreactLink } from "egreact";
@@ -16,7 +11,8 @@ import {
   Link
 } from "react-router-dom";
 import { increment } from "./store/counterSlice";
-import TestEui from "./components/TestEui";
+global.BASE_URL = "/resource/assets/";
+import TestEui from "./components/friend-list";
 import TestFont from "./components/TestFont";
 
 function App() {
@@ -44,7 +40,7 @@ function App() {
           width: "100%",
           height: "100%"
         }}
-        scaleMode="noScale"
+        scaleMode="showAll"
         orientation="auto"
         frameRate="60"
         contentWidth="750"

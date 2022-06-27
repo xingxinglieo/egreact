@@ -1,6 +1,7 @@
 import displayObjectPropsHandlers from './DisplayObject'
 import { graphicsProp } from '../common'
 import { mixinHelper } from '../utils'
+
 const shapePropsHandlers = mixinHelper
   .set({
     ...displayObjectPropsHandlers,

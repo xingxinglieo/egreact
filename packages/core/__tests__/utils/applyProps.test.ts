@@ -1,6 +1,6 @@
 import { applyProps, attachInfo, diffProps } from '../../src/utils'
 import groupHandlers from '../../src/Host/eui/Group'
-// import {CONSTANTS} from '../../flag'
+
 describe('apply props', () => {
   const instance = attachInfo<eui.Group>(new eui.Group(), {
     propsHandlers: {
@@ -26,7 +26,7 @@ describe('apply props', () => {
   }
   describe('when an instance mounted', () => {
     applyProps(instance, p1)
-    it('should mouted all props', () => {
+    it('should mounted all props', () => {
       const layout = instance.layout as eui.HorizontalLayout
       expect(layout).toBeInstanceOf(eui.HorizontalLayout)
       expect(layout.paddingBottom).toBe(10)

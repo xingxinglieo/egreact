@@ -1,5 +1,6 @@
 import displayObjectContainerPropsHandlers from '../egret/DisplayObjectContainer'
 import { NormalProp, euiBaseLayoutProp, EventProp } from '../common'
+
 const componentHandlers = {
   ...displayObjectContainerPropsHandlers,
   ...euiBaseLayoutProp,

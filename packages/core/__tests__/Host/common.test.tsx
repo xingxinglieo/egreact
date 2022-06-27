@@ -2,7 +2,7 @@ import { Egreact } from '../../src/Egreact'
 import { Graphics, isMountProp, NormalProp } from '../../src/Host/common'
 import React, { useEffect, useState } from 'react'
 import { render } from '@testing-library/react'
-import { CONSTANTS } from '../../src/type'
+import { CONSTANTS } from '../../src/constants'
 
 describe('Host common', () => {
   describe('NormalProp.passWithType', () => {
@@ -54,7 +54,7 @@ describe('Host common', () => {
   })
 
   describe('NormalProp.instance', () => {
-    it('should throw error beacause args is not array', () => {
+    it('should throw error because args is not array', () => {
       const container = new egret.DisplayObjectContainer()
       expect(() =>
         render(
@@ -91,7 +91,7 @@ describe('Host common', () => {
   })
 
   describe('layoutBaseHandlers', () => {
-    it('should hava a correct layout type', () => {
+    it('should have a correct layout type', () => {
       const container = new egret.DisplayObjectContainer()
       const layout = new eui.TileLayout()
       const ref1 = React.createRef<any>()

@@ -1,16 +1,15 @@
 import egretProps from './egret/index'
 import euiProps from './eui/index'
 import customProps from './custom'
-import type { IPropsHandlers } from '../type'
-export interface NodeProps<T> {
+import { Pool } from '../utils/Pool'
+import { detachRenderString } from './custom/RenderString'
+import type { IPropsHandlers, IElementProps } from '../type'
+
+export type NodeProps<T> = {
   children?: React.ReactNode
   ref?: React.Ref<T>
   key?: React.Key
-  mountedApplyProps?: boolean
-  args?: any
-  attach?: string
-  [key: string]: any
-}
+} & IElementProps
 
 type InferClass<T> = T extends {
   __Class: new (...args: any[]) => infer U
@@ -62,6 +61,34 @@ declare global {
     }
   }
 }
+
+Pool.registerClass([
+  ...[
+    egret.DisplayObject,
+    egret.DisplayObjectContainer,
+    egret.Shape,
+    egret.Sprite,
+    egret.Bitmap,
+    egret.BitmapText,
+    eui.Component,
+    eui.Image,
+    eui.BitmapLabel,
+    eui.Rect,
+    eui.Scroller,
+  ].map((clz) => ({ constructor: clz })),
+  // 需要特殊处理
+  ...[
+    {
+      constructor: eui.Group,
+      resetter: (instance: eui.Group) => {
+        instance.scrollH = 0
+        instance.scrollV = 0
+      },
+    },
+    { constructor: eui.Label, resetter: detachRenderString },
+    { constructor: egret.TextField, resetter: detachRenderString },
+  ],
+])
 
 export interface Catalogue {
   [name: string]: IPropsHandlers

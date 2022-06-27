@@ -1,9 +1,9 @@
 import { getBoundingClientRect } from '../devtool'
 import { EVENT_CATEGORY_MAP } from '../Host'
 import type { PropSetter, IElementProps, Instance, IRenderInfo, EventInfo } from '../type'
-import { CONSTANTS } from '../type'
-const hyphenateRE = /\B([A-Z])/g
+import { CONSTANTS, isProduction } from '../constants'
 
+const hyphenateRE = /\B([A-Z])/g
 /**
  * @description 驼峰转连字
  */
@@ -94,6 +94,8 @@ export function attachInfo<T = unknown>(
       type: '',
       primitive: false,
       container: false,
+      noUsePool: false,
+      args: false,
       root: egret.lifecycle.stage,
       fiber: null,
       parent: null,
@@ -104,7 +106,7 @@ export function attachInfo<T = unknown>(
       ...info,
     }
   }
-  if (process.env.NODE_ENV !== 'production') {
+  if (!isProduction) {
     // devtool need to get rect of element
     // https://github.com/facebook/react/blob/29c2c633159cb2171bb04fe84b9caa09904388e8/packages/react-devtools-shared/src/backend/views/utils.js#L108
     instance.getBoundingClientRect = () => getBoundingClientRect(instance)
@@ -161,19 +163,11 @@ export function diffProps(
   // 从少key到多key，保证添加的顺序，否则会出错
   entries.sort((a, b) => a[0].split('-').length - b[0].split('-').length)
   entries.forEach(([key, value]) => {
-    const isRemove = value === CONSTANTS.DEFAULT_REMOVE
-    let keys = key.split('-')
-    const prefixKeys = [...keys]
-    prefixKeys.pop()
-    const prefixKey = prefixKeys.join('-')
-    // 前缀属性改变
-    const prefixPropIndex =
-      prefixKey === '' ? -1 : changes.findIndex(([prefixPropKey]) => prefixPropKey === prefixKey)
     /**
      * 因为属性和其前缀属性(如果存在)之间是联动的，所以需要按照属性的顺序进行操作
      * entries.sort 排序已经保证其 key 顺序是从少 key 到多 key
      * 比如 layout 和 layout-paddingBottom 属性
-     * 1 如果layout-paddingBottom 的前缀 layout 属性改变
+     * 1 如果 layout-paddingBottom 的前缀 layout 属性改变
      * 无论如何, layout-paddingBottom 属性都需要做出操作
      *  1.1 layout-paddingBottom 是 Remove，则插入在 layout 之前，
      *  因为 layout 也可能是 remove，这样就保证了 layout-paddingBottom 移除在 layout 移除之前
@@ -181,27 +175,23 @@ export function diffProps(
      *  因为 layout 更新后可能是新的实例, 需要重新应用所有后缀属性
      * 2 否则走正常的操作
      */
-    const isPrefixPropChange = prefixPropIndex !== -1
-    if (isPrefixPropChange) {
-      if (isRemove) {
-        return changes.splice(prefixPropIndex, 0, [key, CONSTANTS.DEFAULT_REMOVE, false, keys])
-      } else {
-        return changes.splice(prefixPropIndex + 1, 0, [key, value, false, keys])
-      }
+    const keys = key.split('-')
+    const prefixKey = keys.slice(0, keys.length - 1).join('-')
+    const prefixPropIndex =
+      prefixKey === '' ? -1 : changes.findIndex(([prefixPropKey]) => prefixPropKey === prefixKey)
+    if (prefixPropIndex !== -1) {
+      const isRemove = value === CONSTANTS.DEFAULT_REMOVE
+      return changes.splice(prefixPropIndex + Number(!isRemove), 0, [
+        key,
+        isRemove ? CONSTANTS.DEFAULT_REMOVE : value,
+        false,
+        keys,
+      ])
     }
 
-    // 自定义的属性对比，
-    const customDiff = info.propsHandlers[`${CONSTANTS.CUSTOM_DIFF_PREFIX}${key}`]
-    if (customDiff) {
-      if (customDiff(value, previous[key])) return
-    } else {
-      if (is.equ(value, previous[key])) return
-
-      if (isEvent(key)) {
-        return changes.push([key, value, true, keys])
-      }
-    }
-    changes.push([key, value, false, keys])
+    // 属性对比
+    const propDiff = info.propsHandlers[`${CONSTANTS.CUSTOM_DIFF_PREFIX}${key}`] ?? is.equ
+    return propDiff(value, previous[key]) || changes.push([key, value, isEvent(key), keys])
   })
 
   const memoized: { [key: string]: any } = { ...props }
@@ -286,6 +276,8 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
   // Prepare memoized props
   if (info) info.memoizedProps = memoized
   changes.forEach(([key, newValue, isEvent, keys]) => {
+    if (key.startsWith('__')) return
+
     const oldValue = oldMemoizedProps.hasOwnProperty(key)
       ? oldMemoizedProps[key]
       : CONSTANTS.PROP_MOUNT
@@ -364,6 +356,23 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
       }
     }
   })
+
+  if (!isProduction && info.fiber) {
+    info.fiber.memoizedProps = {
+      ...info.fiber.memoizedProps,
+      [CONSTANTS.STATE_NODE_KEY]: instance,
+      [CONSTANTS.INFO_KEY]: instance[CONSTANTS.INFO_KEY],
+      [CONSTANTS.FIBER_KEY]: info.fiber,
+    }
+    if (is.obj(info.fiber.alternate?.memoizedProps)) {
+      info.fiber.alternate.memoizedProps = {
+        ...info.fiber.alternate.memoizedProps,
+        [CONSTANTS.STATE_NODE_KEY]: instance,
+        [CONSTANTS.INFO_KEY]: instance[CONSTANTS.INFO_KEY],
+        [CONSTANTS.FIBER_KEY]: info.fiber.alternate,
+      }
+    }
+  }
   return instance
 }
 

@@ -1,5 +1,7 @@
 import { proxyHelper } from '../utils'
-import { Instance, IContainer, CONSTANTS } from '../../type'
+import { Instance, IContainer } from '../../type'
+import { CONSTANTS } from '../../constants'
+
 export class ArrayContainer extends egret.EventDispatcher implements IContainer {
   __target = []
   addChild(child: any) {
