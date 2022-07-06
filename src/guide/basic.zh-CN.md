@@ -32,7 +32,7 @@ egret 配置项和 `egretOptions` 详见[入口文件说明](https://docs.egret.
   
 `contextsFrom` 见 [ContextBridge](/guide/basic#contextbridge)
 
-ref 暴露了这些内部生成的对象。
+ref 暴露了这些内部生成的对象
 
 ``` tsx | pure
 interface EgreactRef {
@@ -120,7 +120,11 @@ group['layout']['gap'] = 10
 
 ``` tsx | pure
 // ❌
-<bitmap scale9Grid={new Rectangle()}></bitmap>
+<bitmap scale9Grid={new egret.Rectangle(0,0,0,0)}></bitmap>
+
+// ✅
+const rectangle = new egret.Rectangle(0,0,0,0)
+<bitmap scale9Grid={rectangle}></bitmap>
 
 // ✅
 <bitmap scale9Grid={[0,0,0,0]}></bitmap>
@@ -188,7 +192,7 @@ const Test = () => {
 
 ### args 构造函数参数
 
-`args` 是用于传递构造函数参数的 prop，每个 egreact 组件都支持这个 prop，仅在执行构造函数时作用一次，后续也不会影响更新。
+`args` 是用于传递构造函数参数的 prop，内部创建 egret 实例的 egreact 组件都支持这个 prop，仅在执行构造函数时作用一次，后续也不会影响更新。
 
 ``` tsx | pure
 // 在组件中
@@ -272,9 +276,31 @@ onTouchTapCaptureOnce12
 
 因为事件往往采用字面量形式声明并传入函数，为避免频繁地移除和添加事件，内部采用引用的方式对监听函数进行更新，实际监听的函数并非传入的函数。
 
-## ContextBridge
+## Pool 对象池
 
-`ContextBridge` 是用于继承上文渲染器的 `contexts` 的组件，在 `Egreact` 中内置，通过 `contextsFrom` 控制是否开启或者 `contexts` 的来源。以 `redux` 为例说明为什么需要这个机制。
+在 @1.3.0 后，默认开启对象池功能，原生组件被移除时，被回收至池中，当创建同类时直接从池中取出。
+
+[池的默认大小]()，可以通过 setInfo 设置大小
+``` typescript
+import { Pool } from 'egreact'
+Pool.setInfo({
+  constructor: egret.DisplayObject,
+  size: 1000
+})
+```
+
+egreact 对回收的对象会自动清除显式赋值的副作用，但某些自动赋值的副作用需要手动去除。若未清除副作用对复用产生影响，可以使用 `noUsePool` 属性关闭对象池，并报告这个场景的 [issue](https://github.com/xingxinglieo/egreact/issues) ，让我们在下个修复中覆盖它。  
+
+``` tsx | pure
+// 直接使用构造函数创建且不会被回收
+<eui-group noUsePool></eui-group>
+```
+
+
+
+## ContextBridge 桥接 Context
+
+`ContextBridge` 是用于桥接上文渲染器的 `contexts` 的组件，在 `Egreact` 中内置，通过 `contextsFrom` 控制是否开启或者 `contexts` 的来源。以 `redux` 为例说明为什么需要这个机制。
 
 ``` tsx
 /**

@@ -14,7 +14,18 @@ toc: menu
 | ------ | ----- | :--------- | :--- | :--- |
 | object | `any` | 传入的对象 |      |      |
 
-如果 object 实现了 `addChild,removeChild,addChildAt,getChildIndex` 四个方法，则它也可以直接在 tsx 编写子组件;  
+如果 object 实现了 `IContainer` 接口，则它也可以直接在 tsx 编写子组件;
+
+``` typescript
+export interface IContainer {
+  addChild: (child: any, childInstance?: any) => void
+  removeChild: (child: any, childInstance?: any) => void
+  removeChildren: () => void
+  addChildAt: (child: any, index: number, childInstance?: any) => void
+  getChildIndex: (child: any) => number
+}
+```
+
 如果它拥有 text 属性，则它也可以插入文字。  
   
 `primitive` 不限制属性和事件，按照默认的规则进行解析，但是有以下限制规则

@@ -27,7 +27,7 @@ toc: menu
 
 ## 属性为子组件
 
-有些特殊组件如 `scroll`，exml解析时也做了特殊处理。
+有些特殊组件如 `scroller`，exml解析时也做了特殊处理。
 
 ``` xml
 <e:Scroller>
@@ -59,6 +59,7 @@ toc: menu
 
 ``` tsx | pure
 <eui-group>
-    {data.map(({ url })=>(<eui-image  source={url}/>))}
+    {/* 别忘记了 key */}
+    {data.map(({ url })=>(<eui-image source={url} key={url} />))}
 </eui-group>
 ```
