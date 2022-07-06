@@ -8,20 +8,32 @@ export default function Test() {
   const count = useSelector((state: RootState) => state.counter.value);
   const dispatch = useDispatch();
   const arrayContainer = useRef<Instance<ArrayContainer>>(null);
+  console.log(egret.$hashCount);
   useEffect(() => {
     arrayContainer.current.reAttach();
   });
 
   return (
-    <eui-label
-      onTouchTap={() => {
-        dispatch(increment());
-      }}
-    >
-      <arrayContainer attach="textFlow" ref={arrayContainer}>
-        <objectContainer text={count + ''} style={{ textColor: 0xff0000 }} />
-      </arrayContainer>
-    </eui-label>
+    <>
+      <eui-label
+        onTouchTap={() => {
+          dispatch(increment());
+        }}
+      >
+        <arrayContainer attach="textFlow" ref={arrayContainer}>
+          <objectContainer text={count + ""} style={{ textColor: 0xff0000 }} />
+        </arrayContainer>
+      </eui-label>
+
+      <eui-label
+        textColor={0x000000}
+        onTouchTap={() => {
+          dispatch(increment());
+        }}
+      >
+        i am {count}.
+      </eui-label>
+    </>
   );
 }
 

@@ -5,6 +5,7 @@ import label from "./Label";
 import rect from "./Rect";
 import scroller from "./Scroller";
 import bitmapLabel from "./BitmapLabel";
+
 export default {
   component,
   group,

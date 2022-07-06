@@ -1,5 +1,5 @@
-import { CONSTANTS } from '../type'
 import { IPropsHandlers } from '../type'
+import { CONSTANTS } from '../constants'
 
 type ToUnionOfFunction<T> = T extends any ? (x: T) => any : never
 // 联合类型转交叉类型

@@ -1,5 +1,6 @@
 import displayObjectPropsHandlers from "../egret/DisplayObject";
 import { NormalProp, euiBaseLayoutProp } from "../common";
+
 const bitmapLabel = {
   ...displayObjectPropsHandlers,
   ...euiBaseLayoutProp,

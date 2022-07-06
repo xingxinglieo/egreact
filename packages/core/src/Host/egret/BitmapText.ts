@@ -1,5 +1,6 @@
 import displayObjectPropsHandlers from './DisplayObject'
 import { NormalProp } from '../common'
+
 const bitmapTextHandlers = {
   ...displayObjectPropsHandlers,
   __Class: egret.BitmapText,

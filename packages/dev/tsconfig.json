@@ -16,5 +16,5 @@
     "noImplicitThis": false,
     "baseUrl": "./"
   },
-  "include": ["src","node_modules/egreact/types","../core/src/types"],
+  "include": ["src","node_modules/egreact/types"],
 }

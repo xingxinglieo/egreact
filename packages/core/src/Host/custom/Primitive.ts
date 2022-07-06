@@ -2,8 +2,9 @@ import { PropSetterParameters } from './../../type'
 import { proxyHelper } from '../utils'
 import { isEvent } from '../../utils'
 import type { Instance, IContainer } from '../../type'
-import { CONSTANTS } from '../../type'
+import { CONSTANTS } from '../../constants'
 import { NormalProp, EventProp } from '../common'
+
 export class Primitive extends egret.EventDispatcher implements IContainer {
   __target: any
   constructor(...args) {

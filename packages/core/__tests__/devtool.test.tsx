@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import React from 'react'
 import sinon from 'sinon'
-import { Egreact,findEgretAncestor } from '../src/index'
+import { Egreact, findEgretAncestor } from '../src/index'
 import { findFiberByHostInstance } from '../src/devtool'
 
 import {
@@ -59,9 +59,9 @@ describe('devtool', () => {
       const ref1 = React.createRef<any>()
       const ref2 = React.createRef<any>()
       const ref3 = React.createRef<any>()
-      const domref = React.createRef<any>()
+      const domRef = React.createRef<any>()
       render(
-        <div ref={domref}>
+        <div ref={domRef}>
           <Egreact>
             <eui-label ref={ref3}>
               <arrayContainer ref={ref1} attach="textFlow">
@@ -72,8 +72,8 @@ describe('devtool', () => {
         </div>,
       )
 
-      sinon.stub(document, 'querySelector').returns(domref.current)
-      sinon.stub(domref.current, 'getBoundingClientRect').returns({
+      sinon.stub(document, 'querySelector').returns(domRef.current)
+      sinon.stub(domRef.current, 'getBoundingClientRect').returns({
         height: 500,
         width: 500,
         left: 0,
@@ -87,17 +87,17 @@ describe('devtool', () => {
       const handle2 = jest.fn()
       window.addEventListener('pointermove', handle2)
 
-      const styleSheet = getComputedStyle(domref.current)
+      const styleSheet = getComputedStyle(domRef.current)
 
       proxyListener()
       proxyGetComputedStyle()
 
       expect(ref1.current.getBoundingClientRect().width).toBe(0)
-      expect(getComputedStyle(domref.current).width).toBe(styleSheet.width)
+      expect(getComputedStyle(domRef.current).width).toBe(styleSheet.width)
       expect(getComputedStyle(ref1.current).borderLeftWidth).toBe('0')
 
       expect(findFiberByHostInstance(ref1.current).stateNode).toBe(ref1.current)
-      expect(findFiberByHostInstance(domref.current)).toBe(null)
+      expect(findFiberByHostInstance(domRef.current)).toBe(null)
 
       const handle = jest.fn()
       const handle1 = jest.fn()
@@ -107,7 +107,7 @@ describe('devtool', () => {
       const e = new Event('pointerover') as Event & { pageX: number; pageY: number; e: any }
       e.pageX = 300
       e.pageY = 300
-      
+
       window.dispatchEvent(e)
       window.removeEventListener('pointermove', handle2)
       window.removeEventListener('pointerover', handle)

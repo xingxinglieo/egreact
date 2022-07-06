@@ -1,5 +1,6 @@
 import bitmap from '../egret/Bitmap'
 import { NormalProp, euiBaseLayoutProp, EventProp } from '../common'
+
 const image = {
   ...bitmap,
   ...euiBaseLayoutProp,

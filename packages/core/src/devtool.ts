@@ -1,9 +1,12 @@
-import { getCanvas, findEgretAncestor } from './utils'
+import { throttle } from 'lodash'
+import { Reconciler } from 'react-reconciler'
+
+import { getCanvas, findEgretAncestor, is } from './utils'
 import { findTargetByPosition } from './outside'
 import { catalogueMap } from './Host/index'
-import { throttle } from 'lodash'
-import { CONSTANTS, Instance } from './type'
-import { Reconciler } from 'react-reconciler'
+import { Instance } from './type'
+import { CONSTANTS, isProduction } from './constants'
+
 /**
  * @description dom px 和 egret 坐标值换算比例
  */
@@ -207,14 +210,41 @@ export function unProxyListener() {
 export function findFiberByHostInstance(instance: Instance) {
   return instance?.[CONSTANTS.INFO_KEY]?.fiber ?? null
 }
+
+/**
+ * @description 兼容 devtool 用到的 dom 属性
+ */
+export function addCompatibleDomAttributes(instance: any) {
+  if (is.obj(instance)) {
+    // devtool need to get rect of element
+    // https://github.com/facebook/react/blob/29c2c633159cb2171bb04fe84b9caa09904388e8/packages/react-devtools-shared/src/backend/views/utils.js#L108
+    instance.getBoundingClientRect = () => getBoundingClientRect(instance)
+
+    // https://github.com/facebook/react/blob/327e4a1f96fbb874001b17684fbb073046a84938/packages/react-devtools-shared/src/backend/views/Highlighter/Overlay.js#L193
+    instance.nodeType = 1
+
+    // https://github.com/facebook/react/blob/327e4a1f96fbb874001b17684fbb073046a84938/packages/react-devtools-shared/src/backend/views/Highlighter/Overlay.js#L233
+    instance.nodeName = instance.__class__
+
+    instance.ownerDocument = document
+  }
+}
+
+export function deleteCompatibleDomAttributes(instance: any) {
+  if (is.obj(instance)) {
+    delete instance.getBoundingClientRect
+    delete instance.nodeType
+    delete instance.nodeName
+    delete instance.ownerDocument
+  }
+}
+
 import packageJson from '../package.json'
 export function injectIntoDevTools(reconciler: Reconciler<any, any, any, any, any>) {
-  if (process.env.NODE_ENV !== 'production') {
-    reconciler.injectIntoDevTools({
-      bundleType: 0,
-      rendererPackageName: 'egreact',
-      version: packageJson.version,
-      findFiberByHostInstance,
-    })
-  }
+  reconciler.injectIntoDevTools({
+    bundleType: 0,
+    rendererPackageName: 'egreact',
+    version: packageJson.version,
+    findFiberByHostInstance,
+  })
 }

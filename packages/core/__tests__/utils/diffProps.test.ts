@@ -1,10 +1,10 @@
 import { diffProps, attachInfo } from '../../src/utils'
 import groupHandlers from '../../src/Host/eui/Group'
 import spriteHandlers from '../../src/Host/egret/Sprite'
-import {CONSTANTS} from '../../src/type'
+import { CONSTANTS } from '../../src/constants'
 
 describe('diff props', () => {
-  describe('when an instance mouted ', () => {
+  describe('when an instance mounted ', () => {
     const emptyFun = () => {}
     it('should return a diff object, all props', () => {
       expect(
