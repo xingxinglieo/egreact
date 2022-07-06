@@ -1,4 +1,4 @@
-import { getBoundingClientRect } from '../devtool'
+import { addCompatibleDomAttributes } from '../devtool'
 import { EVENT_CATEGORY_MAP } from '../Host'
 import type { PropSetter, IElementProps, Instance, IRenderInfo, EventInfo } from '../type'
 import { CONSTANTS, isProduction } from '../constants'
@@ -106,18 +106,9 @@ export function attachInfo<T = unknown>(
       ...info,
     }
   }
+
   if (!isProduction) {
-    // devtool need to get rect of element
-    // https://github.com/facebook/react/blob/29c2c633159cb2171bb04fe84b9caa09904388e8/packages/react-devtools-shared/src/backend/views/utils.js#L108
-    instance.getBoundingClientRect = () => getBoundingClientRect(instance)
-
-    // https://github.com/facebook/react/blob/327e4a1f96fbb874001b17684fbb073046a84938/packages/react-devtools-shared/src/backend/views/Highlighter/Overlay.js#L193
-    instance.nodeType = 1
-
-    // https://github.com/facebook/react/blob/327e4a1f96fbb874001b17684fbb073046a84938/packages/react-devtools-shared/src/backend/views/Highlighter/Overlay.js#L233
-    instance.nodeName = instance.__class__
-
-    instance.ownerDocument = document
+    addCompatibleDomAttributes(instance)
   }
 
   return instance

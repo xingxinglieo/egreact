@@ -28,6 +28,7 @@ export default function Medias() {
         >
           <eui-group
             attach="viewport"
+            noUsePool
             layout-gap={68}
             layout="horizontal"
             layout-paddingLeft={42}

@@ -8,6 +8,9 @@ describe('Pool', () => {
       resetter: fun,
       size: 0,
     })
+    Pool.setInfo({
+      constructor: class _ extends egret.DisplayObject {},
+    })
     const info = Pool.getInfo(egret.DisplayObject)
     expect(info[1]).toEqual(fun)
     expect(info[2]).toEqual(0)

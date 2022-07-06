@@ -1,6 +1,6 @@
 import Reconciler from 'react-reconciler'
-import { catalogueMap } from '../Host/index'
 import { DefaultEventPriority } from 'react-reconciler/constants'
+import { catalogueMap } from '../Host/index'
 import RenderString from '../Host/custom/RenderString'
 import {
   getActualInstance,
@@ -16,7 +16,8 @@ import {
 import { Pool } from '../utils/Pool'
 import { getEventPriority } from '../outside'
 import { IContainer, IElementProps, Instance } from '../type'
-import { CONSTANTS } from '../constants'
+import { deleteCompatibleDomAttributes } from '../devtool'
+import { CONSTANTS, isProduction } from '../constants'
 
 type HostConfig = Reconciler.HostConfig<
   string, // host type
@@ -67,7 +68,7 @@ const createInstance: HostConfig['createInstance'] = function (
 
   const hasArgs = args.length > 0
   const instance: Instance = attachInfo(
-     hasArgs || noUsePool || !Pool.isRegisteredClass(instanceProp.__Class)
+    hasArgs || noUsePool || !Pool.isRegisteredClass(instanceProp.__Class)
       ? new instanceProp.__Class(...args, props)
       : Pool.get(instanceProp.__Class),
     {
@@ -76,7 +77,7 @@ const createInstance: HostConfig['createInstance'] = function (
       fiber: internalInstanceHandle,
       propsHandlers: instanceProp,
       primitive: isPrimitive,
-      args:hasArgs,
+      args: hasArgs,
       mountedApplyProps,
       noUsePool,
       attach,
@@ -154,6 +155,10 @@ const detachDeletedInstance: HostConfig['detachDeletedInstance'] = (instance) =>
   if (info.targetInfo) {
     const [target, targetKey, defaultValue] = info.targetInfo
     target[targetKey] = defaultValue
+  }
+
+  if (!isProduction) {
+    deleteCompatibleDomAttributes(instance)
   }
 
   if (!info.noUsePool && !info.args && Pool.isRegisteredClass(instance.constructor)) {
@@ -298,6 +303,9 @@ export const hostConfig: HostConfig = {
 
 export const reconciler = Reconciler(hostConfig)
 import { injectIntoDevTools } from '../devtool'
-injectIntoDevTools(reconciler)
+
+if (!isProduction) {
+  injectIntoDevTools(reconciler)
+}
 
 export * from './create'

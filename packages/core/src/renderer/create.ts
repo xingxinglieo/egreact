@@ -1,11 +1,10 @@
+import React from 'react'
 import { ConcurrentRoot } from 'react-reconciler/constants'
 import { reconciler } from './index'
 import { attachInfo, detachInfo } from '../utils'
 import { defaultOnRecoverableError } from '../outside'
-import React from 'react'
-
+import { Instance } from '../type'
 import type { TransitionTracingCallbacks, FiberRoot } from 'react-reconciler'
-import { Instance } from 'type'
 
 export type CreateRootOptions = {
   unstable_strictMode?: boolean
