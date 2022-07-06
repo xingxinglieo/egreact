@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import React, { createRef, useEffect, useRef, useState } from 'react'
+import React, { createRef, useEffect, useState } from 'react'
 import { Egreact, getActualInstance, Instance, hostConfig, createEgreactRoot } from '../src/index'
 import RenderString from '../src/Host/custom/RenderString'
 describe('Egreact', () => {
