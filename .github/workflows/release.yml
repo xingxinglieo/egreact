@@ -19,6 +19,7 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
       - run: cd packages/core && pnpm run test
+      - run: cd packages/core && pnpm run build
       - uses: mikeal/merge-release@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
