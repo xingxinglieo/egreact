@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: 14
           cache: 'pnpm'
-      - run: pnpm install
+      - run: pnpm install --no-frozen-lockfile
       - run: cd packages/core && pnpm run test
       - run: cd packages/core && pnpm run build
       - uses: mikeal/merge-release@master
