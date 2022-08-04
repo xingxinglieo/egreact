@@ -5,7 +5,7 @@ import { getCanvas, findEgretAncestor, is } from './utils'
 import { findTargetByPosition } from './outside'
 import { catalogueMap } from './Host/index'
 import { Instance } from './type'
-import { CONSTANTS, isProduction } from './constants'
+import { CONSTANTS } from './constants'
 
 /**
  * @description dom px 和 egret 坐标值换算比例
@@ -55,7 +55,7 @@ export function getBoundingClientRect(instance: Instance<unknown>) {
  * @description 代理 window.getComputedStyle，使它也能计算某个函数的宽高大小
  * @link https://github.com/facebook/react/blob/29c2c633159cb2171bb04fe84b9caa09904388e8/packages/react-devtools-shared/src/backend/views/utils.js#L113
  */
-export function proxyGetComputedStyle() {
+function proxyGetComputedStyle() {
   window.getComputedStyle = function (el, pseudo) {
     if (
       Object.entries(catalogueMap).some(
@@ -68,7 +68,7 @@ export function proxyGetComputedStyle() {
     }
   }
 }
-export function unProxyGetComputedStyle() {
+function unProxyGetComputedStyle() {
   window.getComputedStyle = getComputedStyle
 }
 
@@ -120,7 +120,7 @@ export function extraMatchEvent(info: ProxyEventInfo): ProxyEventInfo | null {
  * @description 代理window监听器，目的是代理 react-devtool 添加的事件
  * @link https://github.com/facebook/react/blob/c3d7a7e3d72937443ef75b7e29335c98ad0f1424/packages/react-devtools-shared/src/backend/views/Highlighter/index.js#L41
  */
-export function proxyListener() {
+function proxyListener() {
   window.addEventListener = function (
     type: string,
     listener: (event: Event) => void,
@@ -195,7 +195,7 @@ export function proxyListener() {
   }
 }
 
-export function unProxyListener() {
+function unProxyListener() {
   window.addEventListener = addEventListener
   window.removeEventListener = removeEventListener
   while (eventInfoCollection.length) {
@@ -247,4 +247,21 @@ export function injectIntoDevTools(reconciler: Reconciler<any, any, any, any, an
     version: packageJson.version,
     findFiberByHostInstance,
   })
+}
+
+let isProxyDevTools = false
+export function proxyHackForDevTools() {
+  if (!isProxyDevTools) {
+    proxyGetComputedStyle()
+    proxyListener()
+    isProxyDevTools = true
+  }
+}
+
+export function unProxyHackForDevTools() {
+  if (isProxyDevTools) {
+    unProxyGetComputedStyle()
+    unProxyListener()
+    isProxyDevTools = false
+  }
 }

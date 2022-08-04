@@ -10,13 +10,6 @@ import {
 } from './utils'
 import { createEgreactRoot, EgreactRoot } from './renderer'
 import { RootOptions } from 'react-dom/client'
-import { isProduction } from './constants'
-import {
-  proxyGetComputedStyle,
-  proxyListener,
-  unProxyGetComputedStyle,
-  unProxyListener,
-} from './devtool'
 
 // 单独拿出来用于提示
 const DomEgretPropsName = [
@@ -60,8 +53,8 @@ type Props = {
   // 是否渲染 egret 的 canvas div 容器
   renderDom?: boolean
 
-  // boolean: 是否从dom中提取context, 为 true 时 renderDom 必须为 true;
-  // Context: 直接传入 Context ; Html: 从 dom 向上搜寻;
+  // boolean: 是否从dom中提取context, 为 true 时 renderDom 必须为 true, 从渲染的 dom 向上搜寻;
+  // Context: 直接传入 Context ; Html: 从传入的 dom 向上搜寻;
   contextsFrom?: boolean | React.Context<any>[] | HTMLElement
 } & JSX.IntrinsicElements['div']
 
@@ -73,7 +66,7 @@ interface EgreactRef {
 }
 
 const entryClass = '__Main'
-let mountedCount = 0
+// let mountedCount = 0
 
 function hyphenateEgretConfig(p: any) {
   return Object.keys(p).reduce((obj, key) => {
@@ -140,19 +133,8 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
       }
 
       setMounted(true)
-      mountedCount++
-
-      if (!isProduction && mountedCount === 1) {
-        proxyGetComputedStyle()
-        proxyListener()
-      }
 
       return () => {
-        mountedCount--
-        if (!isProduction && mountedCount === 0) {
-          unProxyGetComputedStyle()
-          unProxyListener()
-        }
         egreactRoot.current.unmount()
       }
     }, [])
@@ -181,8 +163,8 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
     useImperativeHandle(ref, () => ({
       container: containerInstance.current,
       root: egreactRoot.current,
-      contexts: contexts,
       dom: divRef.current,
+      contexts,
     }))
 
     return (

@@ -131,17 +131,21 @@ describe('arrayContainer font objectContainer primitive', () => {
   it(`should primitive update object prop but didn't have key(must use key to unmount and mount again)`, () => {
     const container = new egret.DisplayObjectContainer()
     const ref1 = createRef<any>()
+    const ref2 = createRef<any>()
     const o1 = new egret.DisplayObject()
     const o2 = new egret.DisplayObject()
-    const TestContainer = () => {
+    const TestContainer = ({ isConstruct = false }) => {
       const [obj, setObj] = useState<any>(o1)
+      const [C, setC] = useState<any>(() => egret.DisplayObject)
       useEffect(() => {
         expect(ref1.current.__target).toBe(o1)
-        setObj(o2)
+        expect(ref2.current.__target).toBeInstanceOf(C)
+        isConstruct ? setC(() => egret.DisplayObjectContainer) : setObj(o2)
       }, [])
       return (
         <textField>
           <primitive object={obj} ref={ref1} attach="textFlow" onChange={() => void 0}></primitive>
+          <primitive classConstructor={C} ref={ref2} attach="test"></primitive>
         </textField>
       )
     }
@@ -149,6 +153,14 @@ describe('arrayContainer font objectContainer primitive', () => {
       render(
         <Egreact container={container}>
           <TestContainer />
+        </Egreact>,
+      ),
+    ).toThrow()
+
+    expect(() =>
+      render(
+        <Egreact container={container}>
+          <TestContainer isConstruct />
         </Egreact>,
       ),
     ).toThrow()

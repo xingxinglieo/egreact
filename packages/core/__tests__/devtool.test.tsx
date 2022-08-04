@@ -2,15 +2,13 @@ import { render } from '@testing-library/react'
 import React from 'react'
 import sinon from 'sinon'
 import { Egreact, findEgretAncestor } from '../src/index'
-import { findFiberByHostInstance } from '../src/devtool'
 
 import {
   findMatchEventIndex,
   ProxyEventInfo,
-  proxyListener,
-  unProxyListener,
-  proxyGetComputedStyle,
-  unProxyGetComputedStyle,
+  findFiberByHostInstance,
+  proxyHackForDevTools,
+  unProxyHackForDevTools,
 } from '../src/devtool'
 
 afterEach(() => {
@@ -89,8 +87,7 @@ describe('devtool', () => {
 
       const styleSheet = getComputedStyle(domRef.current)
 
-      proxyListener()
-      proxyGetComputedStyle()
+      proxyHackForDevTools()
 
       expect(ref1.current.getBoundingClientRect().width).toBe(0)
       expect(getComputedStyle(domRef.current).width).toBe(styleSheet.width)
@@ -111,8 +108,8 @@ describe('devtool', () => {
       window.dispatchEvent(e)
       window.removeEventListener('pointermove', handle2)
       window.removeEventListener('pointerover', handle)
-      unProxyGetComputedStyle()
-      unProxyListener()
+
+      unProxyHackForDevTools()
       window.addEventListener('pointerover', handle1)
       window.removeEventListener('message', handle)
     })
