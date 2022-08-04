@@ -9,11 +9,15 @@ export class Primitive extends egret.EventDispatcher implements IContainer {
   __target: any
   constructor(...args) {
     super()
-    const props = { ...args[args.length - 1] }
-    if ('object' in props) {
-      this.__target = props.object
+    const { object, classConstructor } = args[args.length - 1]
+    
+    if (typeof object === 'object' && object !== null) {
+      this.__target = object
+    } else if (typeof classConstructor === 'function') {
+      // @ts-ignore TODO: ts 认可的构造函数断言？
+      this.__target = new classConstructor(...args)
     } else {
-      throw `primitive must have \`object\` prop`
+      throw `primitive must have a \`object\` or a \`constructor\` prop`
     }
   }
   get object() {
@@ -45,6 +49,11 @@ const primitive = {
   object: ({}: PropSetterParameters<any, Instance<Primitive>>) => {
     return (isRemove: boolean) => {
       if (!isRemove) throw new Error('please use key to refresh object in primitive')
+    }
+  },
+  classConstructor: ({}: PropSetterParameters<any, Instance<Primitive>>) => {
+    return (isRemove: boolean) => {
+      if (!isRemove) throw new Error('please use key to refresh constructor in primitive')
     }
   },
   [objectDiffKey]: (n, o) => n === o,

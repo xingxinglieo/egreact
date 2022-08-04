@@ -1,10 +1,12 @@
 import React from 'react'
+import type { TransitionTracingCallbacks, FiberRoot } from 'react-reconciler'
 import { ConcurrentRoot } from 'react-reconciler/constants'
 import { reconciler } from './index'
 import { attachInfo, detachInfo } from '../utils'
 import { defaultOnRecoverableError } from '../outside'
 import { Instance } from '../type'
-import type { TransitionTracingCallbacks, FiberRoot } from 'react-reconciler'
+import { isProduction } from '../constants'
+import { proxyHackForDevTools, unProxyHackForDevTools } from '../devtool'
 
 export type CreateRootOptions = {
   unstable_strictMode?: boolean
@@ -14,13 +16,21 @@ export type CreateRootOptions = {
   transitionCallbacks?: TransitionTracingCallbacks
 }
 
+let rendererCount = 0
 export class EgreactRoot {
+  public rendered = false
   constructor(private _internalRoot: FiberRoot) {}
 
   render(children: React.ReactNode) {
     const root = this._internalRoot
     if (root === null) {
       throw new Error('Cannot update an unmounted root.')
+    }
+    if (!this.rendered) {
+      this.rendered = true
+      if (++rendererCount === 1 && !isProduction) {
+        proxyHackForDevTools()
+      }
     }
     reconciler.updateContainer(children, root, null, null)
   }
@@ -33,6 +43,10 @@ export class EgreactRoot {
         reconciler.updateContainer(null, root, null, null)
       }, void 0)
       detachInfo(container)
+
+      if (--rendererCount === 0 && !isProduction) {
+        unProxyHackForDevTools()
+      }
     }
   }
 }
