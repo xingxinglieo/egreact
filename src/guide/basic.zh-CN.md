@@ -50,12 +50,17 @@ interface EgreactRef {
 ``` tsx | pure
 import { createEgreactRoot } from 'egreact'
 
-// rootContainer 要加入显示列表
-const rootContainer = new egret.DisplayObjectContainer()
+class ReactRender extends egret.DisplayObjectContainer {
+  root = createEgreactRoot(this)
+  constructor(reactNode: React.ReactNode) {
+    super()
+    this.addEventListener(egret.Event.ADDED, () => this.root.render(reactNode), this)
+    this.addEventListener(egret.Event.REMOVED, () => this.root.unmount(), this)
+  }
+}
 
-// 第一次调用参数是根容器，第二次调用参数是渲染的组件
-const egreactRoot = createEgreactRoot(rootContainer)
-egreactRoot.render(<displayObjectContainer></displayObjectContainer>)
+const displayObjectContainer = new egret.displayObjectContainer();
+displayObjectContainer.addChild(new ReactRender(<displayObjectContainer></displayObjectContainer>))
 ```
 
 类型定义如下  
@@ -371,3 +376,9 @@ export default () =>(<Provider store={store}><App/></Provider>)
 ```
 
 它成功运行了，而且点击时组件的状态会同步，这正是 `ContextBridge` 所发挥的作用！在 `Egreact` 内部，会通过 dom 节点获取 `fiber` 节点并回溯到根结点，收集路径上的 `contexts`,再通过 `ContextBridge` 桥接到 `egreact` 渲染器中。你也可以传递 `contexts` 数组直接指定 `contexts` 的来源。
+
+## DevTools
+
+得益于 React DevTools 对自定义渲染器的支持，只需要调用一个简单的 api 就能在 Devtools 中展示 egreact 的组件树。然而，Devtools 并未支持对自定义渲染器 picker 的适配接口，egreact 通过拦截监听器等操作最终完美适配了 picker。
+
+![devtool](https://xingxinglieo.github.io/egreact/devtools.png)

@@ -9,6 +9,13 @@ export default defineConfig({
   favicon: "https://xingxinglieo.github.io/egreact/egreact.png",
   logo: "https://xingxinglieo.github.io/egreact/egreact.png",
   outputPath: "docs-dist",
+  algolia: {
+    appId: "TPWQARCSPT",
+
+    apiKey: "5c876491aeb67cca020a391f9aecca16",
+
+    indexName: "egreact",
+  },
   navs: [
     null, // null 值代表保留约定式生成的导航，只做增量配置
     {

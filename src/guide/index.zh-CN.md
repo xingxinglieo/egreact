@@ -20,8 +20,8 @@ egreact 是一个为 [egret](https://www.egret.com/products) 引擎而生的 Rea
 
 ### egreact 有什么限制吗？
 
-没有。egret 能做什么它就能做什么。
+没有，它只是帮你提高编写 UI 效率的工具。
 
 ### 我需要 egreact 吗？
 
-egreact 的目的是取代 exml 编写游戏中传统的 UI 界面，而非高交互的游戏模块，较为理想的做法是采用混合开发：UI 界面采用 egreact 编写，而游戏模块使用`primitive`标签嵌入界面中。不过，即使你的 UI 界面很少，egreact 也值得一试。它不是只能渲染一个根组件，也可以通过创建多个 egreact 渲染器管理多个小的组件，就像 eui 的皮肤一样。
+egreact 的目的是取代 exml 编写游戏中传统的 UI 界面，而非高交互的游戏模块，较为理想的做法是采用混合开发：UI 界面采用 egreact 编写，而游戏模块使用`primitive`标签嵌入界面中。不过，即使你的 UI 界面很少，egreact 也值得一试。它不是只能渲染一个根组件，也可以通过创建多个 egreact 根节点管理多个小的组件，就像 eui 的皮肤一样。
