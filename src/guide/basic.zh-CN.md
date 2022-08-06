@@ -45,7 +45,7 @@ interface EgreactRef {
 
 ### createEgreactRoot
 
-可以不使用组件 `Egreact` ,直接使用 `createEgreactRoot` 渲染
+可以不使用组件 `Egreact`，直接使用 `createEgreactRoot` 渲染
 
 ``` tsx | pure
 import { createEgreactRoot } from 'egreact'
@@ -379,6 +379,6 @@ export default () =>(<Provider store={store}><App/></Provider>)
 
 ## DevTools
 
-得益于 React DevTools 对自定义渲染器的支持，只需要调用一个简单的 api 就能在 Devtools 中展示 egreact 的组件树。然而，Devtools 并未支持对自定义渲染器 picker 的适配接口，egreact 通过拦截监听器等操作最终完美适配了 picker。
+得益于 React DevTools 对自定义渲染器的支持，只需要调用一个简单的 api 就能在 Devtools 中展示 egreact 的组件树。然而，Devtools 并未支持对自定义渲染器 picker 的适配接口，egreact 通过拦截监听器等操作完美适配了 picker。
 
-![devtool](https://xingxinglieo.github.io/egreact/devtools.png)
+<img src="https://xingxinglieo.github.io/egreact/devtools.png" width="666" />

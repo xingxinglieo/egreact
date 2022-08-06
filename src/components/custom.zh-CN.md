@@ -21,9 +21,9 @@ toc: menu
 export interface IContainer {
   addChild: (child: any, childInstance?: any) => void
   removeChild: (child: any, childInstance?: any) => void
-  removeChildren: () => void
   addChildAt: (child: any, index: number, childInstance?: any) => void
   getChildIndex: (child: any) => number
+  removeChildren?: () => void // 用于被移除后移除子元素
 }
 ```
 
