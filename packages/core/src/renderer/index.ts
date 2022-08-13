@@ -260,7 +260,7 @@ export const hostConfig: HostConfig = {
   commitTextUpdate(instance, oldText, newText) {
     instance.text = newText
   },
-  resetTextContent(instance: Instance<egret.TextField>) {
+  resetTextContent(instance: Instance<{ text: string }>) {
     instance.text = ''
   },
   shouldSetTextContent: (_type, props) => {

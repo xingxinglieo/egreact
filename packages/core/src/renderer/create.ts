@@ -24,7 +24,7 @@ export class EgreactRoot {
   render(children: React.ReactNode) {
     const root = this._internalRoot
     if (root === null) {
-      throw new Error('Cannot update an unmounted root.')
+      throw `Cannot update an unmounted root.`
     }
     if (!this.rendered) {
       this.rendered = true

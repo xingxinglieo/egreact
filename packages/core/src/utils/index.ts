@@ -31,7 +31,7 @@ export const isDiffSet = (def: any): def is DiffSet =>
   def && !!(def as DiffSet).memoized && !!(def as DiffSet).changes
 
 export type EquConfig = {
-  /** Compare arrays by reference equality a === b (default), or by shallow equality */
+  /** Compare arrays by reference equality a === b (default), or by shallow equality*/
   arrays?: 'reference' | 'shallow'
   /** Compare objects by reference equality a === b (default), or by shallow equality */
   objects?: 'reference' | 'shallow'
@@ -167,11 +167,14 @@ export function diffProps(
      * 2 否则走正常的操作
      */
     const keys = key.split('-')
+    const isRemove = value === CONSTANTS.DEFAULT_REMOVE
     const prefixKey = keys.slice(0, keys.length - 1).join('-')
     const prefixPropIndex =
       prefixKey === '' ? -1 : changes.findIndex(([prefixPropKey]) => prefixPropKey === prefixKey)
-    if (prefixPropIndex !== -1) {
-      const isRemove = value === CONSTANTS.DEFAULT_REMOVE
+    if (
+      prefixPropIndex !== -1 &&
+      (isRemove || changes[prefixPropIndex][1] !== CONSTANTS.DEFAULT_REMOVE)
+    ) {
       return changes.splice(prefixPropIndex + Number(!isRemove), 0, [
         key,
         isRemove ? CONSTANTS.DEFAULT_REMOVE : value,

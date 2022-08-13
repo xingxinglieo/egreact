@@ -20,7 +20,13 @@ function App() {
   const dispatch = useDispatch();
   return (
     <div>
-      <h1>Hello, Egreact!</h1>
+      <h1>
+        Hello, Egreact!
+        <Routes>
+          <Route path="/" element={"At eui"} />
+          <Route path="font" element={"At font"} />
+        </Routes>
+      </h1>
       <div onClick={() => dispatch(increment())}>
         i have been click {count} times!
       </div>

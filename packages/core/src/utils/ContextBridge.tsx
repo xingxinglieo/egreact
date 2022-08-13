@@ -10,9 +10,11 @@ export class CallBackArray<T = any> extends Array<T> {
     super()
     return new Proxy(this, {
       set(target, key, value, receiver) {
-        Reflect.set(target, key, value, receiver)
-        if (key !== 'setCallback') {
-          target?.callback?.()
+        if (target[key] !== value) {
+          Reflect.set(target, key, value, receiver)
+          if (key !== 'setCallback') {
+            target?.callback?.()
+          }
         }
         return true
       },
@@ -91,6 +93,6 @@ export const ContextListeners = memo(
 export const ContextListener = memo(
   ({ context, values, index }: { context: React.Context<any>; values: any[]; index: number }) => {
     values[index] = useContext(context)
-    return null;
+    return null
   },
 )

@@ -138,7 +138,7 @@ export module NormalProp {
         if (is.arr(newValue)) {
           target[targetKey] = new constructor(...newValue)
         } else {
-          throw `${keys.join('-')} must be instance of ${constructor.name} or array`
+          throw `${keys.join('-')} must be an instance of ${constructor.name} or an array`
         }
       }
     }
