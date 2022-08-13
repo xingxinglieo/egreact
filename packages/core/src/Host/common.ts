@@ -109,17 +109,6 @@ export module NormalProp {
       return pass<T>(args)
     }
 
-  // 相比 passWithType 多了一个 translate 进行转换
-  // export const passWithTranslate =
-  //   <P extends (value: any) => any, T = P extends (value: infer S) => any ? S : never>(
-  //     translate: P,
-  //     test: ((newProp: any) => boolean)[] = [],
-  //     propName?: any,
-  //   ) =>
-  //   (value: T) => {
-  //     return passWithType(test, propName)(translate(value))
-  //   }
-
   export const instance =
     <P>(constructor: new (...args: any) => any) =>
     ({ newValue, target, targetKey, keys }: PropSetterParameters<P>) => {
