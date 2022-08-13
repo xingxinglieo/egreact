@@ -15,6 +15,8 @@ const defaultResetter = (instance: any) => instance
 export class Pool {
   private static poolMap = new Map<EgretClass, [Set<egret.DisplayObject>, EgretResetter, number]>()
   public static defaultSize: number = CONSTANTS.POOL_DEFAULT_SIZE
+  // 默认关闭 https://github.com/xingxinglieo/egreact/issues/6
+  public static enable = false
 
   /**
    * @description 注册构造函数

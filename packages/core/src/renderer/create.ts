@@ -21,10 +21,11 @@ export class EgreactRoot {
   public rendered = false
   constructor(private _internalRoot: FiberRoot) {}
 
-  render(children: React.ReactNode) {
+  render(children: React.ReactNode, options: { sync?: boolean } = {}) {
     const root = this._internalRoot
+    const { sync = false } = options
     if (root === null) {
-      throw new Error('Cannot update an unmounted root.')
+      throw `Cannot update an unmounted root.`
     }
     if (!this.rendered) {
       this.rendered = true
@@ -32,7 +33,13 @@ export class EgreactRoot {
         proxyHackForDevTools()
       }
     }
-    reconciler.updateContainer(children, root, null, null)
+    if (sync) {
+      reconciler.flushSync(() => {
+        reconciler.updateContainer(children, root, null, null)
+      }, void 0)
+    } else {
+      reconciler.updateContainer(children, root, null, null)
+    }
   }
   unmount() {
     const root = this._internalRoot
@@ -51,10 +58,7 @@ export class EgreactRoot {
   }
 }
 
-export function createEgreactRoot(
-  containerNode: egret.DisplayObjectContainer,
-  options: CreateRootOptions = {},
-) {
+export function createEgreactRoot(containerNode: egret.DisplayObjectContainer, options: CreateRootOptions = {}) {
   let isStrictMode = false
   let concurrentUpdatesByDefaultOverride = false
   let identifierPrefix = ''

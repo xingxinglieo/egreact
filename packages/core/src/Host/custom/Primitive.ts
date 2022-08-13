@@ -10,7 +10,7 @@ export class Primitive extends egret.EventDispatcher implements IContainer {
   constructor(...args) {
     super()
     const { object, classConstructor } = args[args.length - 1]
-    
+
     if (typeof object === 'object' && object !== null) {
       this.__target = object
     } else if (typeof classConstructor === 'function') {
@@ -48,12 +48,12 @@ const primitive = {
   }),
   object: ({}: PropSetterParameters<any, Instance<Primitive>>) => {
     return (isRemove: boolean) => {
-      if (!isRemove) throw new Error('please use key to refresh object in primitive')
+      if (!isRemove) throw `please use key to refresh object in primitive`
     }
   },
   classConstructor: ({}: PropSetterParameters<any, Instance<Primitive>>) => {
     return (isRemove: boolean) => {
-      if (!isRemove) throw new Error('please use key to refresh constructor in primitive')
+      if (!isRemove) throw `please use key to refresh constructor in primitive`
     }
   },
   [objectDiffKey]: (n, o) => n === o,
@@ -62,7 +62,7 @@ const primitive = {
 const primitiveProxy = new Proxy(primitive, {
   get(target, p: string) {
     if (p in target) return target[p]
-    else if (p.startsWith(CONSTANTS.CUSTOM_DIFF_PREFIX)) return undefined
+    else if (typeof p === 'symbol' || p.startsWith(CONSTANTS.CUSTOM_DIFF_PREFIX)) return undefined
     else if (isEvent(p)) return EventProp.eventSetter
     else return NormalProp.pass
   },

@@ -125,17 +125,13 @@ const insertBefore: HostConfig['insertBefore'] = function (
   child: Instance,
   beforeChild: Instance,
 ) {
-  if (beforeChild[CONSTANTS.INFO_KEY].targetInfo)
-    throw `please keep the order of elements which have attach prop`
+  if (beforeChild[CONSTANTS.INFO_KEY].targetInfo) throw `please keep the order of elements which have attach prop`
   const actualTarget = getActualInstance(child)
   const actualBefore = getActualInstance(beforeChild)
   parentInstance.addChildAt(actualTarget, parentInstance.getChildIndex(actualBefore), child)
 }
 
-const removeChild: HostConfig['removeChild'] = function (
-  parentInstance: Instance<IContainer>,
-  child: Instance<egret.DisplayObject>,
-) {
+const removeChild: HostConfig['removeChild'] = function (parentInstance: Instance<IContainer>, child: Instance) {
   if (child) {
     const info = getRenderInfo(child)
     // detachDeletedInstance 中处理
@@ -161,14 +157,13 @@ const detachDeletedInstance: HostConfig['detachDeletedInstance'] = (instance) =>
     deleteCompatibleDomAttributes(instance)
   }
 
-  if (!info.noUsePool && !info.args && Pool.isRegisteredClass(instance.constructor)) {
-    for (let [, reset] of Object.entries(info.memoizedResetter)) {
-      reset(true)
-    }
+  for (let [, reset] of Object.entries(info.memoizedResetter)) {
+    reset(true)
+  }
 
-    if (is.fun(instance.removeChildren)) {
-      instance.removeChildren()
-    }
+  // 对象池回收
+  if (Pool.enable && !info.noUsePool && !info.args && Pool.isRegisteredClass(instance.constructor)) {
+    instance?.removeChildren?.()
     Pool.recover(instance)
   }
 
@@ -176,20 +171,8 @@ const detachDeletedInstance: HostConfig['detachDeletedInstance'] = (instance) =>
 }
 
 const prepareUpdate: HostConfig['prepareUpdate'] = (instance, _type, oldProps, newProps) => {
-  const {
-    args: argsN = [],
-    attach: attachN,
-    mountedApplyProps: nm,
-    children: cN,
-    ...restNew
-  } = newProps
-  const {
-    args: argsO = [],
-    attach: attachO,
-    mountedApplyProps: om,
-    children: cO,
-    ...restOld
-  } = oldProps
+  const { args: argsN = [], attach: attachN, mountedApplyProps: nm, children: cN, ...restNew } = newProps
+  const { args: argsO = [], attach: attachO, mountedApplyProps: om, children: cO, ...restOld } = oldProps
 
   const diff = diffProps(instance, restNew, restOld)
   if (diff.changes.length || oldProps.attach !== newProps.attach) return diff
@@ -197,13 +180,7 @@ const prepareUpdate: HostConfig['prepareUpdate'] = (instance, _type, oldProps, n
   return null
 }
 
-const commitUpdate: HostConfig['commitUpdate'] = function (
-  instance,
-  diff,
-  _type,
-  oldProps,
-  newProps,
-) {
+const commitUpdate: HostConfig['commitUpdate'] = function (instance, diff, _type, oldProps, newProps) {
   const info = getRenderInfo(instance)
 
   if (diff.changes.length) applyProps(instance, diff)
@@ -227,7 +204,6 @@ const commitUpdate: HostConfig['commitUpdate'] = function (
     target[targetKey] = getActualInstance(instance)
   }
 }
-
 export const getCurrentEventPriority = () => {
   const currentEvent = window.event
   if (currentEvent === undefined) {
@@ -237,68 +213,62 @@ export const getCurrentEventPriority = () => {
 }
 
 export const hostConfig: HostConfig = {
+  /* 创建实例 */
   createInstance,
-  createTextInstance: (text) => {
-    const instance = new RenderString(text)
-    return attachInfo(instance)
-  },
-  removeChild,
-  detachDeletedInstance,
+  createTextInstance: (text) => attachInfo(new RenderString(text)),
+
+  /* 节点操作 */
   appendChild,
   appendInitialChild: appendChild,
-  insertBefore,
-  supportsMutation: true,
-  isPrimaryRenderer: false,
-  noTimeout: -1,
   appendChildToContainer: appendChild,
-  removeChildFromContainer: removeChild,
+  insertBefore,
   insertInContainerBefore: insertBefore,
+  removeChild,
+  removeChildFromContainer: removeChild,
+  clearContainer: () => null,
+  detachDeletedInstance,
+
+  /* 属性对比和应用更新 */
+  prepareUpdate,
+  commitUpdate,
+  shouldSetTextContent: (_type, props) => 'text' in props,
+  commitTextUpdate: (instance, _oldText, newText) => (instance.text = newText),
+  resetTextContent: (instance: { text: string }) => (instance.text = ''),
+  prepareForCommit: () => null,
+  resetAfterCommit: () => null,
+
+  /* ref 返回值 */
+  getPublicInstance: (renderInstance) => renderInstance,
+
+  /* 事件优先级 */
+  getCurrentEventPriority,
+
+  /* 不移除节点情况下 显示/隐藏 */
+  hideInstance: (renderInstance) => 'visible' in renderInstance && (renderInstance.visible = false),
+  unhideInstance: (renderInstance) => 'visible' in renderInstance && (renderInstance.visible = true),
+  hideTextInstance: (renderString: RenderString) => (renderString.text = ''),
+  unhideTextInstance: (renderString: RenderString, text: string) => (renderString.text = text),
+
+  /* 无/未知作用 */
   getRootHostContext: () => null,
   getChildHostContext: (parentHostContext: any) => parentHostContext,
   finalizeInitialChildren: () => false,
-  prepareUpdate,
-  commitUpdate,
-  commitTextUpdate(instance, oldText, newText) {
-    instance.text = newText
-  },
-  resetTextContent(instance: Instance<egret.TextField>) {
-    instance.text = ''
-  },
-  shouldSetTextContent: (_type, props) => {
-    return 'text' in props
-  },
-  getPublicInstance: (renderInstance) => renderInstance,
-  prepareForCommit: () => null,
   preparePortalMount: () => null,
-  resetAfterCommit: () => {},
-  clearContainer: () => false,
-  getCurrentEventPriority,
-  hideInstance: (renderInstance) => {
-    if (renderInstance instanceof egret.DisplayObject) {
-      renderInstance.visible = false
-    }
-  },
-  unhideInstance: (renderInstance) => {
-    if (renderInstance instanceof egret.DisplayObject) {
-      renderInstance.visible = true
-    }
-  },
-  hideTextInstance: (renderString: RenderString) => {
-    renderString.text = ''
-  },
-  unhideTextInstance: (renderString: RenderString, text: string) => {
-    renderString.text = text
-  },
-  now:
-    typeof performance !== 'undefined' && is.fun(performance.now)
-      ? performance.now
-      : is.fun(Date.now)
-      ? Date.now
-      : undefined,
+
+  /* 是否可以变更树，必须开启 */
+  supportsMutation: true,
+  /* 树持久化，关闭 */
   supportsPersistence: false,
+  /* 是否开启水合，未实现 ssr，关闭 */
+  supportsHydration: false,
+  /* 是否只有一个渲染器，关闭 */
+  isPrimaryRenderer: false,
+
+  /* 定时器相关 */
+  noTimeout: -1,
+  now: performance?.now ?? Date.now,
   scheduleTimeout: setTimeout,
   cancelTimeout: clearTimeout,
-  supportsHydration: false,
 }
 
 export const reconciler = Reconciler(hostConfig)

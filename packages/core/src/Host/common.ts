@@ -11,8 +11,7 @@ export interface IProp {
   __Class?: new (...args: any[]) => any
 }
 
-export const isMountProp = (value: any): value is typeof CONSTANTS.PROP_MOUNT =>
-  value === CONSTANTS.PROP_MOUNT
+export const isMountProp = (value: any): value is typeof CONSTANTS.PROP_MOUNT => value === CONSTANTS.PROP_MOUNT
 
 export module EventProp {
   export type GetEventKeyWithoutNum<T extends string> = `${T}${'Once' | ''}${'Capture' | ''}`
@@ -48,13 +47,7 @@ export module EventProp {
         }
         memorizedListeners[targetKey] = [innerListener, newValue]
 
-        actualInstance[once ? 'once' : 'addEventListener'](
-          type,
-          innerListener,
-          actualInstance,
-          capture,
-          priority,
-        )
+        actualInstance[once ? 'once' : 'addEventListener'](type, innerListener, actualInstance, capture, priority)
       } else {
         memorizedListeners[targetKey][1] = newValue
       }
@@ -111,9 +104,7 @@ export module NormalProp {
     <T>(test: ((newProp: any) => boolean)[] = [], propName?: any) =>
     (args: PropSetterParameters<T>) => {
       if (!(test.length === 0 || test.some((test) => test(args.newValue)))) {
-        console.error(
-          `${propName ? 'value of' : ''} \`${propName || args.newValue}\` is not correct`,
-        )
+        console.error(`${propName ? 'value of' : ''} \`${propName || args.newValue}\` is not correct`)
       }
       return pass<T>(args)
     }
@@ -135,11 +126,7 @@ export module NormalProp {
       if (newValue instanceof constructor) {
         target[targetKey] = newValue
       } else {
-        if (is.arr(newValue)) {
-          target[targetKey] = new constructor(...newValue)
-        } else {
-          throw `${keys.join('-')} must be instance of ${constructor.name} or array`
-        }
+        target[targetKey] = new constructor(...(is.arr(newValue) ? newValue : [newValue]))
       }
     }
 
@@ -166,16 +153,12 @@ export module Graphics {
     instance: { graphics: egret.Graphics },
   ) => void | ((isRemove: boolean) => void)
 
-  export type GetGraphicsProp<K extends keyof egret.Graphics> = egret.Graphics[K] extends (
-    ...args: any
-  ) => any
+  export type GetGraphicsProp<K extends keyof egret.Graphics> = egret.Graphics[K] extends (...args: any) => any
     ? [K, ...Parameters<egret.Graphics[K]>]
     : never
 
   // 利用分布条件类型
-  export type GenerateGraphicsProp<T extends keyof egret.Graphics> = T extends any
-    ? GetGraphicsProp<T>
-    : never
+  export type GenerateGraphicsProp<T extends keyof egret.Graphics> = T extends any ? GetGraphicsProp<T> : never
 
   export type GraphicActions =
     | 'beginFill'
@@ -194,10 +177,7 @@ export module Graphics {
 
   export type Prop = GenerateGraphicsProp<GraphicActions>[] | FunProp
 
-  export const setter: PropSetter<Prop, { graphics: egret.Graphics }> = ({
-    newValue,
-    instance,
-  }) => {
+  export const setter: PropSetter<Prop, { graphics: egret.Graphics }> = ({ newValue, instance }) => {
     if (is.arr(newValue)) {
       for (const action of newValue) {
         // @ts-ignore

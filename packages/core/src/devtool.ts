@@ -1,10 +1,10 @@
 import { throttle } from 'lodash'
 import { Reconciler } from 'react-reconciler'
 
-import { getCanvas, findEgretAncestor, is } from './utils'
+import { getCanvas, findEgretAncestor, is, getActualInstance } from './utils'
 import { findTargetByPosition } from './outside'
 import { catalogueMap } from './Host/index'
-import { Instance } from './type'
+import { IRenderInfo, Instance } from './type'
 import { CONSTANTS } from './constants'
 
 /**
@@ -57,11 +57,7 @@ export function getBoundingClientRect(instance: Instance<unknown>) {
  */
 function proxyGetComputedStyle() {
   window.getComputedStyle = function (el, pseudo) {
-    if (
-      Object.entries(catalogueMap).some(
-        ([n, catalogue]) => catalogue.__Class && el instanceof catalogue.__Class,
-      )
-    ) {
+    if (Object.entries(catalogueMap).some(([n, catalogue]) => catalogue.__Class && el instanceof catalogue.__Class)) {
       return emptyCSSStyleSheet
     } else {
       return getComputedStyle.call(this, el, pseudo)
@@ -126,17 +122,7 @@ function proxyListener() {
     listener: (event: Event) => void,
     options?: boolean | { capture?: boolean },
   ) {
-    if (
-      [
-        'click',
-        'mousedown',
-        'mouseover',
-        'mouseup',
-        'pointerdown',
-        'pointerover',
-        'pointerup',
-      ].includes(type)
-    ) {
+    if (['click', 'mousedown', 'mouseover', 'mouseup', 'pointerdown', 'pointerover', 'pointerup'].includes(type)) {
       const proxyHandler: EventHandler = function (e: MouseEvent) {
         const { pageX: x, pageY: y } = e
         const r = getCanvas().getBoundingClientRect()
@@ -145,11 +131,7 @@ function proxyListener() {
         // 判断点击点是否处于画布中
         if (x > r.x && x < r.x + r.width && y > r.y && y < r.y + r.height) {
           const scale = calculateScale()
-          const target = findTargetByPosition(
-            egret.lifecycle.stage,
-            (x - r.x) / scale,
-            (y - r.y) / scale,
-          ) as any
+          const target = findTargetByPosition(egret.lifecycle.stage, (x - r.x) / scale, (y - r.y) / scale) as any
           // 模拟一个新的 event，目的是改变 target
           if (target) {
             e = {
@@ -263,5 +245,26 @@ export function unProxyHackForDevTools() {
     unProxyGetComputedStyle()
     unProxyListener()
     isProxyDevTools = false
+  }
+}
+
+export function injectMemoizedProps(instance: Instance, info: IRenderInfo) {
+  if (!info.fiber) return
+
+  info.fiber.memoizedProps = {
+    ...info.fiber.memoizedProps,
+    [CONSTANTS.STATE_NODE_KEY]: instance,
+    [CONSTANTS.TARGET_KEY]: getActualInstance(instance),
+    [CONSTANTS.INFO_KEY]: instance[CONSTANTS.INFO_KEY],
+    [CONSTANTS.FIBER_KEY]: info.fiber,
+  }
+  if (is.obj(info.fiber.alternate?.memoizedProps)) {
+    info.fiber.alternate.memoizedProps = {
+      ...info.fiber.alternate.memoizedProps,
+      [CONSTANTS.STATE_NODE_KEY]: instance,
+      [CONSTANTS.TARGET_KEY]: getActualInstance(instance),
+      [CONSTANTS.INFO_KEY]: instance[CONSTANTS.INFO_KEY],
+      [CONSTANTS.FIBER_KEY]: info.fiber.alternate,
+    }
   }
 }

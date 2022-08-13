@@ -1,7 +1,11 @@
 import { render } from '@testing-library/react'
-import React, { createRef, useEffect, useRef, useState } from 'react'
+import React, { createRef, useEffect, useState } from 'react'
 import { Egreact, getActualInstance, Instance, hostConfig, createEgreactRoot } from '../src/index'
 import RenderString from '../src/Host/custom/RenderString'
+
+import { Pool } from '../src/index'
+Pool.enable = true
+
 describe('Egreact', () => {
   it('should throw error when use html element in egreact context', () => {
     const container = new egret.DisplayObjectContainer()
@@ -180,9 +184,20 @@ describe('Egreact', () => {
     expect(() => root.render(<TestComponent />)).toThrow()
   })
 
+  it(`sync allow ref get instance immediately`, () => {
+    const container = new egret.DisplayObjectContainer()
+    const ref = createRef<any>()
+    const TestComponent = () => {
+      return <eui-group ref={ref}></eui-group>
+    }
+    const root = createEgreactRoot(container)
+    root.render(<TestComponent />, { sync: true })
+    expect(ref.current).not.toBeNull()
+    root.unmount()
+  })
+
   it('another host functions had not called in application', () => {
-    const displayObjectContainer =
-      new egret.DisplayObjectContainer() as Instance<egret.DisplayObjectContainer>
+    const displayObjectContainer = new egret.DisplayObjectContainer() as Instance<egret.DisplayObjectContainer>
     const renderString = new RenderString('e') as Instance<RenderString>
     renderString.setParent(new egret.TextField())
 
@@ -207,11 +222,7 @@ describe('Egreact', () => {
   it('prepareUpdate should return null when diff success', () => {
     const container = new egret.DisplayObjectContainer()
     const TestComponent = () => {
-      const [actions, setActions] = useState([
-        ['beginFill', 0x000000],
-        ['drawRect', 0, 0, 300, 100],
-        ['endFill'],
-      ])
+      const [actions, setActions] = useState([['beginFill', 0x000000], ['drawRect', 0, 0, 300, 100], ['endFill']])
       useEffect(() => {
         setActions([['beginFill', 0x000000], ['drawRect', 0, 0, 300, 100], ['endFill']])
       }, [])

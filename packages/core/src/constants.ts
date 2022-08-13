@@ -15,13 +15,10 @@ export namespace CONSTANTS {
 
   /* 键名 */
 
-  // egreact 渲染所需信息挂载键
+  // 将实例挂载在 info/memoizedProp/target/fiber 的键，方便 devtool 查看
   export const INFO_KEY = '__renderInfo' as const
-
-  // 将实例挂载在 memoizedProp 的键，方便 devtool 查看
   export const STATE_NODE_KEY = '__stateNode' as const
-
-  // 将 fiber 挂载在 memoizedProp 的键，方便 devtool 查看
+  export const TARGET_KEY = '__target' as const
   export const FIBER_KEY = '__fiber' as const
 
   /* 常量 */

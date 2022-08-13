@@ -39,3 +39,28 @@ export default () => (
   </Egreact>
 )
 ```
+
+或者在 egret 中像皮肤一样使用
+
+``` ts
+import { createEgreactRoot } from 'egreact'
+class ReactRender extends egret.DisplayObjectContainer {
+  root = createEgreactRoot(this)
+  constructor(reactNode: React.ReactNode) {
+    super()
+    this.addEventListener(egret.Event.ADDED, () => this.root.render(reactNode), this)
+    this.addEventListener(egret.Event.REMOVED, () => this.root.unmount(), this)
+  }
+}
+const displayObjectContainer = new egret.displayObjectContainer();
+displayObjectContainer.addChild(new ReactRender(
+    <sprite
+      graphics={[
+        ['beginFill', 0x000000],
+        ['drawRect', 0, 0, 300, 100],
+        ['endFill'],
+      ]}>
+      <textField size={16}>Hello, egreact</textField>
+    </sprite>  
+))
+```
