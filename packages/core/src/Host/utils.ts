@@ -15,9 +15,7 @@ module Mixin {
 
   // 转换 P-__diff 的键为 `${CONSTANTS.CUSTOM_DIFF_PREFIX}${P}`
   type TranslateDiffKey<T extends object> = {
-    [K in keyof T as K extends `${infer P}-__diff`
-      ? `${typeof CONSTANTS.CUSTOM_DIFF_PREFIX}${P}`
-      : K]: T[K]
+    [K in keyof T as K extends `${infer P}-__diff` ? `${typeof CONSTANTS.CUSTOM_DIFF_PREFIX}${P}` : K]: T[K]
   }
 
   // 铺平对象，比如 {a:{b:string},b:number} 会转换为 { a-b:string,b:number }
@@ -38,11 +36,7 @@ module Mixin {
 
   // 完成上述类型相对应的函数转换
   // S extends [string] 用于字面量推断，传入的字符串会推断为字面量而非 string
-  export const mixin = <T, P extends IPropsHandlers, S extends [string]>(
-    target: T,
-    obj: P,
-    ...key: S
-  ) => {
+  export const mixin = <T, P extends IPropsHandlers, S extends [string]>(target: T, obj: P, ...key: S) => {
     const entries: [string[], any][] = []
     // 铺平收集键值对
     const collectTranslateKey = (obj: P, prefixKey: string[]) => {
@@ -81,11 +75,7 @@ export const mixinHelper = {
       store: target,
     }
   },
-  mixin<P extends { store: any }, T extends IPropsHandlers, S extends [string]>(
-    this: P,
-    obj: T,
-    ...name: S
-  ) {
+  mixin<P extends { store: any }, T extends IPropsHandlers, S extends [string]>(this: P, obj: T, ...name: S) {
     type Store = P extends { store: infer D } ? D : never
     type Name = S extends [infer N] ? N : never
     return {
@@ -173,3 +163,5 @@ export const proxyHelper = <T extends new (...args: any[]) => any>(config: {
   }[name] as unknown as T
   return proxyConstructor
 }
+
+export type Cover<T extends object, S extends object> = Omit<T, keyof S> & S

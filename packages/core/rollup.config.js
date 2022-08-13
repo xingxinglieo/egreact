@@ -1,19 +1,14 @@
 import typescript from 'rollup-plugin-typescript'
 import json from '@rollup/plugin-json'
 
-const configs = {
+export default {
   input: './src/index.ts',
   plugins: [json(), typescript({})],
   output: [
     {
-      format: 'cjs',
-      file: `dist/index.cjs.js`,
-    },
-    {
       format: 'es',
       file: `dist/index.esm.js`,
+      sourceMap: false,
     },
   ],
 }
-
-export default configs

@@ -13,17 +13,16 @@
   "homepage": "https://xingxinglieo.github.io/egreact",
   "module": "dist/index.esm.js",
   "main": "dist/index.cjs.js",
-  "types": "dist/types/src/index.d.ts",
+  "types": "src/index.ts",
   "files": [
     "dist",
-    "types"
+    "src"
   ],
   "scripts": {
     "test": "jest --silent --detect-open-handles",
     "build:pkg": "rollup -c",
-    "dev": "concurrently tsc -w && rollup -c -w",
-    "build:types": "rm -rf ./dist/types && tsc -p ./tsconfig.compiler.json",
-    "build": "npm run build:types && npm run build:pkg"
+    "dev": "rollup -c -w",
+    "build": "npm run build:pkg"
   },
   "license": "ISC",
   "peerDependencies": {
@@ -36,7 +35,7 @@
     "react-router-dom": {
       "optional": true
     },
-    "react-dom":{
+    "react-dom": {
       "optional": true
     }
   },
@@ -50,12 +49,12 @@
     "@types/node": "^17.0.42",
     "@types/sinon": "^10.0.11",
     "concurrently": "^7.2.2",
+    "jest": "^28.1.0",
     "rollup": "^2.75.6",
     "rollup-plugin-typescript": "^1.0.1",
     "sinon": "^14.0.0",
     "tslib": "^2.4.0",
-    "typescript": "^4.7.3",
-    "jest": "^28.1.0"
+    "typescript": "^4.7.3"
   },
   "dependencies": {
     "react": ">=18.0",

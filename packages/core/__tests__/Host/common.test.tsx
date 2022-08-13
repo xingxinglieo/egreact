@@ -54,7 +54,7 @@ describe('Host common', () => {
   })
 
   describe('NormalProp.instance', () => {
-    it('should throw error because args is not array', () => {
+    it('args can be everything', () => {
       const container = new egret.DisplayObjectContainer()
       expect(() =>
         render(
@@ -63,7 +63,7 @@ describe('Host common', () => {
             <displayObject scrollRect={0} />
           </Egreact>,
         ),
-      ).toThrow()
+      ).not.toThrow()
     })
     it('should equal to outer instance', () => {
       const container = new egret.DisplayObjectContainer()

@@ -1,7 +1,7 @@
-import { addCompatibleDomAttributes } from '../devtool'
 import { EVENT_CATEGORY_MAP } from '../Host'
 import type { PropSetter, IElementProps, Instance, IRenderInfo, EventInfo } from '../type'
 import { CONSTANTS, isProduction } from '../constants'
+import { addCompatibleDomAttributes, injectMemoizedProps } from '../devtool'
 
 const hyphenateRE = /\B([A-Z])/g
 /**
@@ -27,8 +27,7 @@ export type DiffSet = {
   memoized: { [key: string]: any }
   changes: Changes[]
 }
-export const isDiffSet = (def: any): def is DiffSet =>
-  def && !!(def as DiffSet).memoized && !!(def as DiffSet).changes
+export const isDiffSet = (def: any): def is DiffSet => def && !!(def as DiffSet).memoized && !!(def as DiffSet).changes
 
 export type EquConfig = {
   /** Compare arrays by reference equality a === b (default), or by shallow equality*/
@@ -52,11 +51,7 @@ export const is = {
   boo: (a: any): a is boolean => typeof a === 'boolean',
   und: (a: any) => a === void 0,
   arr: (a: any): a is Array<any> => Array.isArray(a),
-  equ(
-    a: any,
-    b: any,
-    { arrays = 'shallow', objects = 'reference', strict = true }: EquConfig = {},
-  ) {
+  equ(a: any, b: any, { arrays = 'shallow', objects = 'reference', strict = true }: EquConfig = {}) {
     // Wrong type or one of the two undefined, doesn't match
     if (typeof a !== typeof b || !!a !== !!b) return false
     // Atomic, just compare a against b
@@ -83,10 +78,7 @@ export const is = {
 /**
  * @description 附加 __renderInfo
  */
-export function attachInfo<T = unknown>(
-  instance: any,
-  info: Partial<IRenderInfo> = {},
-): Instance<T> {
+export function attachInfo<T = unknown>(instance: any, info: Partial<IRenderInfo> = {}): Instance<T> {
   if (!(is.obj(instance) || is.arr(instance))) {
     throw `instance must be an object`
   } else if (!instance[CONSTANTS.INFO_KEY]) {
@@ -148,8 +140,7 @@ export function diffProps(
   const changes: DiffSet['changes'] = []
   const previousKeys = Object.keys(previous)
   for (let i = 0; i < previousKeys.length; i++) {
-    if (!props.hasOwnProperty(previousKeys[i]))
-      entries.push([previousKeys[i], CONSTANTS.DEFAULT_REMOVE])
+    if (!props.hasOwnProperty(previousKeys[i])) entries.push([previousKeys[i], CONSTANTS.DEFAULT_REMOVE])
   }
   // 从少key到多key，保证添加的顺序，否则会出错
   entries.sort((a, b) => a[0].split('-').length - b[0].split('-').length)
@@ -157,24 +148,20 @@ export function diffProps(
     /**
      * 因为属性和其前缀属性(如果存在)之间是联动的，所以需要按照属性的顺序进行操作
      * entries.sort 排序已经保证其 key 顺序是从少 key 到多 key
-     * 比如 layout 和 layout-paddingBottom 属性
-     * 1 如果  layout-paddingBottom 的前缀 layout 属性改变
-     * 无论如何, layout-paddingBottom 属性都需要做出操作
-     *  1.1 layout-paddingBottom 是 Remove，则插入在 layout 之前，
-     *  因为 layout 也可能是 remove，这样就保证了 layout-paddingBottom 移除在 layout 移除之前
-     *  1.2 否则，无论有没有更新，则插入在 layout 之后，
+     * 比如 layout 和 layout-gap 属性
+     * 1 如果  layout-gap 的前缀 layout 属性改变
+     * 无论如何, layout-gap 属性都需要做出操作
+     *  1.1 layout-gap 是 Remove，则插入在 layout 之前，
+     *  因为 layout 也可能是 remove，这样就保证了 layout-gap 移除在 layout 移除之前
+     *  1.2 layout 变更存在，则插入在 layout 之后，
      *  因为 layout 更新后可能是新的实例, 需要重新应用所有后缀属性
      * 2 否则走正常的操作
      */
     const keys = key.split('-')
     const isRemove = value === CONSTANTS.DEFAULT_REMOVE
     const prefixKey = keys.slice(0, keys.length - 1).join('-')
-    const prefixPropIndex =
-      prefixKey === '' ? -1 : changes.findIndex(([prefixPropKey]) => prefixPropKey === prefixKey)
-    if (
-      prefixPropIndex !== -1 &&
-      (isRemove || changes[prefixPropIndex][1] !== CONSTANTS.DEFAULT_REMOVE)
-    ) {
+    const prefixPropIndex = prefixKey === '' ? -1 : changes.findIndex(([prefixPropKey]) => prefixPropKey === prefixKey)
+    if (prefixPropIndex !== -1 && (isRemove || changes[prefixPropIndex][1] !== CONSTANTS.DEFAULT_REMOVE)) {
       return changes.splice(prefixPropIndex + Number(!isRemove), 0, [
         key,
         isRemove ? CONSTANTS.DEFAULT_REMOVE : value,
@@ -205,7 +192,7 @@ export function reduceKeysToTarget(target: any, key: string, separator = '-') {
     else throw ``
   } catch (e) {
     const prefixKey = prefixKeys.join(separator)
-    throw `\`${key}\` depends on \`${prefixKey}\`, you must set \`${prefixKey}\` before`
+    console.error(`\`${key}\` depends on \`${prefixKey}\`, you must set \`${prefixKey}\` before`)
   }
 }
 
@@ -272,17 +259,13 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
   changes.forEach(([key, newValue, isEvent, keys]) => {
     if (key.startsWith('__')) return
 
-    if (key.startsWith('__')) return
-
-    const oldValue = oldMemoizedProps.hasOwnProperty(key)
-      ? oldMemoizedProps[key]
-      : CONSTANTS.PROP_MOUNT
+    const oldValue = oldMemoizedProps.hasOwnProperty(key) ? oldMemoizedProps[key] : CONSTANTS.PROP_MOUNT
     const isRemove = newValue === CONSTANTS.DEFAULT_REMOVE
     if (isEvent) {
       const eInfo = splitEventKeyToInfo(key)
       const setter = info.propsHandlers[eInfo.name] as PropSetter<any>
       if (!is.fun(setter)) {
-        return console.error(`\`${key}\` maybe not a valid event`)
+        return console.warn(`\`${key}\` maybe not a valid event`)
       }
 
       // 无论如何都会先清除副作用
@@ -315,7 +298,7 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
       }
 
       if (!is.fun(info.propsHandlers[key])) {
-        console.error(`\`${key}\` maybe not a valid prop in ${instance.constructor.name}`)
+        console.warn(`\`${key}\` maybe not a valid prop in ${instance.constructor.name}`)
       }
 
       const defaultPropsHandler =
@@ -353,38 +336,8 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
     }
   })
 
-  if (!isProduction && info.fiber) {
-    info.fiber.memoizedProps = {
-      ...info.fiber.memoizedProps,
-      [CONSTANTS.STATE_NODE_KEY]: instance,
-      [CONSTANTS.INFO_KEY]: instance[CONSTANTS.INFO_KEY],
-      [CONSTANTS.FIBER_KEY]: info.fiber,
-    }
-    if (is.obj(info.fiber.alternate?.memoizedProps)) {
-      info.fiber.alternate.memoizedProps = {
-        ...info.fiber.alternate.memoizedProps,
-        [CONSTANTS.STATE_NODE_KEY]: instance,
-        [CONSTANTS.INFO_KEY]: instance[CONSTANTS.INFO_KEY],
-        [CONSTANTS.FIBER_KEY]: info.fiber.alternate,
-      }
-    }
-  }
-
-  if (!isProduction && info.fiber) {
-    info.fiber.memoizedProps = {
-      ...info.fiber.memoizedProps,
-      [CONSTANTS.STATE_NODE_KEY]: instance,
-      [CONSTANTS.INFO_KEY]: instance[CONSTANTS.INFO_KEY],
-      [CONSTANTS.FIBER_KEY]: info.fiber,
-    }
-    if (is.obj(info.fiber.alternate?.memoizedProps)) {
-      info.fiber.alternate.memoizedProps = {
-        ...info.fiber.alternate.memoizedProps,
-        [CONSTANTS.STATE_NODE_KEY]: instance,
-        [CONSTANTS.INFO_KEY]: instance[CONSTANTS.INFO_KEY],
-        [CONSTANTS.FIBER_KEY]: info.fiber.alternate,
-      }
-    }
+  if (!isProduction) {
+    injectMemoizedProps(instance, info)
   }
   return instance
 }
@@ -398,11 +351,9 @@ export function collectContextsFromDom(dom: any) {
     console.error(`prop is not a HTMLElement`)
     return []
   }
-  const fiberKey = Object.keys(dom).find(
-    (key) => key.startsWith('__react') && dom[key]?.stateNode === dom,
-  )
+  const fiberKey = Object.keys(dom).find((key) => key.startsWith('__react') && dom[key]?.stateNode === dom)
   if (!fiberKey) {
-    console.error(`dom must created by react-dom`)
+    console.error(`dom must be created by react-dom`)
     return []
   }
   let fiber = dom[fiberKey]

@@ -48,12 +48,12 @@ const primitive = {
   }),
   object: ({}: PropSetterParameters<any, Instance<Primitive>>) => {
     return (isRemove: boolean) => {
-      if (!isRemove) throw new Error('please use key to refresh object in primitive')
+      if (!isRemove) throw `please use key to refresh object in primitive`
     }
   },
   classConstructor: ({}: PropSetterParameters<any, Instance<Primitive>>) => {
     return (isRemove: boolean) => {
-      if (!isRemove) throw new Error('please use key to refresh constructor in primitive')
+      if (!isRemove) throw `please use key to refresh constructor in primitive`
     }
   },
   [objectDiffKey]: (n, o) => n === o,
