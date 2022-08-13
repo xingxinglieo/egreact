@@ -283,18 +283,25 @@ onTouchTapCaptureOnce12
 
 ## Pool 对象池
 
-在 @1.3.0 后，默认开启对象池功能，原生组件被移除时，被回收至池中，当创建同类时直接从池中取出。
+>> 不稳定，在大量元素频繁切换时会布局错乱。
+
+@1.3.0 新增，原生组件被移除时，被回收至池中，当创建同类时直接从池中取出，默认关闭。
 
 [池的默认大小]()，可以通过 setInfo 设置大小
 ``` typescript
 import { Pool } from 'egreact'
+// 全局开启
+Pool.enable = true;
+// 设置每个类默认的最大容量
+Pool.defaultSize = 500;
+// 设置单独的最大容量
 Pool.setInfo({
   constructor: egret.DisplayObject,
   size: 1000
 })
 ```
 
-egreact 对回收的对象会自动清除显式赋值的副作用，但某些自动赋值的副作用需要手动去除。若未清除副作用对复用产生影响，可以使用 `noUsePool` 属性关闭对象池，并报告这个场景的 [issue](https://github.com/xingxinglieo/egreact/issues) ，让我们在下个修复中覆盖它。  
+egreact 对回收的对象会自动清除显式赋值的副作用，但挂载后未知的副作用需要手动去除。若未清除副作用对复用产生影响，可以使用 `noUsePool` 属性声明不参与对象池，并报告这个场景的 [issue](https://github.com/xingxinglieo/egreact/issues)。 
 
 ``` tsx | pure
 // 直接使用构造函数创建且不会被回收
