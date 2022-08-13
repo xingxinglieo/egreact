@@ -227,7 +227,6 @@ const commitUpdate: HostConfig['commitUpdate'] = function (
     target[targetKey] = getActualInstance(instance)
   }
 }
-
 export const getCurrentEventPriority = () => {
   const currentEvent = window.event
   if (currentEvent === undefined) {

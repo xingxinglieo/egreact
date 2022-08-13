@@ -158,7 +158,7 @@ export function diffProps(
      * 因为属性和其前缀属性(如果存在)之间是联动的，所以需要按照属性的顺序进行操作
      * entries.sort 排序已经保证其 key 顺序是从少 key 到多 key
      * 比如 layout 和 layout-paddingBottom 属性
-     * 1 如果 layout-paddingBottom 的前缀 layout 属性改变
+     * 1 如果  layout-paddingBottom 的前缀 layout 属性改变
      * 无论如何, layout-paddingBottom 属性都需要做出操作
      *  1.1 layout-paddingBottom 是 Remove，则插入在 layout 之前，
      *  因为 layout 也可能是 remove，这样就保证了 layout-paddingBottom 移除在 layout 移除之前
@@ -269,6 +269,8 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
   changes.forEach(([key, newValue, isEvent, keys]) => {
     if (key.startsWith('__')) return
 
+    if (key.startsWith('__')) return
+
     const oldValue = oldMemoizedProps.hasOwnProperty(key)
       ? oldMemoizedProps[key]
       : CONSTANTS.PROP_MOUNT
@@ -347,6 +349,23 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
       }
     }
   })
+
+  if (!isProduction && info.fiber) {
+    info.fiber.memoizedProps = {
+      ...info.fiber.memoizedProps,
+      [CONSTANTS.STATE_NODE_KEY]: instance,
+      [CONSTANTS.INFO_KEY]: instance[CONSTANTS.INFO_KEY],
+      [CONSTANTS.FIBER_KEY]: info.fiber,
+    }
+    if (is.obj(info.fiber.alternate?.memoizedProps)) {
+      info.fiber.alternate.memoizedProps = {
+        ...info.fiber.alternate.memoizedProps,
+        [CONSTANTS.STATE_NODE_KEY]: instance,
+        [CONSTANTS.INFO_KEY]: instance[CONSTANTS.INFO_KEY],
+        [CONSTANTS.FIBER_KEY]: info.fiber.alternate,
+      }
+    }
+  }
 
   if (!isProduction && info.fiber) {
     info.fiber.memoizedProps = {
