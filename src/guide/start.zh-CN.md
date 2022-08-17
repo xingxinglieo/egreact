@@ -46,18 +46,18 @@ npm install egreact
 
 ### 配置 tsconfig.json
 
-为了全局声明 `egret` 和 `eui` 的类型，在原先 `includes`的数组后追加 `"node_modules/egreact/types"`,这个文件夹是 egret 及相关库的 .d.ts 文件，或者追加复制的文件夹，如果里面带有此类 .d.ts 文件。
+为了全局声明 `egret` 和 `eui` 的类型，在原先 `includes` 的数组后追加 egret 提供的类型定义，这些 .d.ts 文件在 egret 创建的项目或 `egret-engine` 包中或直接到 [github](https://github.com/xingxinglieo/egreact/tree/release/packages/core/types) 复制。
 
 ``` json
 {
   "include": [
     "src",
-    "node_modules/egreact/types" 
+    "node_modules/egret-engine/build"
   ]
 }
 ```
 
-> 修改 tsconfig.json 后需要重启 vscode 才能生效
+> 请保证此步骤生效，否则会因 ts 类型错误过多而导致项目卡顿。修改 tsconfig.json 后可能需要重启 vscode 才能生效。
 
 一个开发环境搭建就这么简单，一是引入 egret 库，二是配置 egret 的类型声明，如果你还有疑问，可以看看 [简单模版](https://github.com/xingxinglieo/egreact/tree/master/packages/dev)。
 
