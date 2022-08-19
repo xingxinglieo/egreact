@@ -1,4 +1,5 @@
-import { Plugin } from "../traverse";
+import { Plugin } from "../generate";
+
 import { isNativeValue, isReference } from "../utils";
 
 const translateExpression = (value: string) =>

@@ -19,9 +19,37 @@ export default function Test() {
         onTouchTap={() => {
           dispatch(increment());
         }}
+        backgroundColor={0x000000}
       >
         <arrayContainer attach="textFlow" ref={arrayContainer}>
           <objectContainer text={count + ""} style={{ textColor: 0xff0000 }} />
+          <font fontFamily="Impact" textColor={0x000000}>
+            {" "}
+            can{" "}
+          </font>
+          <font fontFamily="Times New Roman " textColor={0x000000}>
+            be set{" "}
+          </font>
+          <font textColor={0xff0000}>to a </font>
+          <font> {"\n"} </font>
+          <font textColor={0x00ff00}>variety </font>
+          <font textColor={0xf000f0}>of </font>
+          <font textColor={0x00ffff}>styles </font>
+          <font size={56} textColor={0x000000}>
+            with{" "}
+          </font>
+          <font size={16} textColor={0x000000}>
+            different{" "}
+          </font>
+          <font size={26} textColor={0x000000}>
+            colors,{" "}
+          </font>
+          <font text={"\n"} />
+          <font textColor={0x00ff00} text="fonts "></font>
+          <font size={26} textColor={0xf000f0} fontFamily="Quaver">
+            and{" "}
+          </font>
+          <font textColor={0xf06f00}>sizes</font>
         </arrayContainer>
       </eui-label>
 
@@ -36,18 +64,3 @@ export default function Test() {
     </>
   );
 }
-
-//  <font fontfamily="Impact"> can </font>
-//  <font fontfamily="Times New Roman ">be set</font>
-//  <font color=0xff0000>to a </font>
-//  <font> \n </font>
-//  <font color=0x00ff00>variety </font>
-//  <font color=0xf000f0>of </font>
-//  <font color=0x00ffff>styles </font>
-//  <font size=56>with </font>
-//  <font size=16>different </font>
-//  <font size=26>colors, </font>
-//  <font> \n </font>
-//  <font color=0x00ff00><i>fonts </i></font>
-//  <font size=26 color=0xf000f0 fontfamily=\Quaver\">and </font>"
-//  <font color=0xf06f00><i>sizes</i></font>

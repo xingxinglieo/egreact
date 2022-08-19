@@ -1,4 +1,5 @@
-import { Plugin } from "../traverse";
+import { Plugin } from "../generate";
+
 import { isNativeValue } from "../utils";
 
 export const handleNativeValue: Plugin = {

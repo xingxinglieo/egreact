@@ -1,4 +1,4 @@
-import { Plugin } from "../traverse";
+import { Plugin } from "../generate";
 
 export const htmlDecode: Plugin = {
   replaceAfter(jsx) {

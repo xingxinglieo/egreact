@@ -21,6 +21,8 @@
     "webpack-dev-server": "^4.9.1"
   },
   "dependencies": {
-    "egreact": "workspace:^1.1.0"
+    "egreact": "workspace:^1.1.0",
+    "react": "^18.1.0",
+    "react-reconciler": "^0.29.0"
   }
 }

@@ -1,4 +1,12 @@
-import { CollectInfo } from "./convert";
+import { Plugin as P } from "xml-js-convert";
+
+export class CollectInfo {
+  className = "";
+  variables: string[] = [];
+  ids: [string, string][] = []; // [id, type]
+  skins: [string | undefined, string][] = []; // [id, skin]
+}
+export type Plugin = P<CollectInfo>;
 
 export const generate = (jsx: string, info: CollectInfo) => {
   const { className, ids, skins, variables } = info;
@@ -50,12 +58,3 @@ export const ${className} = ({ context }) => {
   )
 }`;
 };
-
-// const variableWhiteList = ['eui', 'egret']
-// let s = ''
-// const firstKey = value.split('.')[0]
-// if (/^(\-|\+)?\d+(\.\d+)?$/.test(value) || ['true', 'false'].includes(value)) {
-//   s = value
-// } else if (firstKey in global || variableWhiteList.includes(firstKey)) {
-//   s = value
-// }
