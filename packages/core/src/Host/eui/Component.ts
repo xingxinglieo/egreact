@@ -5,7 +5,7 @@ const componentHandlers = {
   ...displayObjectContainerPropsHandlers,
   ...euiBaseLayoutProp,
   __Class: eui.Component,
-  skinName: NormalProp.pass,
+  skinName: NormalProp.pass<string | eui.Skin | typeof eui.Skin | void>,
   currentState: NormalProp.str,
   hostComponentKey: NormalProp.str,
   enabled: NormalProp.boo,

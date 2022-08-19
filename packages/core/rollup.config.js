@@ -8,7 +8,12 @@ export default {
     {
       format: 'es',
       file: `dist/index.esm.js`,
-      sourceMap: false,
+      sourcemap: false,
+    },
+    {
+      format: 'cjs',
+      file: `dist/index.cjs.js`,
+      sourcemap: false,
     },
   ],
 }

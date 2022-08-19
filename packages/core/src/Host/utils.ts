@@ -164,4 +164,4 @@ export const proxyHelper = <T extends new (...args: any[]) => any>(config: {
   return proxyConstructor
 }
 
-export type Cover<T extends object, S extends object> = Omit<T, keyof S> & S
+export type Cover<T, S> = Omit<T, keyof S> & S
