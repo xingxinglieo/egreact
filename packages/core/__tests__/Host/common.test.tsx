@@ -17,8 +17,8 @@ describe('Host common', () => {
       const defaultError = console.error
       const myError = jest.fn(console.error)
       console.error = myError
-      const pass1 = NormalProp.passWithType()
-      const pass2 = NormalProp.passWithType([])
+      // const pass1 = NormalProp.passWithType()
+      // const pass2 = NormalProp.passWithType([])
 
       // @ts-ignore
       pass1(p)
@@ -33,8 +33,8 @@ describe('Host common', () => {
       const defaultError = console.error
       const myError = jest.fn(console.error)
       console.error = myError
-      const pass1 = NormalProp.passWithType([(v) => v === 1, (v) => v === '1'])
-      const pass2 = NormalProp.passWithType([(v) => v === 1, (v) => v === 2], 'test')
+      // const pass1 = NormalProp.passWithType([(v) => v === 1, (v) => v === '1'])
+      // const pass2 = NormalProp.passWithType([(v) => v === 1, (v) => v === 2], 'test')
       // const pass3 = NormalProp.passWithTranslate(
       //   (v) => Number(v),
       //   [(v) => v === '1', (v) => v === 2],

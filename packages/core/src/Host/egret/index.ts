@@ -5,7 +5,7 @@ import sprite from './Sprite'
 import bitmap from './Bitmap'
 import bitmapText from './BitmapText'
 import textField from './TextField'
-const _ = {
+export default {
   displayObject,
   displayObjectContainer,
   shape,
@@ -14,4 +14,3 @@ const _ = {
   bitmapText,
   textField,
 }
-export default _

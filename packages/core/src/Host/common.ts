@@ -100,14 +100,14 @@ export module NormalProp {
   )
 
   // 解决无法传范型的问题
-  export const passWithType =
-    <T>(test: ((newProp: any) => boolean)[] = [], propName?: any) =>
-    (args: PropSetterParameters<T>) => {
-      if (!(test.length === 0 || test.some((test) => test(args.newValue)))) {
-        console.error(`${propName ? 'value of' : ''} \`${propName || args.newValue}\` is not correct`)
-      }
-      return pass<T>(args)
-    }
+  // export const passWithType =
+  //   <T>(test: ((newProp: any) => boolean)[] = [], propName?: any) =>
+  //   (args: PropSetterParameters<T>) => {
+  //     if (!(test.length === 0 || test.some((test) => test(args.newValue)))) {
+  //       console.error(`${propName ? 'value of' : ''} \`${propName || args.newValue}\` is not correct`)
+  //     }
+  //     return pass<T>(args)
+  //   }
 
   export const instance =
     <P>(constructor: new (...args: any) => any) =>
@@ -235,10 +235,7 @@ export const textureProp = {
   __setter: Texture.setter,
   __diff: Texture.diff,
   bitmapData: NormalProp.pass<egret.Bitmap | void>,
-  // WithType
-  // <egret.Bitmap>(),
   disposeBitmapData: NormalProp.boo,
-  ktxData: NormalProp.pass<ArrayBuffer | void>,
 }
 
 export module LayoutBase {
