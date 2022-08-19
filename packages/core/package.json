@@ -20,16 +20,21 @@
   ],
   "scripts": {
     "test": "jest --silent --detect-open-handles",
-    "build:pkg": "rollup -c",
-    "dev": "rollup -c -w",
-    "build": "npm run build:pkg"
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
   },
   "license": "ISC",
-  "peerDependencies": {
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
     "lodash": "*",
+    "react-reconciler": "^0.27.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0",
     "react-dom": ">=18.0",
-    "react-router-dom": ">=5.0",
-    "typescript": ">=4.7"
+    "react-router-dom": ">=5.0"
   },
   "peerDependenciesMeta": {
     "react-router-dom": {
@@ -38,9 +43,6 @@
     "react-dom": {
       "optional": true
     }
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "devDependencies": {
     "@babel/core": "^7.18.2",
@@ -55,9 +57,5 @@
     "sinon": "^14.0.0",
     "tslib": "^2.4.0",
     "typescript": "^4.7.3"
-  },
-  "dependencies": {
-    "react": ">=18.0",
-    "react-reconciler": ">=0.28.0"
   }
 }

@@ -10,7 +10,11 @@ export default function FriendList() {
   return (
     <eui-group width={750} height={1334}>
       <eui-rect width="100%" height="100%" fillColor="0xE5E5E5" />
-      <eui-scroller ref={scroller} width="100%" height="100%">
+      <eui-scroller
+         ref={scroller}
+        width="100%"
+        height="100%"
+      >
         <eui-group
           width="100%"
           height="100%"

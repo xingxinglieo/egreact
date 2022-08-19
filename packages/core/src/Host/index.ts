@@ -45,6 +45,10 @@ declare global {
       'eui-label': TransProp<typeof euiProps.label>
       'eui-rect': TransProp<typeof euiProps.rect>
       'eui-scroller': TransProp<typeof euiProps.scroller>
+      'eui-button': TransProp<typeof euiProps.button>
+      'eui-dataGroup': TransProp<typeof euiProps.dataGroup>
+      'eui-editableText': TransProp<typeof euiProps.editableText>
+      'eui-list': TransProp<typeof euiProps.list>
       // 'eui-hScrollBar': TransProp<typeof euiProps.hScrollBar>
       // 'eui-vScrollBar': TransProp<typeof euiProps.vScrollBar>
 
@@ -109,6 +113,10 @@ export const EVENT_CATEGORY_MAP: {
     category: egret.TouchEvent,
     withPrefix: true,
   },
+  Item: {
+    category: eui.ItemTapEvent,
+    withPrefix: true,
+  },
   Ui: {
     category: eui.UIEvent,
     withPrefix: false,
@@ -131,15 +139,4 @@ extend({
 })
 
 import { Link, LinkProps } from 'react-router-dom'
-export const EgreactLink: React.ForwardRefExoticComponent<
-  TransProp<typeof euiProps.label> & LinkProps
-> = Link as any
-
-/* 如果能加入字符的 container，需要在此声明 */
-// export const TEXT_CONTAINER_CATEGORY = [
-//   egretProps.bitmapText,
-//   egretProps.textField,
-//   euiProps.bitmapLabel,
-//   euiProps.label,
-//   customProps.font
-// ];
+export const EgreactLink: React.ForwardRefExoticComponent<TransProp<typeof euiProps.label> & LinkProps> = Link as any

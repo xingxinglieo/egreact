@@ -1,8 +1,38 @@
 import React, { useState } from "react";
 import { mediasData } from "./staticData";
 
+class MediasAvatar extends eui.ItemRenderer {
+  group = new eui.Group();
+  image = new eui.Image();
+  label = new eui.Label();
+  constructor() {
+    super();
+    this.init();
+  }
+  protected dataChanged(): void {
+    this.image.source = this.data.url;
+    this.label.text = this.data.name;
+  }
+  init() {
+    const layout = new eui.VerticalLayout();
+    layout.gap = 8;
+    this.group.layout = layout;
+
+    this.label.textAlign = "center";
+    this.label.percentWidth = 100;
+    this.label.textColor = 0x000000;
+    this.label.size = 20;
+
+    this.group.addChild(this.image);
+    this.group.addChild(this.label);
+    this.addChild(this.group);
+  }
+}
+
 export default function Medias() {
-  const [medias, setMedias] = useState(mediasData);
+  // const [medias, setMedias] = useState(mediasData);
+  const [medias] = useState(() => new eui.ArrayCollection([...mediasData]));
+
   return (
     <eui-group width="100%">
       <eui-rect height="100%" width="100%" fillColor="0xFFFFFF" />
@@ -23,20 +53,22 @@ export default function Medias() {
         <eui-scroller
           width="100%"
           onTouchTap={() => {
-            setMedias([...medias.reverse()]);
+            console.log(123423);
+            medias.replaceAll([...medias.source].reverse());
           }}
         >
-          <eui-group
+          <eui-list
+            dataProvider={medias}
             attach="viewport"
-            noUsePool
             layout-gap={68}
             layout="horizontal"
             layout-paddingLeft={42}
             layout-paddingRight={42}
             layout-paddingTop={27}
             layout-paddingBottom={27}
-          >
-            {medias.map((media, i) => (
+            itemRenderer={MediasAvatar}
+          />
+          {/* {medias.map((media, i) => (
               <eui-group layout="vertical" key={i} layout-gap={8}>
                 <eui-image source={media.url} />
                 <eui-label
@@ -49,8 +81,7 @@ export default function Medias() {
                   {media.name}
                 </eui-label>
               </eui-group>
-            ))}
-          </eui-group>
+            ))} */}
         </eui-scroller>
       </eui-group>
     </eui-group>

@@ -3,6 +3,9 @@ import { EventProp, NormalProp, rectangleProp } from '../common'
 import { mixinHelper } from '../utils'
 
 const normalEventType = [
+  'onChange',
+  'onChanging',
+  'onComplete',
   'onAdded',
   'onAddedToStage',
   'onRemoved',
@@ -16,15 +19,10 @@ const normalEventType = [
   'onEnterFrameOnce',
   'onRenderOnce',
 ] as const
+
 type NormalEventType = typeof normalEventType[number]
 
-const touchEventType = [
-  'onTouchMove',
-  'onTouchBegin',
-  'onTouchEnd',
-  'onTouchTap',
-  'onTouchReleaseOutside',
-] as const
+const touchEventType = ['onTouchMove', 'onTouchBegin', 'onTouchEnd', 'onTouchTap', 'onTouchReleaseOutside'] as const
 
 type TouchEventType = typeof touchEventType[number]
 
