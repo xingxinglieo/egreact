@@ -1,8 +1,6 @@
-import { Plugin } from "../traverse";
+import { Plugin } from "../generate";
 
-import { CollectInfo } from "../convert";
-
-export const handleSkin: Plugin<CollectInfo> = {
+export const handleSkin = {
   replaceBefore(exml, info) {
     info.className =
       exml.match(/class="skins\.([a-zA-Z]+)"/)?.[1] ?? "SkinName";

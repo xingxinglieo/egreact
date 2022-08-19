@@ -1,5 +1,4 @@
-import { get } from "lodash";
-import { Plugin } from "../traverse";
+import { Plugin } from "../generate";
 import { Element } from "xml-js";
 
 const propTagHandlers: {

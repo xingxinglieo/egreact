@@ -1,6 +1,5 @@
-import { Plugin } from "../traverse";
+import { Plugin } from "../generate";
 import { firstLowerCase, firstUpperCase } from "../utils";
-import { CollectInfo } from "../convert";
 
 const egretKeys = [
   "Bitmap",
@@ -26,7 +25,7 @@ const euiKeys = [
   "UIComponent"
 ];
 
-export const handleTag: Plugin<CollectInfo> = {
+export const handleTag = {
   before({ element, info }) {
     // 标签名转换
     if ("name" in element) {

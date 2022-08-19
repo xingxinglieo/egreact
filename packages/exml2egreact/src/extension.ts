@@ -2,48 +2,29 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import * as fs from "fs/promises";
-import * as prettier from "prettier";
-import { convert } from "./convert";
-import {
-  handleTag,
-  handlePropTag,
-  handleComment,
-  handleConditionProps,
-  handleSpecialProps,
-  handleNativeValue,
-  handleSkin,
-  handleVariable,
-  htmlDecode
-} from "./plugins";
-
-const t = (exml: string) =>
-  convert(exml, [
-    handleVariable,
-    handleSkin,
-    handleTag,
-    handlePropTag,
-    handleComment,
-    handleConditionProps,
-    handleSpecialProps,
-    handleNativeValue,
-    htmlDecode
-  ]);
+import convert from "./convert";
 
 async function translate(path: string) {
   const exml = await fs.readFile(path, { encoding: "utf-8" });
-  const options = await prettier.resolveConfig(path).catch(() => ({} as any));
-  options.parser = "babel-ts";
-  let jsx: string;
+  const p = path.replace("exml", "tsx");
+  await fs.writeFile(p, convert(exml));
   try {
-    jsx = prettier.format(t(exml), options);
+    const uri = vscode.Uri.file(p);
+    const edit = new vscode.WorkspaceEdit();
+    edit.set(
+      uri,
+      await vscode.commands.executeCommand(
+        "vscode.executeFormatDocumentProvider",
+        uri
+      )
+    );
+    vscode.workspace.applyEdit(edit);
   } catch (e) {
-    jsx = t(exml);
     const p = path.split("/");
     vscode.window.showWarningMessage(
       `${p[p.length - 1]} need to be fixed manually.`
     );
   }
-  fs.writeFile(path.replace("exml", "tsx"), jsx);
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -65,6 +46,7 @@ export function activate(context: vscode.ExtensionContext) {
                 return translate(filePath);
               })
           );
+
           const mark = { fulfilled: 0, rejected: 0 };
           results.forEach(({ status }) => mark[status]++);
           vscode.window.showInformationMessage(

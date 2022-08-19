@@ -1,4 +1,5 @@
-import { Plugin } from "../traverse";
+import { Plugin } from "../generate";
+
 
 export const handleSpecialProps: Plugin = {
   after({ element, elements }) {

@@ -1,7 +1,6 @@
-import { Plugin } from "../traverse";
-import { CollectInfo } from "../convert";
+import { Plugin } from "../generate";
 
-export const handleVariable: Plugin<CollectInfo> = {
+export const handleVariable = {
   replaceBefore(exml, info) {
     const v = exml
       .match(/\{[a-zA-Z_]+\w+(\.[a-zA-Z_]+\w+)*}/g)
