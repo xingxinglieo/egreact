@@ -5,53 +5,53 @@ import { render } from '@testing-library/react'
 import { CONSTANTS } from '../../src/constants'
 
 describe('Host common', () => {
-  describe('NormalProp.passWithType', () => {
-    const target = new egret.DisplayObject()
-    const targetKey = 'test'
-    const p = {
-      newValue: '1',
-      target,
-      targetKey,
-    }
-    it('should pass when test.length === 0', () => {
-      const defaultError = console.error
-      const myError = jest.fn(console.error)
-      console.error = myError
-      // const pass1 = NormalProp.passWithType()
-      // const pass2 = NormalProp.passWithType([])
+  // describe('NormalProp.passWithType', () => {
+  //   const target = new egret.DisplayObject()
+  //   const targetKey = 'test'
+  //   const p = {
+  //     newValue: '1',
+  //     target,
+  //     targetKey,
+  //   }
+  //   it('should pass when test.length === 0', () => {
+  //     const defaultError = console.error
+  //     const myError = jest.fn(console.error)
+  //     console.error = myError
+  //     // const pass1 = NormalProp.passWithType()
+  //     // const pass2 = NormalProp.passWithType([])
 
-      // @ts-ignore
-      pass1(p)
-      expect(myError).toBeCalledTimes(0)
-      // @ts-ignore
-      pass2(p)
-      expect(myError).toBeCalledTimes(0)
-      console.error = defaultError
-    })
+  //     // @ts-ignore
+  //     pass1(p)
+  //     expect(myError).toBeCalledTimes(0)
+  //     // @ts-ignore
+  //     pass2(p)
+  //     expect(myError).toBeCalledTimes(0)
+  //     console.error = defaultError
+  //   })
 
-    it('should check when test.length > 0', () => {
-      const defaultError = console.error
-      const myError = jest.fn(console.error)
-      console.error = myError
-      // const pass1 = NormalProp.passWithType([(v) => v === 1, (v) => v === '1'])
-      // const pass2 = NormalProp.passWithType([(v) => v === 1, (v) => v === 2], 'test')
-      // const pass3 = NormalProp.passWithTranslate(
-      //   (v) => Number(v),
-      //   [(v) => v === '1', (v) => v === 2],
-      // )
-      // NormalProp.passWithTranslate((v) => Number(v))
-      // @ts-ignore
-      pass1(p)
-      expect(myError).toBeCalledTimes(0)
-      // @ts-ignore
-      pass2(p)
-      expect(myError).toBeCalledTimes(1)
-      // @ts-ignore
-      // pass3(p)
-      // expect(myError).toBeCalledTimes(2)
-      console.error = defaultError
-    })
-  })
+  //   it('should check when test.length > 0', () => {
+  //     const defaultError = console.error
+  //     const myError = jest.fn(console.error)
+  //     console.error = myError
+  //     // const pass1 = NormalProp.passWithType([(v) => v === 1, (v) => v === '1'])
+  //     // const pass2 = NormalProp.passWithType([(v) => v === 1, (v) => v === 2], 'test')
+  //     // const pass3 = NormalProp.passWithTranslate(
+  //     //   (v) => Number(v),
+  //     //   [(v) => v === '1', (v) => v === 2],
+  //     // )
+  //     // NormalProp.passWithTranslate((v) => Number(v))
+  //     // @ts-ignore
+  //     pass1(p)
+  //     expect(myError).toBeCalledTimes(0)
+  //     // @ts-ignore
+  //     pass2(p)
+  //     expect(myError).toBeCalledTimes(1)
+  //     // @ts-ignore
+  //     // pass3(p)
+  //     // expect(myError).toBeCalledTimes(2)
+  //     console.error = defaultError
+  //   })
+  // })
 
   describe('NormalProp.instance', () => {
     it('args can be everything', () => {
