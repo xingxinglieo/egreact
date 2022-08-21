@@ -1,6 +1,6 @@
 ---
 title: 接口
-order: 1
+order: 2
 toc: menu
 nav:
   title: 组件
@@ -97,7 +97,6 @@ graphics.endFill()
 | `${name}`                   | `[]\|egret.Texture` |                                   | 传入数组时， `new egret.Texture()` |
 | `${name}-bitmapData`        | `egret.Bitmap`      | 被引用的 BitmapData 对象          |                                    |
 | `${name}-disposeBitmapData` | `boolean`           | 销毁纹理时是否销毁对应 BitmapData |                                    |
-| `${name}-ktxData`           | `ArrayBuffer`       | 被引用的 KTXData 对象             |                                    |
 
 ## LayoutBase
 

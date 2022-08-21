@@ -18,7 +18,6 @@
   },
   "include": [
     "src",
-    "node_modules/egreact/types",
-    "node_modules/egreact/dist/types"
+    "types"
   ]
 }

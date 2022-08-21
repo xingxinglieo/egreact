@@ -1,6 +1,6 @@
 ---
 title: eui
-order: 3
+order: 4
 toc: menu
 ---
 
@@ -66,14 +66,14 @@ toc: menu
 
 父类组件混入：[displayObjectContainer](/components/egret#displayobjectContainer),[BaseLayout](/components/eui#baselayout)
 
-| 属性名           | 类型                      | 描述                                                           | 创建 | 清除 |
-| ---------------- | ------------------------- | :------------------------------------------------------------- | :--- | :--- |
-| skinName         | `any`                     | 皮肤标识符                                                     |      |
-| currentState     | `string`                  | 组件的当前视图状态                                             |      |
-| hostComponentKey | `string`                  | 主机组件标识符                                                 |      |
-| enabled          | `boolean`                 | 组件是否可以接受用户交互                                       |      |
-| skin             | `eui.Skin`                | 皮肤对象实例                                                   |      |
-| onComplete       | `(e:egret.Event) => void` | 当设置skinName为外部exml文件路径时，加载并完成EXML解析后调度。 |      |
+| 属性名           | 类型                                            | 描述                                                           | 创建 | 清除 |
+| ---------------- | ----------------------------------------------- | :------------------------------------------------------------- | :--- | :--- |
+| skinName         | `string \| eui.Skin \| typeof eui.Skin \| void` | 皮肤标识符                                                     |      |
+| currentState     | `string`                                        | 组件的当前视图状态                                             |      |
+| hostComponentKey | `string`                                        | 主机组件标识符                                                 |      |
+| enabled          | `boolean`                                       | 组件是否可以接受用户交互                                       |      |
+| skin             | `eui.Skin`                                      | 皮肤对象实例                                                   |      |
+| onComplete       | `(e:egret.Event) => void`                       | 当设置skinName为外部exml文件路径时，加载并完成EXML解析后调度。 |      |
 
 ## eui-group
 
@@ -154,7 +154,7 @@ toc: menu
 
 ## eui-scroller
 
-[eui.Group](https://docs.egret.com/uieditor/docs/api/eui/eui.Scroller)  
+[eui.Scroller](https://docs.egret.com/uieditor/docs/api/eui/eui.Scroller)  
 
 > Scroller 组件显示一个称为视域的单个可滚动组件，以及水平滚动条和垂直滚动条。该视域必须实现 IViewport 接口。
 
@@ -171,3 +171,59 @@ toc: menu
 | verticalScrollBar   | `eui.VScrollBar` | 垂直滚动条                                                                                                   |      |
 
 **`viewport` 需要通过 `attach` 声明**， 点 [这里](/guide/basic#attach) 回顾，里面有一个 `eui-scroller` 的例子。
+
+## eui-dataGroup
+
+[eui.DataGroup](https://docs.egret.com/uieditor/docs/api/eui/eui.DataGroup)  
+
+> DataGroup 类将数据项目转换为可视元素以进行显示。尽管此容器可以包含可视元素，但它通常仅用于包含作为子项的数据项目。
+
+父类组件混入：[eui-group](/components/eui#eui-group)
+
+| 属性名               | 类型                                            | 描述                                                                    | 创建 | 清除 |
+| -------------------- | ----------------------------------------------- | :---------------------------------------------------------------------- | :--- | :--- |
+| dataProvider         | `eui.ICollection \| void`                       | 列表数据源，请使用实现了ICollection接口的数据类型，例如 ArrayCollection |      |
+| itemRenderer         | `typeof eui.ItemRenderer \| void`               | 用于数据项目的项呈示器                                                  |      |
+| itemRendererFunction | `(item: any) => typeof eui.ItemRenderer`        | 为某个特定数据项返回一个项呈示器类定义的函数                            |      |
+| itemRendererSkinName | `string \| eui.Skin \| typeof eui.Skin \| void` | 条目渲染器的可选皮肤标识符                                              |      |
+
+
+## eui-list
+
+[eui.List](https://docs.egret.com/uieditor/docs/api/eui/eui.List)  
+
+> List 控件可显示垂直或水平的项目列表。用户可以根据 allowMultipleSelection 属性的值从列表中选择一个或多个项目。
+
+父类组件混入：[eui-dataGroup](/components/eui#eui-dataGroup)
+
+| 属性名                 | 类型      | 描述                                                                                                  | 创建 | 清除 |
+| ---------------------- | --------- | :---------------------------------------------------------------------------------------------------- | :--- | :--- |
+| allowMultipleSelection | `boolean` | 是否允许同时选中多项,设置为 true 时，触摸按下未选中的项呈示器，将会设置该项选中，再次按下将会取消选中 |      |
+
+## eui-button
+
+[eui.Button](https://docs.egret.com/uieditor/docs/api/eui/eui.Button)  
+
+> Button 组件是常用的矩形按钮。Button 组件看起来可以按压。默认外观具有一个文本标签和图标显示对象。
+
+父类组件混入：[eui-component](/components/eui#eui-component)
+
+| 属性名       | 类型                            | 描述                            | 创建 | 清除 |
+| ------------ | ------------------------------- | :------------------------------ | :--- | :--- |
+| label        | `string\number`                 | 要在按钮上显示的文本            |      |
+| icon         | `string\| egret.Texture\| void` | 要在按钮上显示的图标数据        |      |
+| iconDisplay  | `eui.Image \| void`             | [SkinPart] 按钮上的图标显示对象 |      |
+| labelDisplay | `eui.IDisplayText \| void`      | [SkinPart] 按钮上的文本标签     |      |
+
+## eui-editableText
+
+[eui.EditableText](https://docs.egret.com/uieditor/docs/api/eui/eui.EditableText)  
+
+> 可编辑文本，用于显示、滚动、选择和编辑文本。
+
+父类组件混入：[BaseLayout](/components/eui#baselayout),[textField](/components/egret#textfield)
+
+| 属性名      | 类型               | 描述                                   | 创建 | 清除 |
+| ----------- | ------------------ | :------------------------------------- | :--- | :--- |
+| prompt      | `string \| number` | 当text属性为空字符串时要显示的文本内容 |      |
+| promptColor | `number \| string` | 默认文本的颜色                         |      |

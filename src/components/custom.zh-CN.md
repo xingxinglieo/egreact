@@ -1,6 +1,6 @@
 ---
 title: 自定义组件
-order: 4
+order: 5
 toc: menu
 ---
 
