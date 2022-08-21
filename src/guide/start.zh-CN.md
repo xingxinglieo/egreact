@@ -8,20 +8,18 @@ toc: menu
 
 ## webpack 配置
 
-你可能不了解如何使用 webpack 启动一个 egret 应用，本节将配置一个最简单的 webpack egreact 开发环境。
+你可能不了解如何使用 webpack 启动一个 egret 应用，本节将配置一个最简单的 webpack egret 开发环境。
 
 ### 准备 egret 库
 
-首先你需要准备 egret 库。
+首先你需要准备 egret 库，这里提供三种思路
 
 - 直接从旧项目复制过来，.d.ts 文件也需要一同复制过来
 
 - npm 安装
-
   ```
-  npm install egret-engine
+  npm install egret-engine -S
   ```
-
 - 通过 cnd 引入
 
 > 注意 npm 的 egret-engine 最新版本是 5.2.18，建议直接从旧项目复制过来。
@@ -57,7 +55,7 @@ npm install egreact
 }
 ```
 
-> 请保证此步骤生效，否则会因 ts 类型错误过多而导致项目卡顿。修改 tsconfig.json 后可能需要重启 vscode 才能生效。
+> 请保证此步骤生效，否则会因 ts 类型错误过多而导致项目卡顿。修改 tsconfig.json 后可能需要重启 vscode 才能生效。判断是否配置成功，在项目中任意地方输入 `egret` 查看是否有类型声明
 
 一个开发环境搭建就这么简单，一是引入 egret 库，二是配置 egret 的类型声明，如果你还有疑问，可以看看 [简单模版](https://github.com/xingxinglieo/egreact/tree/master/packages/dev)。
 

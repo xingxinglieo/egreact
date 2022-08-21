@@ -10,10 +10,16 @@ hero:
 features:
   - icon: https://xingxinglieo.github.io/egreact/react.png
     title: 混合开发 
-    desc: 用 react 开发 egret 应用的 UI，还支持 redux，react-router 等库和 react devtool 调试
+    desc: 用 react 开发 egret 应用的 UI，支持 redux，react-router 等 react 生态
+
   - icon: https://xingxinglieo.github.io/egreact/typescript.png
     title: 完备的 TypeScript 支持
     desc: 编写 egreact 时处处有 TypeScript 提示，给予最好的开发体验
+
+  - icon: https://xingxinglieo.github.io/egreact/util.png
+    title: 工具支持 
+    desc: 支持 React Devtool 调试，vscode 插件 exml2egreact
+
   - icon: https://xingxinglieo.github.io/egreact/custom.png
     title: 自定义原生组件
     desc: 开放自定义原生组件的接口，可以自行拓展原生组件，拓宽组件的描述能力。

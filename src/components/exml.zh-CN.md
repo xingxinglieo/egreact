@@ -46,7 +46,7 @@ toc: menu
 
 ### 循环
 
-无需使用 `e:DataGroup` 组件，直接使用 jsx 中的 map 循环即可。
+无需使用 `e:DataGroup` 组件，直接使用 tsx 中的 map 循环即可。
 
 ``` xml
 <e:DataGroup>
@@ -66,8 +66,8 @@ toc: menu
 ```
 ## vscode 插件 exml2egreact
 
-为了转换/兼容更为高效，egreact 提供了一个 vscode 插件帮助转换 exml 到 egreact 的 jsx 组件。
-vscode 插件市场搜索 exml2egreact 安装后，在 `.exml` 文件或包括 `.exml` 的文件夹右键选择`exml2egreact`，就会在同目录下生成同名的 tsx 文件。
+为了转换/兼容更为高效，egreact 提供了一个 vscode 插件帮助转换 exml 到 egreact 的 tsx 组件。
+vscode 插件市场搜索 exml2egreact 安装后，在 `.exml` 文件或包括 `.exml` 的文件夹右键选择`exml2egreact`，就会在同目录下生成同名的 `.tsx` 文件。
 
 <img src="https://xingxinglieo.github.io/egreact/exml2egreact2.png" height="500">
 

@@ -4,11 +4,11 @@ toc: menu
 order: 3
 ---
 
-## 入口
+## renderer 渲染入口
 
 ### Egreact
 
-`Egreact` 是渲染的入口，从这里开始使用 tsx 编写 egret 应用。
+`Egreact` 是渲染的入口，它是一个 `react-dom` 组件，从这里开始使用 tsx 编写 egret 应用。
 
 ``` tsx | pure
 import React from 'react'
@@ -77,8 +77,8 @@ export type CreateRootOptions = {
 }
 
 class EgreactRoot{
-  render(children: React.ReactNode) {}
-  unmount() {} // 需要卸载整个组件树调用
+  render(children: React.ReactNode, sync: boolean) => void // sync 是否同步渲染
+  unmount() => void // 需要卸载整个组件树调用
 }
 
 function createEgreactRoot(
@@ -87,7 +87,7 @@ function createEgreactRoot(
 ): EgreactRoot
 ```
 
-## prop
+## prop and event 属性和事件
 
 以 `eui-group` 最常用的属性 `layout` 说明在 egreact 中是如何处理 prop 的。
 
@@ -235,7 +235,7 @@ parent.addChild(child)
 child['x'] = 100;
 ```
 
-## event
+### event
 
 以 `on` 开头的 prop 会被识别是事件，如 `onTouchTap`  
 
@@ -280,35 +280,6 @@ onTouchTapCaptureOnce12
 ```
 
 因为事件往往采用字面量形式声明并传入函数，为避免频繁地移除和添加事件，内部采用引用的方式对监听函数进行更新，实际监听的函数并非传入的函数。
-
-## Pool 对象池
-
->> 不稳定，在大量元素频繁切换时会布局错乱。
-
-@1.3.0 新增，原生组件被移除时，被回收至池中，当创建同类时直接从池中取出，默认关闭。
-
-[池的默认大小]()，可以通过 setInfo 设置大小
-``` typescript
-import { Pool } from 'egreact'
-// 全局开启
-Pool.enable = true;
-// 设置每个类默认的最大容量
-Pool.defaultSize = 500;
-// 设置单独的最大容量
-Pool.setInfo({
-  constructor: egret.DisplayObject,
-  size: 1000
-})
-```
-
-egreact 对回收的对象会自动清除显式赋值的副作用，但挂载后未知的副作用需要手动去除。若未清除副作用对复用产生影响，可以使用 `noUsePool` 属性声明不参与对象池，并报告这个场景的 [issue](https://github.com/xingxinglieo/egreact/issues)。 
-
-``` tsx | pure
-// 直接使用构造函数创建且不会被回收
-<eui-group noUsePool></eui-group>
-```
-
-
 
 ## ContextBridge 桥接 Context
 
@@ -384,8 +355,35 @@ export default () =>(<Provider store={store}><App/></Provider>)
 
 它成功运行了，而且点击时组件的状态会同步，这正是 `ContextBridge` 所发挥的作用！在 `Egreact` 内部，会通过 dom 节点获取 `fiber` 节点并回溯到根结点，收集路径上的 `contexts`,再通过 `ContextBridge` 桥接到 `egreact` 渲染器中。你也可以传递 `contexts` 数组直接指定 `contexts` 的来源。
 
-## DevTools
+## React DevTools 开发者工具
 
 得益于 React DevTools 对自定义渲染器的支持，只需要调用一个简单的 api 就能在 Devtools 中展示 egreact 的组件树。然而，Devtools 并未支持对自定义渲染器 picker 的适配接口，egreact 通过拦截监听器等操作完美适配了 picker。
 
 <img src="https://xingxinglieo.github.io/egreact/devtools.png" width="666" />
+
+## Pool 对象池 <Badge type="warning">不稳定</Badge>
+
+> 不稳定，在大量元素频繁切换时会布局错乱，目前已经默认关闭。
+
+@1.3.0 新增，原生组件被移除时，被回收至池中，当创建同类时直接从池中取出。
+
+[池的默认大小]()，可以通过 setInfo 设置大小
+``` typescript
+import { Pool } from 'egreact'
+// 全局开启
+Pool.enable = true;
+// 设置每个类默认的最大容量
+Pool.defaultSize = 500;
+// 设置单独的最大容量
+Pool.setInfo({
+  constructor: egret.DisplayObject,
+  size: 1000
+})
+```
+
+egreact 对回收的对象会自动清除显式赋值的副作用，但挂载后未知的副作用需要手动去除。若未清除副作用对复用产生影响，可以使用 `noUsePool` 属性声明不参与对象池。
+
+``` tsx | pure
+// 直接使用构造函数创建且不会被回收
+<eui-group noUsePool></eui-group>
+```
