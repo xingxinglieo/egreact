@@ -29,6 +29,7 @@ describe('diff props', () => {
 
   describe('when a prefix prop update and a suffix prop remove', () => {
     const instance = attachInfo(new eui.Group(), {
+      // @ts-ignore
       propsHandlers: groupHandlers,
     })
     it('layout-paddingBottom should before layout, layout-gap should after layout', () => {
@@ -56,6 +57,7 @@ describe('diff props', () => {
 
   describe('when a prop hava a custom diff fun', () => {
     const instance = attachInfo(new egret.Sprite(), {
+      // @ts-ignore
       propsHandlers: spriteHandlers,
     })
     expect(

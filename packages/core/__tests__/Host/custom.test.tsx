@@ -4,6 +4,7 @@ import { render } from '@testing-library/react'
 import { getActualInstance } from '../../src/utils'
 import { ArrayContainer } from '../../src/Host/custom/ArrayContainer'
 import objectContainer from '../../src/Host/custom/ObjectContainer'
+import { Primitive } from '../../src/Host/custom/Primitive'
 import { BrowserRouter } from 'react-router-dom'
 import { EgreactLink } from '../../src/Host'
 
@@ -178,6 +179,15 @@ describe('arrayContainer font objectContainer primitive', () => {
       )
     }
     expect(() => render(<TestContainer />)).toThrow()
+  })
+
+  it(`should throw error when target has IContainer method`, () => {
+    const p = new Primitive({ constructor: Object })
+
+    expect(() => p.addChild({}, {})).toThrow()
+    expect(() => p.removeChild({}, {})).toThrow()
+    expect(() => p.addChildAt({}, 1, {})).toThrow()
+    expect(() => p.getChildIndex({}, {})).toThrow()
   })
 })
 

@@ -1,4 +1,4 @@
-import { IPropsHandlers } from '../type'
+import { IPropsHandlers, IPropInterface } from '../type'
 import { CONSTANTS } from '../constants'
 
 type ToUnionOfFunction<T> = T extends any ? (x: T) => any : never
@@ -19,8 +19,8 @@ module Mixin {
   }
 
   // 铺平对象，比如 {a:{b:string},b:number} 会转换为 { a-b:string,b:number }
-  type _FlattenObject<T extends IPropsHandlers, S extends string> = {
-    [K in Exclude<keyof T, Symbol>]: T[K] extends IPropsHandlers
+  type _FlattenObject<T extends IPropInterface, S extends string> = {
+    [K in Exclude<keyof T, Symbol>]: T[K] extends IPropInterface
       ? _FlattenObject<T[K], `${S}${K}-`>
       : { [_ in `${S}${K}`]: T[K] }
   }[Exclude<keyof T, Symbol>]
@@ -30,13 +30,13 @@ module Mixin {
     [K in Exclude<keyof T, Symbol> as `${S}-${K}`]: T[K]
   }
 
-  export type FlattenObject<T extends IPropsHandlers, K extends string> = TranslateDiffKey<
+  export type FlattenObject<T extends IPropInterface, K extends string> = TranslateDiffKey<
     TranslateHandlerKey<WrapKey<LiteralObj<UnionToIntersection<_FlattenObject<T, ''>>>, K>>
   >
 
   // 完成上述类型相对应的函数转换
   // S extends [string] 用于字面量推断，传入的字符串会推断为字面量而非 string
-  export const mixin = <T, P extends IPropsHandlers, S extends [string]>(target: T, obj: P, ...key: S) => {
+  export const mixin = <T, P extends IPropInterface, S extends [string]>(target: T, obj: P, ...key: S) => {
     const entries: [string[], any][] = []
     // 铺平收集键值对
     const collectTranslateKey = (obj: P, prefixKey: string[]) => {
@@ -75,7 +75,7 @@ export const mixinHelper = {
       store: target,
     }
   },
-  mixin<P extends { store: any }, T extends IPropsHandlers, S extends [string]>(this: P, obj: T, ...name: S) {
+  mixin<P extends { store: any }, T extends IPropInterface, S extends [string]>(this: P, obj: T, ...name: S) {
     type Store = P extends { store: infer D } ? D : never
     type Name = S extends [infer N] ? N : never
     return {

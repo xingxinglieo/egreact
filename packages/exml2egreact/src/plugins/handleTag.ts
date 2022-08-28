@@ -14,7 +14,7 @@ const euiKeys = [
   "BitmapLabel",
   "Button",
   "Component",
-  "DateGroup",
+  "DataGroup",
   "EditableText",
   "Group",
   "Image",
@@ -36,7 +36,7 @@ export const handleTag = {
       } else if (element.name.startsWith("ns1:")) {
         // 自定义组件
         // 1. 有 id 增入 skins 待 generate 并增加变量, 删除 id 属性避免走到后续处理
-        // 2. 无 id 增加 classConstructor 属性
+        // 2. 无 id 增加 constructor 属性
         const className = element.name.replace("ns1:", "");
         if ("id" in element.attributes) {
           const id = element.attributes.id as string;

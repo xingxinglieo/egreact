@@ -9,7 +9,8 @@ import {
   handleNativeValue,
   handleSkin,
   handleVariable,
-  htmlDecode
+  htmlDecode,
+  handleScroller
 } from "./plugins";
 
 export default function (exml: string) {
@@ -19,6 +20,7 @@ export default function (exml: string) {
     plugins: [
       handleVariable,
       handleSkin,
+      handleScroller,
       handleTag,
       handlePropTag,
       handleComment,

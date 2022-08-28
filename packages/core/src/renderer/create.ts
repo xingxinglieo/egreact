@@ -2,7 +2,7 @@ import React from 'react'
 import type { TransitionTracingCallbacks, FiberRoot } from 'react-reconciler'
 import { ConcurrentRoot } from 'react-reconciler/constants'
 import { reconciler } from './index'
-import { attachInfo, detachInfo } from '../utils'
+import { attachInfo, detachInfo, DevThrow } from '../utils'
 import { defaultOnRecoverableError } from '../outside'
 import { Instance } from '../type'
 import { isProduction } from '../constants'
@@ -25,7 +25,7 @@ export class EgreactRoot {
     const root = this._internalRoot
     const { sync = false } = options
     if (root === null) {
-      throw `Cannot update an unmounted root.`
+      return DevThrow(`Cannot update an unmounted root.`)
     }
     if (!this.rendered) {
       this.rendered = true

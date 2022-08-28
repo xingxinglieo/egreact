@@ -38,7 +38,7 @@ export const generate = (jsx: string, info: CollectInfo) => {
 import React, { useRef, useState, useEffect } from 'react';
 ${importIdentifiers}
 
-export const ${className} = ({ context }) => {
+export default function ${className}({ context }) {
   ${variablesIdentifiers}
 
   ${refsIdentifiers}

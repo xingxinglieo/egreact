@@ -11,6 +11,14 @@ export function hyphenate(str: string) {
   return str.replace(hyphenateRE, '-$1').toLowerCase()
 }
 
+export const DevThrow = (e: string | Error) => {
+  if (isProduction) {
+    console.error(e instanceof Error ? e.message : e)
+  } else {
+    throw e
+  }
+}
+
 /**
  * @description 获取用于操作的实际 instance
  */
@@ -182,18 +190,18 @@ export function diffProps(
 
 /**
  * @description key 用分隔符分割，target 逐个 key 访问到目标对象
+ * target 为 null 表示出错
  */
 export function reduceKeysToTarget(target: any, key: string, separator = '-') {
   const prefixKeys = key.split(separator)
   const targetKey = prefixKeys.pop()
   try {
     target = prefixKeys.reduce((target, key) => target[key], target)
-    if (target instanceof Object) return [target, targetKey, prefixKeys] as const
-    else throw ``
-  } catch (e) {
-    const prefixKey = prefixKeys.join(separator)
-    console.error(`\`${key}\` depends on \`${prefixKey}\`, you must set \`${prefixKey}\` before`)
-  }
+    if (target instanceof Object) {
+      return [target, targetKey, prefixKeys] as const
+    }
+  } catch (e) {}
+  return [null, targetKey, prefixKeys] as const
 }
 
 export const DEFAULT_EVENT_CATEGORY = egret.Event
@@ -290,7 +298,12 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
         info.memoizedResetter[key] = resetter
       }
     } else {
-      const [target, targetKey] = reduceKeysToTarget(instance, keys.join('-'))
+      const [target, targetKey, prefixKeys] = reduceKeysToTarget(instance, keys.join('-'))
+
+      if (target === null) {
+        const prefixKey = prefixKeys.join('-')
+        return DevThrow(`\`${targetKey}\` depends on \`${prefixKey}\`, you must set \`${prefixKey}\` before`)
+      }
 
       // 存储一下初始值
       if (!info.memoizedDefault.hasOwnProperty(key)) {

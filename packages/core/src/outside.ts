@@ -1,7 +1,7 @@
 // 外部代码，免于测试
 /**
  *
- * @copyright Copyright egret inject.
+ * @copyright Copyright egret inject(Chrome Plugin).
  * @description 寻找显示对象中符合舞台位置的最深的子显示对象（包含自身）
  */
 export function findTargetByPosition(

@@ -1,42 +1,56 @@
 import { PropSetterParameters } from './../../type'
 import { proxyHelper } from '../utils'
-import { isEvent } from '../../utils'
-import type { Instance, IContainer } from '../../type'
+import { isEvent, DevThrow, is } from '../../utils'
+import type { Instance, IContainer, ICustomClass } from '../../type'
 import { CONSTANTS } from '../../constants'
 import { NormalProp, EventProp } from '../common'
 
-export class Primitive extends egret.EventDispatcher implements IContainer {
+export class Primitive extends egret.EventDispatcher implements IContainer, ICustomClass {
   __target: any
   constructor(...args) {
     super()
-    const { object, constructor } = args[args.length - 1]
+    const props = args[args.length - 1]
+    const { object, constructor } = props
 
     if (typeof object === 'object' && object !== null) {
       this.__target = object
-    } else if (constructor !== {}.constructor && typeof constructor === 'function') {
+    } else if (props.hasOwnProperty('constructor') && typeof constructor === 'function') {
       this.__target = new constructor(...args.slice(0, -1))
     } else {
-      throw `primitive must have a \`object\` or a \`constructor\` prop`
+      DevThrow(`primitive must have an \`object\` or a \`constructor\` prop`)
     }
   }
   get object() {
     return this.__target
   }
   addChild(child: any, childInstance) {
-    if ('addChild' in this.__target) {
+    if (is.fun(this.__target.addChild)) {
       this.__target.addChild(child, childInstance)
     } else {
-      throw `please promise addChild method to ${this.__target.constructor.name}`
+      DevThrow(`please promise addChild method to ${this.__target.constructor.name}`)
     }
   }
   removeChild(child: any, childInstance) {
-    this.__target.removeChild(child, childInstance)
+    if (is.fun(this.__target.removeChild)) {
+      this.__target.removeChild(child, childInstance)
+    } else {
+      DevThrow(`please promise removeChild method to ${this.__target.constructor.name}`)
+    }
   }
   addChildAt(child: any, index: number, childInstance) {
-    this.__target.addChildAt(child, index, childInstance)
+    if (is.fun(this.__target.addChildAt)) {
+      this.__target.addChildAt(child, index, childInstance)
+    } else {
+      DevThrow(`please promise addChildAt method to ${this.__target.constructor.name}`)
+    }
   }
-  getChildIndex(child: any) {
-    return this.__target.getChildIndex(child)
+  getChildIndex(child: any, childInstance) {
+    if (is.fun(this.__target.getChildIndex)) {
+      return this.__target.getChildIndex(child, childInstance)
+    } else {
+      DevThrow(`please promise getChildIndex method to ${this.__target.constructor.name}`)
+      return 0
+    }
   }
 }
 
@@ -47,12 +61,16 @@ const primitive = {
   }),
   object: ({}: PropSetterParameters<object, Instance<Primitive>>) => {
     return (isRemove: boolean) => {
-      if (!isRemove) throw `please use key to refresh object in primitive`
+      if (!isRemove) {
+        DevThrow(`please use key to refresh object in primitive`)
+      }
     }
   },
   constructor: ({}: PropSetterParameters<Function, Instance<Primitive>>) => {
     return (isRemove: boolean) => {
-      if (!isRemove) throw `please use key to refresh constructor in primitive`
+      if (!isRemove) {
+        DevThrow(`please use key to refresh constructor in primitive`)
+      }
     }
   },
   [objectDiffKey]: (n, o) => n === o,

@@ -3,6 +3,7 @@ export { handleConditionProps } from "./handleConditionProps";
 export { handleSpecialProps } from "./handleSpecialProps";
 export { handleNativeValue } from "./handleNativeValue";
 export { handlePropTag } from "./handlePropTag";
+export { handleScroller } from "./handleScroller";
 export { handleTag } from "./handleTag";
 export { handleSkin } from "./handleSkin";
 export { handleVariable } from "./handleVariable";

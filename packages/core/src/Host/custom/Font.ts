@@ -1,7 +1,8 @@
 import { NormalProp } from '../common'
 import { proxyHelper } from '../utils'
+import { ICustomClass } from '../../type'
 
-export class Font extends egret.EventDispatcher {
+export class Font extends egret.EventDispatcher implements ICustomClass {
   __target: egret.ITextElement = {
     text: '',
     style: {},

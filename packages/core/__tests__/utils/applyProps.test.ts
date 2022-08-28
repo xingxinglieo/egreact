@@ -3,9 +3,9 @@ import groupHandlers from '../../src/Host/eui/Group'
 
 describe('apply props', () => {
   const instance = attachInfo<eui.Group>(new eui.Group(), {
+    // @ts-ignore
     propsHandlers: {
       ...groupHandlers,
-      // @ts-ignore
       onMyEventBb: () => () => {
         console.log(32)
       },

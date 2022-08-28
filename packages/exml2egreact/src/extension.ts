@@ -1,24 +1,26 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import * as fs from "fs/promises";
 import convert from "./convert";
 
+const fs = vscode.workspace.fs;
 async function translate(path: string) {
-  const exml = await fs.readFile(path, { encoding: "utf-8" });
-  const p = path.replace("exml", "tsx");
-  await fs.writeFile(p, convert(exml));
+  const originUri = vscode.Uri.file(path);
+  const exml = Buffer.from(await fs.readFile(originUri)).toString();
+
+  const newFileUri = vscode.Uri.file(path.replace("exml", "tsx"));
+
+  await fs.writeFile(newFileUri, new Uint8Array(Buffer.from(convert(exml))));
   try {
-    const uri = vscode.Uri.file(p);
     const edit = new vscode.WorkspaceEdit();
     edit.set(
-      uri,
+      newFileUri,
       await vscode.commands.executeCommand(
         "vscode.executeFormatDocumentProvider",
-        uri
+        newFileUri
       )
     );
-    vscode.workspace.applyEdit(edit);
+    await vscode.workspace.applyEdit(edit);
   } catch (e) {
     const p = path.split("/");
     vscode.window.showWarningMessage(
@@ -35,12 +37,14 @@ export function activate(context: vscode.ExtensionContext) {
     async (info: { path: string }) => {
       try {
         const path = info.path;
-        const stat = await fs.stat(path);
-        if (stat.isDirectory()) {
-          const files = await fs.readdir(path);
+        const originUri = vscode.Uri.file(path);
+
+        const stat = await fs.stat(originUri);
+        if (stat.type === vscode.FileType.Directory) {
+          const files = await fs.readDirectory(originUri);
           const results = await Promise.allSettled(
             files
-              .map((file) => path + "/" + file)
+              .map(([file]) => path + "/" + file)
               .filter((filePath) => /\.exml$/.test(filePath))
               .map((filePath) => {
                 return translate(filePath);

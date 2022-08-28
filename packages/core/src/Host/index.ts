@@ -2,7 +2,7 @@ import egretProps from './egret/index'
 import euiProps from './eui/index'
 import customProps from './custom'
 import { Pool } from '../utils/Pool'
-import { detachRenderString } from './custom/RenderString'
+import { detachTextNode } from './custom/TextNode'
 import type { IPropsHandlers, IElementProps } from '../type'
 
 export type NodeProps<T> = {
@@ -49,19 +49,11 @@ declare global {
       'eui-dataGroup': TransProp<typeof euiProps.dataGroup>
       'eui-editableText': TransProp<typeof euiProps.editableText>
       'eui-list': TransProp<typeof euiProps.list>
-      // 'eui-hScrollBar': TransProp<typeof euiProps.hScrollBar>
-      // 'eui-vScrollBar': TransProp<typeof euiProps.vScrollBar>
 
       font: TransProp<typeof customProps.font>
       arrayContainer: TransProp<typeof customProps.arrayContainer>
-      objectContainer: TransProp<typeof customProps.objectContainer> & {
-        [k in string]: any
-      }
-      primitive: TransProp<typeof customProps.primitive> & {
-        [k in string]: any
-      } & {
-        mountedApplyProps?: false // primitive 不允许插入后再应用属性，因为它的实例本身就是由 object 创造
-      }
+      objectContainer: TransProp<typeof customProps.objectContainer>
+      primitive: TransProp<typeof customProps.primitive>
     }
   }
 }
@@ -79,6 +71,10 @@ Pool.registerClass([
     eui.BitmapLabel,
     eui.Rect,
     eui.Scroller,
+    eui.List,
+    eui.DataGroup,
+    eui.Button,
+    eui.EditableText,
   ].map((clz) => ({ constructor: clz })),
   // 需要特殊处理
   ...[
@@ -89,8 +85,8 @@ Pool.registerClass([
         instance.scrollV = 0
       },
     },
-    { constructor: eui.Label, resetter: detachRenderString },
-    { constructor: egret.TextField, resetter: detachRenderString },
+    { constructor: eui.Label, resetter: detachTextNode },
+    { constructor: egret.TextField, resetter: detachTextNode },
   ],
 ])
 

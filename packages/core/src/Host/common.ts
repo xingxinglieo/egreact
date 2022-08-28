@@ -1,6 +1,6 @@
-import { getActualInstance, is } from '../utils'
+import { DevThrow, getActualInstance, is } from '../utils'
 import { CONSTANTS } from '../constants'
-import { DiffHandler, PropSetter, EventSet, PropSetterParameters } from '../type'
+import { DiffHandler, PropSetter, EventSet, PropSetterParameters, IPropInterface } from '../type'
 
 export interface PropsHandlers {
   [e: `${typeof CONSTANTS.CUSTOM_DIFF_PREFIX}${string}`]: (newProp: any, oldProp: any) => boolean
@@ -133,6 +133,7 @@ export module NormalProp {
   // 数组逐一对比
   export const flatArrDiffWithLevel = (level = Infinity) => {
     const flatArr = (np: any, op: any) => {
+      if (np === op) return true
       if (is.arr(np) && is.arr(op)) {
         np = np.flat(level)
         op = op.flat(level)
@@ -141,7 +142,7 @@ export module NormalProp {
           if (np[i] !== op[i]) return false
         }
         return true
-      } else return np === op
+      } else return false
     }
     return flatArr
   }
@@ -268,10 +269,13 @@ export const layoutBaseHandlers = {
     } else if (newValue instanceof eui.LayoutBase) {
       value = newValue
     } else {
-      throw `prop which type is LayoutBase must be "basic" | "tile" | "horizontal" | "vertical" | eui.LayoutBase`
+      // default to BasicLayout and warning user
+      value = new eui.BasicLayout()
+      DevThrow(`prop which type is LayoutBase must be "basic" | "tile" | "horizontal" | "vertical" | eui.LayoutBase`)
     }
     target[targetKey] = value
   },
+  __diff: (a, b) => a === b,
 
   // 共有的属性
   horizontalAlign: NormalProp.str,

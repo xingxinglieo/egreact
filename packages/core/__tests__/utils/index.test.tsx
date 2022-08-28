@@ -62,13 +62,8 @@ describe('Reduce keys to target', () => {
     expect(reduceKeysToTarget(o1, 'a-b-c')).toEqual([o1.a.b, 'c', ['a', 'b']])
     expect(reduceKeysToTarget(o1, 'a.b.c', '.')).toEqual([o1.a.b, 'c', ['a', 'b']])
   })
-  it('should throw error if target is not exited', () => {
-    const defaultError = console.error
-    const myError = jest.fn(console.error)
-    console.error = myError
-    reduceKeysToTarget(o1, 'a-b-c-d')
-    expect(myError).toBeCalledTimes(1)
-    console.error = defaultError
+  it('should be null if target is not exited', () => {
+    expect(reduceKeysToTarget(o1, 'a-b-c-d')[0]).toBeNull()
   })
 })
 describe('Get event info from key', () => {

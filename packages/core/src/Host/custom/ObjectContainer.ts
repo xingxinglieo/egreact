@@ -1,13 +1,13 @@
 import { NormalProp } from '../common'
 import { proxyHelper } from '../utils'
-import { Instance } from '../../type'
+import { Instance, ICustomClass } from '../../type'
 import { CONSTANTS } from '../../constants'
+import { DevThrow } from '../../utils'
 
-const errorTip = `objectContainer can't add child directly. Please add \`attach\` prop to child`
-export class ObjectContainer extends egret.EventDispatcher {
+export class ObjectContainer extends egret.EventDispatcher implements ICustomClass {
   __target = {} as { [k in string]: any }
   addChild() {
-    throw errorTip
+    DevThrow(`objectContainer can't add child directly. Please add \`attach\` prop to child`)
   }
   reAttach(this: Instance<ObjectContainer>) {
     this.__target = { ...this.__target }

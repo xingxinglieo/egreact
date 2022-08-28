@@ -3,7 +3,7 @@
   "displayName": "exml2egreact",
   "description": "A converter to convert exml to egreact component",
   "repository": "https://github.com/xingxinglieo/egreact",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "publisher": "xingyuhu",
   "icon": "icon/egreact.png",
   "engines": {
@@ -42,9 +42,7 @@
   "scripts": {
     "vsce": "node delete.js && vsce package --no-dependencies",
     "vscode:prepublish": "rollup -c",
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "watch": "rollup -c -w"
+    "watch": "webpack --watch"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.2",
@@ -58,7 +56,10 @@
     "rollup": "^2.75.6",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.32.1",
-    "typescript": "^4.7.4"
+    "ts-loader": "^9.3.0",
+    "typescript": "^4.7.4",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.9.2"
   },
   "dependencies": {
     "xml-js": "^1.6.11",
