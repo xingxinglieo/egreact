@@ -1,12 +1,10 @@
-import { Egreact } from '../src/Egreact'
+import { Egreact } from '../src/Components/Egreact'
 import { render } from '@testing-library/react'
 import React, { useEffect } from 'react'
 
 describe('Egreact', () => {
   it('should handle prop correctly', () => {
-    const selector = render(
-      <Egreact contentWidth="750" contentHeight="1334" data-testid="div"></Egreact>,
-    )
+    const selector = render(<Egreact contentWidth="750" contentHeight="1334" data-testid="div"></Egreact>)
     expect(selector.getByTestId('div').getAttribute('data-content-width')).toBe('750')
   })
   it('should handle contexts prop correctly', () => {
@@ -33,6 +31,7 @@ describe('Egreact', () => {
   it('should handle renderer options', () => {
     render(
       <Egreact
+        mode="concurrent"
         rendererOptions={{
           // @ts-ignore
           unstable_strictMode: true,

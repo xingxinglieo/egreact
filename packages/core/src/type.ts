@@ -49,6 +49,7 @@ export type IPropsHandlers = {
   [key: `${typeof CONSTANTS.CUSTOM_DIFF_PREFIX}${string}`]: DiffHandler<unknown>
 } & {
   __Class: new (...args: any[]) => any
+  __detach?: (instance: Instance) => void
   args?: (...args: any[]) => any
 }
 

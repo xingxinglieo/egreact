@@ -164,7 +164,7 @@ describe('Get event info from key', () => {
 
 import React, { createContext } from 'react'
 import { render, screen } from '@testing-library/react'
-import { Egreact } from '../../src/Egreact'
+import { Egreact } from '../../src/Components/Egreact'
 describe('Get Contexts from Dom which is created by react-dom', () => {
   const myContext = createContext(1)
   it('should return contexts', () => {

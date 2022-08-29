@@ -14,7 +14,7 @@ import {
   getRenderInfo,
   DevThrow,
 } from '../utils'
-import { Pool } from '../utils/Pool'
+// import { Pool } from '../utils/Pool'
 import { getEventPriority } from '../outside'
 import { IContainer, IElementProps, Instance } from '../type'
 import { deleteCompatibleDomAttributes } from '../devtool'
@@ -68,10 +68,11 @@ const createInstance: HostConfig['createInstance'] = function (
   }
   const hasArgs = args.length > 0
 
-  const usePool = Pool.enable && !hasArgs && !noUsePool && Pool.isRegisteredClass(instanceProp.__Class)
+  // const usePool = Pool.enable && !hasArgs && !noUsePool && Pool.isRegisteredClass(instanceProp.__Class)
   const instance: Instance = attachInfo(
     // last parameter is props, let constructor do something
-    usePool ? Pool.get(instanceProp.__Class) : new instanceProp.__Class(...args, props),
+    // usePool ? Pool.get(instanceProp.__Class) :
+    new instanceProp.__Class(...args, props),
     {
       type,
       root: rootContainerInstance,
@@ -160,6 +161,8 @@ const detachDeletedInstance: HostConfig['detachDeletedInstance'] = (instance) =>
     target[targetKey] = defaultValue
   }
 
+  info.propsHandlers.__detach?.(instance)
+
   if (!isProduction) {
     deleteCompatibleDomAttributes(instance)
   }
@@ -169,10 +172,10 @@ const detachDeletedInstance: HostConfig['detachDeletedInstance'] = (instance) =>
   }
 
   // 对象池回收
-  if (Pool.enable && !info.noUsePool && !info.args && Pool.isRegisteredClass(instance.constructor)) {
-    instance?.removeChildren?.()
-    Pool.recover(instance)
-  }
+  // if (Pool.enable && !info.noUsePool && !info.args && Pool.isRegisteredClass(instance.constructor)) {
+  // instance?.removeChildren?.()
+  // Pool.recover(instance)
+  // }
 
   detachInfo(instance)
 }
@@ -215,6 +218,7 @@ const commitUpdate: HostConfig['commitUpdate'] = function (instance, diff, _type
     target[targetKey] = getActualInstance(instance)
   }
 }
+
 export const getCurrentEventPriority = () => {
   const currentEvent = window.event
   if (currentEvent === undefined) {

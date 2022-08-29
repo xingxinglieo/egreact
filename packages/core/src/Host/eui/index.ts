@@ -9,6 +9,7 @@ import button from './Button'
 import editableText from './EditableText'
 import dataGroup from './DateGroup'
 import list from './List'
+import itemRenderer from './ItemRenderer'
 
 export default {
   component,
@@ -22,4 +23,5 @@ export default {
   editableText,
   dataGroup,
   list,
+  itemRenderer,
 }

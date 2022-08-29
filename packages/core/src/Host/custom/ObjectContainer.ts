@@ -1,5 +1,5 @@
 import { NormalProp } from '../common'
-import { proxyHelper } from '../utils'
+import { proxyHelper, proxyGetPropsHandlers } from '../utils'
 import { Instance, ICustomClass } from '../../type'
 import { CONSTANTS } from '../../constants'
 import { DevThrow } from '../../utils'
@@ -26,11 +26,6 @@ const objectContainer = {
   __Class: ObjectContainerProxy,
 }
 const objectContainerProxy = new Proxy(objectContainer, {
-  get(target, key: string | symbol) {
-    if (key in target) return target[key]
-    else if (typeof key === 'symbol') return undefined
-    else if (key.startsWith(CONSTANTS.CUSTOM_DIFF_PREFIX)) return undefined
-    else return NormalProp.pass
-  },
+  get: proxyGetPropsHandlers,
 })
 export default objectContainerProxy

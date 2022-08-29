@@ -7,8 +7,8 @@ import {
   is,
   CallBackArray,
   ErrorBoundary,
-} from './utils'
-import { createEgreactRoot, EgreactRoot } from './renderer'
+} from '../utils'
+import { createEgreactRoot, EgreactRoot } from '../renderer'
 import { RootOptions } from 'react-dom/client'
 
 // 单独拿出来用于提示
@@ -24,6 +24,9 @@ const DomEgretPropsName = [
   'showPaintRect',
   'showFpsStyle',
 ] as const
+
+export type RenderMode = 'sync' | 'concurrent' | 'normal'
+
 type Props = {
   [key in typeof DomEgretPropsName[number]]?: string
 } & {
@@ -46,16 +49,15 @@ type Props = {
   rendererOptions?: RootOptions
 
   container?: egret.DisplayObjectContainer
-
   // 是否执行 runEgret
   runEgret?: boolean
-
   // 是否渲染 egret 的 canvas div 容器
   renderDom?: boolean
-
   // boolean: 是否从dom中提取context, 为 true 时 renderDom 必须为 true, 从渲染的 dom 向上搜寻;
   // Context: 直接传入 Context ; Html: 从传入的 dom 向上搜寻;
   contextsFrom?: boolean | React.Context<any>[] | HTMLElement
+  // 渲染模式
+  mode?: RenderMode
 } & JSX.IntrinsicElements['div']
 
 interface EgreactRef {
@@ -71,9 +73,7 @@ const entryClass = '__Main'
 function hyphenateEgretConfig(p: any) {
   return Object.keys(p).reduce((obj, key) => {
     // egretProps 转为data-中划线连接
-    DomEgretPropsName.includes(key as any)
-      ? (obj['data-' + hyphenate(key)] = p[key])
-      : (obj[key] = p[key])
+    DomEgretPropsName.includes(key as any) ? (obj['data-' + hyphenate(key)] = p[key]) : (obj[key] = p[key])
     return obj
   }, {} as JSX.IntrinsicElements['div'])
 }
@@ -88,6 +88,7 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
       contextsFrom,
       runEgret,
       renderDom,
+      mode = 'normal',
       ...otherProps
     },
     ref,
@@ -146,9 +147,10 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
         if (!egreactRoot.current) {
           egreactRoot.current = createEgreactRoot(containerInstance.current, rendererOptions)
         }
+
         egreactRoot.current.render(
           contextsFrom === false ? (
-            children
+            <ErrorBoundary set={setError}>{children}</ErrorBoundary>
           ) : (
             <ErrorBoundary set={setError}>
               <ContextProviders contexts={contexts} values={values.current}>
@@ -156,6 +158,7 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
               </ContextProviders>
             </ErrorBoundary>
           ),
+          { sync: { sync: true }, concurrent: { concurrent: true } }[mode],
         )
       }
     })
@@ -169,9 +172,7 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
 
     return (
       <>
-        {contextsFrom === false ? null : (
-          <ContextListeners contexts={contexts} values={values.current} />
-        )}
+        {contextsFrom === false ? null : <ContextListeners contexts={contexts} values={values.current} />}
         {renderDom ? (
           <div
             ref={divRef}

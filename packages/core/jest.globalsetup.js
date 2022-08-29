@@ -1,6 +1,6 @@
 const path = require('path')
 const fs = require('fs')
-const egretNodeModulesPath = './libs'
+const egretNodeModulesPath = '../../node_modules/egret-engine/build'
 var egret
 var eui
 // var dragonBones
@@ -8,15 +8,15 @@ var RES
 var EXML
 var Benchmark
 let content
-content = fs.readFileSync(path.resolve(egretNodeModulesPath, 'egret.js'), 'utf-8')
+content = fs.readFileSync(path.resolve(egretNodeModulesPath, 'egret/egret.js'), 'utf-8')
 eval(content)
-content = fs.readFileSync(path.resolve(egretNodeModulesPath, 'egret.web.js'), 'utf-8')
+content = fs.readFileSync(path.resolve(egretNodeModulesPath, 'egret/egret.web.js'), 'utf-8')
 eval(content)
-content = fs.readFileSync(path.resolve(egretNodeModulesPath, 'eui.js'), 'utf-8')
+content = fs.readFileSync(path.resolve(egretNodeModulesPath, 'eui/eui.js'), 'utf-8')
 eval(content)
-content = fs.readFileSync(path.resolve(egretNodeModulesPath, 'assetsmanager.js'), 'utf-8')
+content = fs.readFileSync(path.resolve(egretNodeModulesPath, 'assetsmanager/assetsmanager.js'), 'utf-8')
 eval(content)
-content = fs.readFileSync(path.resolve(egretNodeModulesPath, 'tween.js'), 'utf-8')
+content = fs.readFileSync(path.resolve(egretNodeModulesPath, 'tween/tween.js'), 'utf-8')
 eval(content)
 global.egret = egret
 global.eui = eui

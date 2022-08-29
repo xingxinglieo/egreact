@@ -1,8 +1,8 @@
 import egretProps from './egret/index'
 import euiProps from './eui/index'
 import customProps from './custom'
-import { Pool } from '../utils/Pool'
-import { detachTextNode } from './custom/TextNode'
+// import { Pool } from '../utils/Pool'
+// import { detachTextNode } from './custom/TextNode'
 import type { IPropsHandlers, IElementProps } from '../type'
 
 export type NodeProps<T> = {
@@ -49,46 +49,47 @@ declare global {
       'eui-dataGroup': TransProp<typeof euiProps.dataGroup>
       'eui-editableText': TransProp<typeof euiProps.editableText>
       'eui-list': TransProp<typeof euiProps.list>
+      'eui-itemRenderer': TransProp<typeof euiProps.itemRenderer>
 
-      font: TransProp<typeof customProps.font>
-      arrayContainer: TransProp<typeof customProps.arrayContainer>
       objectContainer: TransProp<typeof customProps.objectContainer>
+      arrayContainer: TransProp<typeof customProps.arrayContainer>
       primitive: TransProp<typeof customProps.primitive>
+      font: TransProp<typeof customProps.font>
     }
   }
 }
 
-Pool.registerClass([
-  ...[
-    egret.DisplayObject,
-    egret.DisplayObjectContainer,
-    egret.Shape,
-    egret.Sprite,
-    egret.Bitmap,
-    egret.BitmapText,
-    eui.Component,
-    eui.Image,
-    eui.BitmapLabel,
-    eui.Rect,
-    eui.Scroller,
-    eui.List,
-    eui.DataGroup,
-    eui.Button,
-    eui.EditableText,
-  ].map((clz) => ({ constructor: clz })),
-  // 需要特殊处理
-  ...[
-    {
-      constructor: eui.Group,
-      resetter: (instance: eui.Group) => {
-        instance.scrollH = 0
-        instance.scrollV = 0
-      },
-    },
-    { constructor: eui.Label, resetter: detachTextNode },
-    { constructor: egret.TextField, resetter: detachTextNode },
-  ],
-])
+// Pool.registerClass([
+//   ...[
+//     egret.DisplayObject,
+//     egret.DisplayObjectContainer,
+//     egret.Shape,
+//     egret.Sprite,
+//     egret.Bitmap,
+//     egret.BitmapText,
+//     eui.Component,
+//     eui.Image,
+//     eui.BitmapLabel,
+//     eui.Rect,
+//     eui.Scroller,
+//     eui.List,
+//     eui.DataGroup,
+//     eui.Button,
+//     eui.EditableText,
+//   ].map((clz) => ({ constructor: clz })),
+//   // 需要特殊处理
+//   ...[
+//     {
+//       constructor: eui.Group,
+//       resetter: (instance: eui.Group) => {
+//         instance.scrollH = 0
+//         instance.scrollV = 0
+//       },
+//     },
+//     // { constructor: eui.Label, resetter: detachTextNode },
+//     // { constructor: egret.TextField, resetter: detachTextNode },
+//   ],
+// ])
 
 export interface Catalogue {
   [name: string]: IPropsHandlers
@@ -133,6 +134,3 @@ extend({
     return acc
   }, {} as any),
 })
-
-import { Link, LinkProps } from 'react-router-dom'
-export const EgreactLink: React.ForwardRefExoticComponent<TransProp<typeof euiProps.label> & LinkProps> = Link as any

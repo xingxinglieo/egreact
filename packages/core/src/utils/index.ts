@@ -127,7 +127,12 @@ export function detachInfo(instance: any) {
 // 找一个 egret 的祖先（有宽高）。
 export function findEgretAncestor(o: Instance<unknown>): Instance<egret.DisplayObject> | null {
   while (!(getActualInstance(o) instanceof egret.DisplayObject)) {
-    o = o[CONSTANTS.INFO_KEY].fiber.return.stateNode
+    // const r =
+    let fiber = o[CONSTANTS.INFO_KEY].fiber.return
+    while (fiber.stateNode === null) {
+      fiber = fiber.return
+    }
+    o = fiber.stateNode
   }
   return getActualInstance(o)
 }
@@ -223,6 +228,7 @@ export function splitEventKeyToInfo(key: string): EventInfo {
   key.replace(eventReg, (match) => (words.push(match), ''))
   info.keys = [...words]
   const endIndex = Math.max(words.length - 3, 0)
+  // 获取后缀
   for (let i = words.length - 1; i >= endIndex; i--) {
     let word = words[i]
     if (/^\d+$/.test(word)) {
@@ -241,7 +247,9 @@ export function splitEventKeyToInfo(key: string): EventInfo {
       word = words[--i]
     }
   }
+
   info.name = `on${words.join('')}`
+  // TODO: 修改 MAP 方式 为 其他
   let category: any
   if (Object.keys(EVENT_CATEGORY_MAP).includes(words[0]) && EVENT_CATEGORY_MAP[words[0]]) {
     const categoryInfo = EVENT_CATEGORY_MAP[words[0]]

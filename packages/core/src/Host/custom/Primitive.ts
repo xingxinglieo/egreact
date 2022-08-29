@@ -4,6 +4,7 @@ import { isEvent, DevThrow, is } from '../../utils'
 import type { Instance, IContainer, ICustomClass } from '../../type'
 import { CONSTANTS } from '../../constants'
 import { NormalProp, EventProp } from '../common'
+import { proxyGetPropsHandlers } from '../utils'
 
 export class Primitive extends egret.EventDispatcher implements IContainer, ICustomClass {
   __target: any
@@ -12,7 +13,7 @@ export class Primitive extends egret.EventDispatcher implements IContainer, ICus
     const props = args[args.length - 1]
     const { object, constructor } = props
 
-    if (typeof object === 'object' && object !== null) {
+    if (object !== undefined && object !== null) {
       this.__target = object
     } else if (props.hasOwnProperty('constructor') && typeof constructor === 'function') {
       this.__target = new constructor(...args.slice(0, -1))
@@ -77,11 +78,6 @@ const primitive = {
 }
 
 const primitiveProxy = new Proxy(primitive, {
-  get(target, p: string) {
-    if (p in target) return target[p]
-    else if (typeof p === 'symbol' || p.startsWith(CONSTANTS.CUSTOM_DIFF_PREFIX)) return undefined
-    else if (isEvent(p)) return EventProp.eventSetter
-    else return NormalProp.pass
-  },
+  get: proxyGetPropsHandlers,
 })
 export default primitiveProxy

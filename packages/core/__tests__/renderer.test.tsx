@@ -3,8 +3,8 @@ import React, { createRef, useEffect, useState } from 'react'
 import { Egreact, getActualInstance, Instance, hostConfig, createEgreactRoot } from '../src/index'
 import TextNode from '../src/Host/custom/TextNode'
 
-import { Pool } from '../src/index'
-Pool.enable = true
+// import { Pool } from '../src/index'
+// Pool.enable = true
 
 describe('Egreact', () => {
   it('should throw error when use html element in egreact context', () => {
@@ -135,6 +135,20 @@ describe('Egreact', () => {
       </Egreact>,
     )
     expect(textRef.current.textFlow).toBe(defaultValue)
+  })
+
+  it('should throw when get attach target error', () => {
+    const container = new egret.DisplayObjectContainer()
+
+    expect(() =>
+      render(
+        <Egreact container={container}>
+          <textField>
+            <arrayContainer attach="a-b-c"></arrayContainer>
+          </textField>
+        </Egreact>,
+      ),
+    ).toThrow()
   })
 
   it('should reset text when remove string', () => {

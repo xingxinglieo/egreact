@@ -1,4 +1,4 @@
-import { Egreact } from '../../src/Egreact'
+import { Egreact } from '../../src/Components/Egreact'
 import React, { createRef, useEffect, useState } from 'react'
 import { render } from '@testing-library/react'
 import { getActualInstance } from '../../src/utils'
@@ -6,7 +6,7 @@ import { ArrayContainer } from '../../src/Host/custom/ArrayContainer'
 import objectContainer from '../../src/Host/custom/ObjectContainer'
 import { Primitive } from '../../src/Host/custom/Primitive'
 import { BrowserRouter } from 'react-router-dom'
-import { EgreactLink } from '../../src/Host'
+import { EgreactLink } from '../../src/Components'
 
 describe('objectContainer', () => {
   it('should be undefined when getting symbol', () => {

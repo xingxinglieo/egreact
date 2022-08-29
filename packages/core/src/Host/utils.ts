@@ -1,5 +1,7 @@
 import { IPropsHandlers, IPropInterface } from '../type'
 import { CONSTANTS } from '../constants'
+import { isEvent } from '../utils'
+import { EventProp, NormalProp } from './common'
 
 type ToUnionOfFunction<T> = T extends any ? (x: T) => any : never
 // 联合类型转交叉类型
@@ -162,6 +164,14 @@ export const proxyHelper = <T extends new (...args: any[]) => any>(config: {
     // return
   }[name] as unknown as T
   return proxyConstructor
+}
+
+
+export function proxyGetPropsHandlers (target, key:symbol|string){
+  if (key in target) return target[key]
+  else if (typeof key === 'symbol' || key.startsWith('__')) return undefined
+  else if (isEvent(key)) return EventProp.eventSetter
+  else return NormalProp.pass
 }
 
 export type Cover<T, S> = Omit<T, keyof S> & S

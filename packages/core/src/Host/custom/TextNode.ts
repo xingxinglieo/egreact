@@ -1,4 +1,4 @@
-interface TextContainer {
+export interface TextContainer {
   text: string
 }
 
@@ -22,10 +22,6 @@ class TextNode {
     const textNodes = TextContainerMap.get(this.container)
     textNodes.splice(textNodes.indexOf(this), 1)
     this.updateContainerText()
-
-    // clear ref
-    if (textNodes.length === 0) TextContainerMap.delete(this.container)
-    this.container = null
   }
 
   private updateContainerText() {
@@ -43,7 +39,8 @@ class TextNode {
   }
 }
 
-export function detachTextNode(instance: TextContainer) {
-  if (TextContainerMap.has(instance)) TextContainerMap.delete(instance)
+export const detachTextContainer = (container) => {
+  if (TextContainerMap.has(container)) TextContainerMap.delete(container)
 }
+
 export default TextNode

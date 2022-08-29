@@ -38,6 +38,13 @@ describe('apply props', () => {
       expect(() => applyProps(instance, { ...p1, onMyEventCc: emptyFun })).toThrow()
     })
   })
+
+  describe('throw when target not exists', () => {
+    it('', () => {
+      expect(() => applyProps(instance, { 'a-b-c': 1 })).toThrow()
+    })
+  })
+
   const p2 = {
     'layout-gap': 20,
     layout: 'horizontal',
