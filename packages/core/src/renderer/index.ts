@@ -52,13 +52,12 @@ const createInstance: HostConfig['createInstance'] = function (
   _hostContext,
   internalInstanceHandle,
 ) {
-  const isPrimitive = type === 'primitive'
   const { attach, mountedApplyProps = false, noUsePool = false, ...props } = newProps
-  const name = `${type[0].toUpperCase()}${type.slice(1)}` // 首字母大写
+  const isPrimitive = type === 'primitive'
+  const instanceProp = catalogueMap[type]
 
-  const instanceProp = catalogueMap[name]
   if (!instanceProp) {
-    throw `\`${name}\` is not a host component! Did you forget to extend it?`
+    throw `\`${type}\` is not a host component! Did you forget to extend it?`
   }
 
   let args = []

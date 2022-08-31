@@ -1,8 +1,6 @@
 import egretProps from './egret/index'
 import euiProps from './eui/index'
 import customProps from './custom'
-// import { Pool } from '../utils/Pool'
-// import { detachTextNode } from './custom/TextNode'
 import type { IPropsHandlers, IElementProps } from '../type'
 
 export type NodeProps<T> = {
@@ -59,38 +57,6 @@ declare global {
   }
 }
 
-// Pool.registerClass([
-//   ...[
-//     egret.DisplayObject,
-//     egret.DisplayObjectContainer,
-//     egret.Shape,
-//     egret.Sprite,
-//     egret.Bitmap,
-//     egret.BitmapText,
-//     eui.Component,
-//     eui.Image,
-//     eui.BitmapLabel,
-//     eui.Rect,
-//     eui.Scroller,
-//     eui.List,
-//     eui.DataGroup,
-//     eui.Button,
-//     eui.EditableText,
-//   ].map((clz) => ({ constructor: clz })),
-//   // 需要特殊处理
-//   ...[
-//     {
-//       constructor: eui.Group,
-//       resetter: (instance: eui.Group) => {
-//         instance.scrollH = 0
-//         instance.scrollV = 0
-//       },
-//     },
-//     // { constructor: eui.Label, resetter: detachTextNode },
-//     // { constructor: egret.TextField, resetter: detachTextNode },
-//   ],
-// ])
-
 export interface Catalogue {
   [name: string]: IPropsHandlers
 }
@@ -114,10 +80,6 @@ export const EVENT_CATEGORY_MAP: {
     category: eui.ItemTapEvent,
     withPrefix: true,
   },
-  Item: {
-    category: eui.ItemTapEvent,
-    withPrefix: true,
-  },
   Ui: {
     category: eui.UIEvent,
     withPrefix: false,
@@ -130,13 +92,11 @@ export const EVENT_CATEGORY_MAP: {
 
 extend({
   ...Object.entries({ ...egretProps, ...customProps }).reduce((acc, [key, val]) => {
-    acc[`${key[0].toUpperCase()}${key.slice(1)}`] = val
+    acc[key] = val
     return acc
   }, {} as any),
   ...Object.keys(euiProps).reduce((acc, key) => {
-    acc[`Eui-${key}`] = euiProps[key]
+    acc[`eui-${key}`] = euiProps[key]
     return acc
   }, {} as any),
 })
-<<<<<<< HEAD
-=======
