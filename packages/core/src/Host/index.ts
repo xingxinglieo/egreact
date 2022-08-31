@@ -1,8 +1,6 @@
 import egretProps from './egret/index'
 import euiProps from './eui/index'
 import customProps from './custom'
-import { Pool } from '../utils/Pool'
-import { detachRenderString } from './custom/RenderString'
 import type { IPropsHandlers, IElementProps } from '../type'
 
 export type NodeProps<T> = {
@@ -49,50 +47,15 @@ declare global {
       'eui-dataGroup': TransProp<typeof euiProps.dataGroup>
       'eui-editableText': TransProp<typeof euiProps.editableText>
       'eui-list': TransProp<typeof euiProps.list>
-      // 'eui-hScrollBar': TransProp<typeof euiProps.hScrollBar>
-      // 'eui-vScrollBar': TransProp<typeof euiProps.vScrollBar>
+      'eui-itemRenderer': TransProp<typeof euiProps.itemRenderer>
 
-      font: TransProp<typeof customProps.font>
+      objectContainer: TransProp<typeof customProps.objectContainer>
       arrayContainer: TransProp<typeof customProps.arrayContainer>
-      objectContainer: TransProp<typeof customProps.objectContainer> & {
-        [k in string]: any
-      }
-      primitive: TransProp<typeof customProps.primitive> & {
-        [k in string]: any
-      } & {
-        mountedApplyProps?: false // primitive 不允许插入后再应用属性，因为它的实例本身就是由 object 创造
-      }
+      primitive: TransProp<typeof customProps.primitive>
+      font: TransProp<typeof customProps.font>
     }
   }
 }
-
-Pool.registerClass([
-  ...[
-    egret.DisplayObject,
-    egret.DisplayObjectContainer,
-    egret.Shape,
-    egret.Sprite,
-    egret.Bitmap,
-    egret.BitmapText,
-    eui.Component,
-    eui.Image,
-    eui.BitmapLabel,
-    eui.Rect,
-    eui.Scroller,
-  ].map((clz) => ({ constructor: clz })),
-  // 需要特殊处理
-  ...[
-    {
-      constructor: eui.Group,
-      resetter: (instance: eui.Group) => {
-        instance.scrollH = 0
-        instance.scrollV = 0
-      },
-    },
-    { constructor: eui.Label, resetter: detachRenderString },
-    { constructor: egret.TextField, resetter: detachRenderString },
-  ],
-])
 
 export interface Catalogue {
   [name: string]: IPropsHandlers
@@ -129,14 +92,11 @@ export const EVENT_CATEGORY_MAP: {
 
 extend({
   ...Object.entries({ ...egretProps, ...customProps }).reduce((acc, [key, val]) => {
-    acc[`${key[0].toUpperCase()}${key.slice(1)}`] = val
+    acc[key] = val
     return acc
   }, {} as any),
   ...Object.keys(euiProps).reduce((acc, key) => {
-    acc[`Eui-${key}`] = euiProps[key]
+    acc[`eui-${key}`] = euiProps[key]
     return acc
   }, {} as any),
 })
-
-import { Link, LinkProps } from 'react-router-dom'
-export const EgreactLink: React.ForwardRefExoticComponent<TransProp<typeof euiProps.label> & LinkProps> = Link as any

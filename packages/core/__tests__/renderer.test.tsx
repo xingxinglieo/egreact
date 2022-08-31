@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react'
 import React, { createRef, useEffect, useState } from 'react'
 import { Egreact, getActualInstance, Instance, hostConfig, createEgreactRoot } from '../src/index'
-import RenderString from '../src/Host/custom/RenderString'
+import TextNode from '../src/Host/custom/TextNode'
 
-import { Pool } from '../src/index'
-Pool.enable = true
+// import { Pool } from '../src/index'
+// Pool.enable = true
 
 describe('Egreact', () => {
   it('should throw error when use html element in egreact context', () => {
@@ -137,6 +137,20 @@ describe('Egreact', () => {
     expect(textRef.current.textFlow).toBe(defaultValue)
   })
 
+  it('should throw when get attach target error', () => {
+    const container = new egret.DisplayObjectContainer()
+
+    expect(() =>
+      render(
+        <Egreact container={container}>
+          <textField>
+            <arrayContainer attach="a-b-c"></arrayContainer>
+          </textField>
+        </Egreact>,
+      ),
+    ).toThrow()
+  })
+
   it('should reset text when remove string', () => {
     const container = new egret.DisplayObjectContainer()
     const TestComponent = () => {
@@ -198,8 +212,8 @@ describe('Egreact', () => {
 
   it('another host functions had not called in application', () => {
     const displayObjectContainer = new egret.DisplayObjectContainer() as Instance<egret.DisplayObjectContainer>
-    const renderString = new RenderString('e') as Instance<RenderString>
-    renderString.setParent(new egret.TextField())
+    const textNode = new TextNode('e') as Instance<TextNode>
+    textNode.setContainer(new egret.TextField())
 
     hostConfig.hideInstance(displayObjectContainer)
     expect(displayObjectContainer.visible).toBe(false)
@@ -207,14 +221,14 @@ describe('Egreact', () => {
     hostConfig.unhideInstance(displayObjectContainer, {})
     expect(displayObjectContainer.visible).toBe(true)
 
-    hostConfig.resetTextContent(renderString)
-    expect(renderString.text).toBe('')
+    hostConfig.resetTextContent(textNode)
+    expect(textNode.text).toBe('')
 
-    hostConfig.unhideTextInstance(renderString, '1')
-    expect(renderString.text).toBe('1')
+    hostConfig.unhideTextInstance(textNode, '1')
+    expect(textNode.text).toBe('1')
 
-    hostConfig.hideTextInstance(renderString)
-    expect(renderString.text).toBe('')
+    hostConfig.hideTextInstance(textNode)
+    expect(textNode.text).toBe('')
 
     hostConfig.preparePortalMount(displayObjectContainer)
   })

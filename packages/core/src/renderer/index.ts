@@ -1,7 +1,7 @@
 import Reconciler from 'react-reconciler'
 import { DefaultEventPriority } from 'react-reconciler/constants'
 import { catalogueMap } from '../Host/index'
-import RenderString from '../Host/custom/RenderString'
+import TextNode from '../Host/custom/TextNode'
 import {
   getActualInstance,
   applyProps,
@@ -12,8 +12,9 @@ import {
   reduceKeysToTarget,
   detachInfo,
   getRenderInfo,
+  DevThrow,
 } from '../utils'
-import { Pool } from '../utils/Pool'
+// import { Pool } from '../utils/Pool'
 import { getEventPriority } from '../outside'
 import { IContainer, IElementProps, Instance } from '../type'
 import { deleteCompatibleDomAttributes } from '../devtool'
@@ -24,7 +25,7 @@ type HostConfig = Reconciler.HostConfig<
   IElementProps, // pass props
   Instance<IContainer>, // container
   Instance<any>, // egret instance created by egreact
-  Instance<RenderString>, // textInstance
+  Instance<TextNode>, // textInstance
   any, // SuspenseInstance
   any, // HydratableInstance
   any, // PublicInstance
@@ -51,26 +52,26 @@ const createInstance: HostConfig['createInstance'] = function (
   _hostContext,
   internalInstanceHandle,
 ) {
-  const isPrimitive = type === 'primitive'
   const { attach, mountedApplyProps = false, noUsePool = false, ...props } = newProps
-  const name = `${type[0].toUpperCase()}${type.slice(1)}` // 首字母大写
+  const isPrimitive = type === 'primitive'
+  const instanceProp = catalogueMap[type]
 
-  const instanceProp = catalogueMap[name]
   if (!instanceProp) {
-    throw `\`${name}\` is not host component! Did you forget to extend it?`
+    throw `\`${type}\` is not a host component! Did you forget to extend it?`
   }
-  // args = is.fun(instanceProp.args) ? instanceProp.args(args) : args
+
   let args = []
   if (!is.und(newProps.args)) {
     // 最外层不是数组转为数组
     args = is.arr(newProps.args) ? newProps.args : [newProps.args]
   }
-
   const hasArgs = args.length > 0
+
+  // const usePool = Pool.enable && !hasArgs && !noUsePool && Pool.isRegisteredClass(instanceProp.__Class)
   const instance: Instance = attachInfo(
-    hasArgs || noUsePool || !Pool.isRegisteredClass(instanceProp.__Class)
-      ? new instanceProp.__Class(...args, props)
-      : Pool.get(instanceProp.__Class),
+    // last parameter is props, let constructor do something
+    // usePool ? Pool.get(instanceProp.__Class) :
+    new instanceProp.__Class(...args, props),
     {
       type,
       root: rootContainerInstance,
@@ -84,11 +85,9 @@ const createInstance: HostConfig['createInstance'] = function (
     },
   )
 
+  // mountedApplyProps 为真时，不在创建时应用 props，而是在挂载时应用 props
   if (!mountedApplyProps) applyProps(instance, props)
-  else {
-    // mountedApplyProps 为真时，不在创建时应用 props，而是在挂载时应用 props
-    instance[CONSTANTS.INFO_KEY].memoizedProps = { ...props }
-  }
+  else instance[CONSTANTS.INFO_KEY].memoizedProps = { ...props }
 
   return instance
 }
@@ -102,14 +101,22 @@ const appendChild: HostConfig['appendChild'] = function (parentInstance, child) 
 
   if (isAttach) {
     const attach = info.attach
-    const [target, targetKey] = reduceKeysToTarget(parentInstance, attach)
+    const [target, targetKey, prefixKeys] = reduceKeysToTarget(parentInstance, attach)
+
+    if (target === null) {
+      const prefixKey = prefixKeys.join('-')
+      return DevThrow(`\`${targetKey}\` depends on \`${prefixKey}\`, you must set \`${prefixKey}\` before`)
+    }
+
     info.targetInfo = [target, targetKey, target[targetKey]]
     target[targetKey] = getActualInstance(child)
-  } else if (child instanceof RenderString) {
+  } else if (child instanceof TextNode) {
     if ('text' in parentInstance) {
-      child.setParent(parentInstance)
+      child.setContainer(parentInstance)
     } else {
-      throw `parent ${parentInstance.constructor.name} is incorrect, text instance must be in a text container, such as textField, bitmapText, eui-label`
+      return DevThrow(
+        `parent ${parentInstance.constructor.name} is incorrect, text instance must be in a text container, such as textField, bitmapText, eui-label`,
+      )
     }
   } else {
     parentInstance.addChild(getActualInstance(child), child)
@@ -128,7 +135,7 @@ const insertBefore: HostConfig['insertBefore'] = function (
   if (beforeChild[CONSTANTS.INFO_KEY].targetInfo) throw `please keep the order of elements which have attach prop`
   const actualTarget = getActualInstance(child)
   const actualBefore = getActualInstance(beforeChild)
-  parentInstance.addChildAt(actualTarget, parentInstance.getChildIndex(actualBefore), child)
+  parentInstance.addChildAt(actualTarget, parentInstance.getChildIndex(actualBefore, beforeChild), child)
 }
 
 const removeChild: HostConfig['removeChild'] = function (parentInstance: Instance<IContainer>, child: Instance) {
@@ -136,8 +143,8 @@ const removeChild: HostConfig['removeChild'] = function (parentInstance: Instanc
     const info = getRenderInfo(child)
     // detachDeletedInstance 中处理
     if (info.targetInfo) return
-    else if (child instanceof RenderString) {
-      child.removeParent()
+    else if (child instanceof TextNode) {
+      child.removeContainer()
     } else {
       parentInstance.removeChild(getActualInstance(child))
     }
@@ -153,6 +160,8 @@ const detachDeletedInstance: HostConfig['detachDeletedInstance'] = (instance) =>
     target[targetKey] = defaultValue
   }
 
+  info.propsHandlers.__detach?.(instance)
+
   if (!isProduction) {
     deleteCompatibleDomAttributes(instance)
   }
@@ -162,10 +171,10 @@ const detachDeletedInstance: HostConfig['detachDeletedInstance'] = (instance) =>
   }
 
   // 对象池回收
-  if (Pool.enable && !info.noUsePool && !info.args && Pool.isRegisteredClass(instance.constructor)) {
-    instance?.removeChildren?.()
-    Pool.recover(instance)
-  }
+  // if (Pool.enable && !info.noUsePool && !info.args && Pool.isRegisteredClass(instance.constructor)) {
+  // instance?.removeChildren?.()
+  // Pool.recover(instance)
+  // }
 
   detachInfo(instance)
 }
@@ -187,7 +196,9 @@ const commitUpdate: HostConfig['commitUpdate'] = function (instance, diff, _type
 
   if (oldProps.attach !== newProps.attach) {
     if (oldProps.attach === undefined || newProps.attach === undefined) {
-      throw `please keep prop \`attach\` state of existence, because it determined how to add into parent instance when child instance created`
+      return DevThrow(
+        `please keep prop \`attach\` state of existence, because it determined how to add into parent instance when child instance created`,
+      )
     }
 
     const attach = newProps.attach
@@ -195,6 +206,8 @@ const commitUpdate: HostConfig['commitUpdate'] = function (instance, diff, _type
     info.attach = attach
 
     const [target, targetKey] = reduceKeysToTarget(parent, attach)
+
+    if (target === null) return
 
     // 清除前一个 attach 副作用
     const [oTarget, oTargetKey, defaultValue] = info.targetInfo
@@ -204,6 +217,7 @@ const commitUpdate: HostConfig['commitUpdate'] = function (instance, diff, _type
     target[targetKey] = getActualInstance(instance)
   }
 }
+
 export const getCurrentEventPriority = () => {
   const currentEvent = window.event
   if (currentEvent === undefined) {
@@ -215,7 +229,7 @@ export const getCurrentEventPriority = () => {
 export const hostConfig: HostConfig = {
   /* 创建实例 */
   createInstance,
-  createTextInstance: (text) => attachInfo(new RenderString(text)),
+  createTextInstance: (text) => attachInfo(new TextNode(text)),
 
   /* 节点操作 */
   appendChild,
@@ -246,8 +260,8 @@ export const hostConfig: HostConfig = {
   /* 不移除节点情况下 显示/隐藏 */
   hideInstance: (renderInstance) => 'visible' in renderInstance && (renderInstance.visible = false),
   unhideInstance: (renderInstance) => 'visible' in renderInstance && (renderInstance.visible = true),
-  hideTextInstance: (renderString: RenderString) => (renderString.text = ''),
-  unhideTextInstance: (renderString: RenderString, text: string) => (renderString.text = text),
+  hideTextInstance: (TextNode: TextNode) => (TextNode.text = ''),
+  unhideTextInstance: (TextNode: TextNode, text: string) => (TextNode.text = text),
 
   /* 无/未知作用 */
   getRootHostContext: () => null,

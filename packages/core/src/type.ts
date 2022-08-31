@@ -44,9 +44,12 @@ export type DiffHandler<T> = (np: T, op: T) => boolean
  * @member args 仅用于描述类传入类的参数
  */
 export type IPropsHandlers = {
+  [key: string]: PropSetter<Instance>
+} & {
   [key: `${typeof CONSTANTS.CUSTOM_DIFF_PREFIX}${string}`]: DiffHandler<unknown>
 } & {
   __Class: new (...args: any[]) => any
+  __detach?: (instance: Instance) => void
   args?: (...args: any[]) => any
 }
 
@@ -64,12 +67,23 @@ export interface IContainer {
   addChild: (child: any, childInstance?: any) => void
   removeChild: (child: any, childInstance?: any) => void
   addChildAt: (child: any, index: number, childInstance?: any) => void
-  getChildIndex: (child: any) => number
+  getChildIndex: (child: any, childInstance?: any) => number
   removeChildren?: () => void
   attach?: () => void
 }
 
+export interface ICustomClass {
+  __target?: any // 实际用于增删操作的实例
+}
+
+export interface IPropInterface {
+  __Class: new (...args: any) => any
+  __setter: PropSetter<any, any>
+  __diff: DiffHandler<any>
+}
+
 import { Fiber } from 'react-reconciler'
+
 /**
  * @export
  * @interface
@@ -118,10 +132,11 @@ export interface IRenderInfo {
   }
 }
 
-export type Instance<I = ExtensionObj> = I & {
-  [CONSTANTS.INFO_KEY]: IRenderInfo
-  __target?: any // 实际用于增删操作的实例
-}
+export type Instance<I = ExtensionObj> = I &
+  ICustomClass & {
+    [CONSTANTS.INFO_KEY]: IRenderInfo
+    __target?: any
+  }
 
 /**
  * @export
@@ -129,7 +144,7 @@ export type Instance<I = ExtensionObj> = I & {
  * @description 描述 host 组件可传入的属性
  */
 export type IElementProps = {
-  args?: unknown
+  args?: any
   attach?: string
   mountedApplyProps?: boolean
   noUsePool?: boolean

@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { startTransition } from 'react'
 import type { TransitionTracingCallbacks, FiberRoot } from 'react-reconciler'
 import { ConcurrentRoot } from 'react-reconciler/constants'
 import { reconciler } from './index'
-import { attachInfo, detachInfo } from '../utils'
+import { attachInfo, detachInfo, DevThrow } from '../utils'
 import { defaultOnRecoverableError } from '../outside'
-import { Instance } from '../type'
+import { IContainer, Instance } from '../type'
 import { isProduction } from '../constants'
 import { proxyHackForDevTools, unProxyHackForDevTools } from '../devtool'
 
@@ -21,11 +21,11 @@ export class EgreactRoot {
   public rendered = false
   constructor(private _internalRoot: FiberRoot) {}
 
-  render(children: React.ReactNode, options: { sync?: boolean } = {}) {
+  render(children: React.ReactNode, options: { sync?: boolean; concurrent?: boolean } = {}) {
     const root = this._internalRoot
-    const { sync = false } = options
+    const { sync = false, concurrent = false } = options
     if (root === null) {
-      throw `Cannot update an unmounted root.`
+      return DevThrow(`Cannot update an unmounted root.`)
     }
     if (!this.rendered) {
       this.rendered = true
@@ -33,12 +33,15 @@ export class EgreactRoot {
         proxyHackForDevTools()
       }
     }
-    if (sync) {
-      reconciler.flushSync(() => {
-        reconciler.updateContainer(children, root, null, null)
-      }, void 0)
-    } else {
+    const update = () => {
       reconciler.updateContainer(children, root, null, null)
+    }
+    if (sync) {
+      reconciler.flushSync(update, void 0)
+    } else if (concurrent) {
+      startTransition(update)
+    } else {
+      update()
     }
   }
   unmount() {
@@ -58,7 +61,7 @@ export class EgreactRoot {
   }
 }
 
-export function createEgreactRoot(containerNode: egret.DisplayObjectContainer, options: CreateRootOptions = {}) {
+export function createEgreactRoot(containerNode: IContainer, options: CreateRootOptions = {}) {
   let isStrictMode = false
   let concurrentUpdatesByDefaultOverride = false
   let identifierPrefix = ''

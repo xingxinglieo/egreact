@@ -35,8 +35,8 @@ export const handleConditionProps: Plugin = {
         element.attributes[key] = `{@@({${value[1].reduce((s, [key, value]) => {
           s = s + `'${key}':${translateExpression(value)},`;
           return s;
-        }, "")}})[currentState]${
-          value[0] !== undefined ? "||" + translateExpression(value[0]) : ""
+        }, "")}})[currentState] ?? ${
+          value[0] !== undefined ? translateExpression(value[0]) : "null"
         }}`;
       }
     });

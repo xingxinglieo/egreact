@@ -7,14 +7,18 @@ const propTagHandlers: {
   layout: (parent, self) => {
     parent.attributes = {
       ...parent.attributes,
-      layout: self.elements[0].name
-        .replace("e:", "")
+      layout: self.elements
+        .find((e) => e.type === "element")
+        .name.replace("e:", "")
         .replace("Layout", "")
         .toLocaleLowerCase(),
-      ...Object.keys(self.elements[0]).reduce((obj, key) => {
-        obj["layout-" + key] = obj[key];
-        return obj;
-      }, {})
+      ...Object.keys(self.elements.find((e) => e.type === "element")).reduce(
+        (obj, key) => {
+          obj["layout-" + key] = obj[key];
+          return obj;
+        },
+        {}
+      )
     };
   }
 };

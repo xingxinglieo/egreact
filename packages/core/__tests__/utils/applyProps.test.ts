@@ -3,9 +3,9 @@ import groupHandlers from '../../src/Host/eui/Group'
 
 describe('apply props', () => {
   const instance = attachInfo<eui.Group>(new eui.Group(), {
+    // @ts-ignore
     propsHandlers: {
       ...groupHandlers,
-      // @ts-ignore
       onMyEventBb: () => () => {
         console.log(32)
       },
@@ -38,6 +38,13 @@ describe('apply props', () => {
       expect(() => applyProps(instance, { ...p1, onMyEventCc: emptyFun })).toThrow()
     })
   })
+
+  describe('throw when target not exists', () => {
+    it('', () => {
+      expect(() => applyProps(instance, { 'a-b-c': 1 })).toThrow()
+    })
+  })
+
   const p2 = {
     'layout-gap': 20,
     layout: 'horizontal',

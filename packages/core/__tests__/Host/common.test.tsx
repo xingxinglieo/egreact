@@ -1,4 +1,4 @@
-import { Egreact } from '../../src/Egreact'
+import { Egreact } from '../../src/Components/Egreact'
 import { Graphics, isMountProp, NormalProp } from '../../src/Host/common'
 import React, { useEffect, useState } from 'react'
 import { render } from '@testing-library/react'

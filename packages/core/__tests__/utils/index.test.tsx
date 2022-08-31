@@ -62,13 +62,8 @@ describe('Reduce keys to target', () => {
     expect(reduceKeysToTarget(o1, 'a-b-c')).toEqual([o1.a.b, 'c', ['a', 'b']])
     expect(reduceKeysToTarget(o1, 'a.b.c', '.')).toEqual([o1.a.b, 'c', ['a', 'b']])
   })
-  it('should throw error if target is not exited', () => {
-    const defaultError = console.error
-    const myError = jest.fn(console.error)
-    console.error = myError
-    reduceKeysToTarget(o1, 'a-b-c-d')
-    expect(myError).toBeCalledTimes(1)
-    console.error = defaultError
+  it('should be null if target is not exited', () => {
+    expect(reduceKeysToTarget(o1, 'a-b-c-d')[0]).toBeNull()
   })
 })
 describe('Get event info from key', () => {
@@ -169,7 +164,7 @@ describe('Get event info from key', () => {
 
 import React, { createContext } from 'react'
 import { render, screen } from '@testing-library/react'
-import { Egreact } from '../../src/Egreact'
+import { Egreact } from '../../src/Components/Egreact'
 describe('Get Contexts from Dom which is created by react-dom', () => {
   const myContext = createContext(1)
   it('should return contexts', () => {

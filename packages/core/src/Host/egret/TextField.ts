@@ -1,5 +1,6 @@
 import displayObjectPropsHandlers from './DisplayObject'
 import { NormalProp, EventProp } from '../common'
+import { detachTextContainer } from '../custom/TextNode'
 
 const focusEventTypeSetters = {
   onFocusIn: EventProp.focusEventSetter,
@@ -11,6 +12,7 @@ const focusEventTypeSetters = {
 const textFieldHandlers = {
   ...displayObjectPropsHandlers,
   __Class: egret.TextField,
+  __detach: detachTextContainer,
   background: NormalProp.boo,
   bold: NormalProp.boo,
   border: NormalProp.boo,

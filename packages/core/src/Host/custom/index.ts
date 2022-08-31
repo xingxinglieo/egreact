@@ -5,8 +5,8 @@ import font from './Font'
 import a from './Anchor'
 
 export default {
-  arrayContainer,
   objectContainer,
+  arrayContainer,
   primitive,
   font,
   a,

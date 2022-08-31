@@ -11,6 +11,14 @@ export function hyphenate(str: string) {
   return str.replace(hyphenateRE, '-$1').toLowerCase()
 }
 
+export const DevThrow = (e: string | Error) => {
+  if (isProduction) {
+    console.error(e instanceof Error ? e.message : e)
+  } else {
+    throw e
+  }
+}
+
 /**
  * @description 获取用于操作的实际 instance
  */
@@ -119,7 +127,12 @@ export function detachInfo(instance: any) {
 // 找一个 egret 的祖先（有宽高）。
 export function findEgretAncestor(o: Instance<unknown>): Instance<egret.DisplayObject> | null {
   while (!(getActualInstance(o) instanceof egret.DisplayObject)) {
-    o = o[CONSTANTS.INFO_KEY].fiber.return.stateNode
+    // const r =
+    let fiber = o[CONSTANTS.INFO_KEY].fiber.return
+    while (fiber.stateNode === null) {
+      fiber = fiber.return
+    }
+    o = fiber.stateNode
   }
   return getActualInstance(o)
 }
@@ -182,18 +195,18 @@ export function diffProps(
 
 /**
  * @description key 用分隔符分割，target 逐个 key 访问到目标对象
+ * target 为 null 表示出错
  */
 export function reduceKeysToTarget(target: any, key: string, separator = '-') {
   const prefixKeys = key.split(separator)
   const targetKey = prefixKeys.pop()
   try {
     target = prefixKeys.reduce((target, key) => target[key], target)
-    if (target instanceof Object) return [target, targetKey, prefixKeys] as const
-    else throw ``
-  } catch (e) {
-    const prefixKey = prefixKeys.join(separator)
-    console.error(`\`${key}\` depends on \`${prefixKey}\`, you must set \`${prefixKey}\` before`)
-  }
+    if (target instanceof Object) {
+      return [target, targetKey, prefixKeys] as const
+    }
+  } catch (e) {}
+  return [null, targetKey, prefixKeys] as const
 }
 
 export const DEFAULT_EVENT_CATEGORY = egret.Event
@@ -215,6 +228,7 @@ export function splitEventKeyToInfo(key: string): EventInfo {
   key.replace(eventReg, (match) => (words.push(match), ''))
   info.keys = [...words]
   const endIndex = Math.max(words.length - 3, 0)
+  // 获取后缀
   for (let i = words.length - 1; i >= endIndex; i--) {
     let word = words[i]
     if (/^\d+$/.test(word)) {
@@ -233,7 +247,9 @@ export function splitEventKeyToInfo(key: string): EventInfo {
       word = words[--i]
     }
   }
+
   info.name = `on${words.join('')}`
+  // TODO: 修改 MAP 方式 为 其他
   let category: any
   if (Object.keys(EVENT_CATEGORY_MAP).includes(words[0]) && EVENT_CATEGORY_MAP[words[0]]) {
     const categoryInfo = EVENT_CATEGORY_MAP[words[0]]
@@ -290,7 +306,12 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
         info.memoizedResetter[key] = resetter
       }
     } else {
-      const [target, targetKey] = reduceKeysToTarget(instance, keys.join('-'))
+      const [target, targetKey, prefixKeys] = reduceKeysToTarget(instance, keys.join('-'))
+
+      if (target === null) {
+        const prefixKey = prefixKeys.join('-')
+        return DevThrow(`\`${targetKey}\` depends on \`${prefixKey}\`, you must set \`${prefixKey}\` before`)
+      }
 
       // 存储一下初始值
       if (!info.memoizedDefault.hasOwnProperty(key)) {
@@ -366,6 +387,3 @@ export function collectContextsFromDom(dom: any) {
   }
   return contexts
 }
-
-export * from './ContextBridge'
-export * from './ErrorBoundary'
