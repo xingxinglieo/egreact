@@ -1,6 +1,6 @@
 {
   "name": "egreact",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "A react render for egret 一个为 egret 而生的 react 渲染器",
   "keywords": [
     "react",
@@ -29,10 +29,12 @@
   },
   "dependencies": {
     "lodash": "*",
+    "react-context-bridge": "workspace:*",
     "react-reconciler": "^0.27.0"
   },
   "peerDependencies": {
     "react": ">=18.0",
+    "react-context-bridge": "workspace:*",
     "react-dom": ">=18.0",
     "react-router-dom": ">=5.0"
   },

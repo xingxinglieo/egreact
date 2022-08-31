@@ -59,6 +59,7 @@ importers:
       concurrently: ^7.2.2
       jest: ^28.1.0
       lodash: '*'
+      react-context-bridge: workspace:^0.0.2
       react-reconciler: ^0.27.0
       rollup: ^2.75.6
       rollup-plugin-typescript: ^1.0.1
@@ -67,6 +68,7 @@ importers:
       typescript: ^4.7.3
     dependencies:
       lodash: 4.17.21
+      react-context-bridge: link:../react-context-bridge
       react-reconciler: 0.27.0
     devDependencies:
       '@babel/core': 7.18.5
@@ -87,7 +89,7 @@ importers:
       '@reduxjs/toolkit': ^1.8.2
       '@types/node': ^17.0.42
       concurrently: ^7.2.2
-      egreact: workspace:^1.1.0
+      egreact: workspace:*
       html-webpack-plugin: ^5.5.0
       react: ^18.1.0
       react-reconciler: ^0.29.0
@@ -147,6 +149,18 @@ importers:
       typescript: 4.7.4
       webpack: 5.74.0_webpack-cli@4.10.0
       webpack-cli: 4.10.0_webpack@5.74.0
+
+  packages/react-context-bridge:
+    specifiers:
+      rollup: ^2.75.6
+      rollup-plugin-typescript: ^1.0.1
+      tslib: ^2.4.0
+      typescript: ^4.7.3
+    devDependencies:
+      rollup: 2.75.6
+      rollup-plugin-typescript: 1.0.1_xglhvrpkxkkdzawzolnhxfl3di
+      tslib: 2.4.0
+      typescript: 4.7.4
 
 packages:
 

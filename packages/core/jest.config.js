@@ -37,9 +37,9 @@ module.exports = {
     global: {
       // 默认全局覆盖率指标
       branches: 80,
-      functions: 95,
-      lines: 90,
-      statements: 90,
+      functions: 85,
+      lines: 85,
+      statements: 85,
     },
   },
   setupFiles: ['jest-canvas-mock'],

@@ -4,8 +4,6 @@ export * from './renderer'
 
 export * from './utils'
 
-// export * from './utils/Pool'
-
 export * from './type'
 
 export * from './Host'

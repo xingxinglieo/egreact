@@ -1,15 +1,9 @@
 import React, { useEffect, useRef, useState, useImperativeHandle, Context } from 'react'
-import {
-  hyphenate,
-  collectContextsFromDom,
-  ContextProviders,
-  ContextListeners,
-  is,
-  CallBackArray,
-  ErrorBoundary,
-} from '../utils'
-import { createEgreactRoot, EgreactRoot } from '../renderer'
+import { useContextBridge } from 'react-context-bridge'
 import { RootOptions } from 'react-dom/client'
+import { hyphenate, collectContextsFromDom, is } from '../utils'
+import { createEgreactRoot, EgreactRoot } from '../renderer'
+import { ErrorBoundary } from './ErrorBoundary'
 
 // 单独拿出来用于提示
 const DomEgretPropsName = [
@@ -57,7 +51,7 @@ type Props = {
   // Context: 直接传入 Context ; Html: 从传入的 dom 向上搜寻;
   contextsFrom?: boolean | React.Context<any>[] | HTMLElement
   // 渲染模式
-  mode?: RenderMode
+  renderMode?: RenderMode
 } & JSX.IntrinsicElements['div']
 
 interface EgreactRef {
@@ -84,11 +78,11 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
       children,
       egretOptions = {},
       rendererOptions = {},
+      renderMode = 'normal',
       container,
       contextsFrom,
       runEgret,
       renderDom,
-      mode = 'normal',
       ...otherProps
     },
     ref,
@@ -104,13 +98,16 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
       contextsFrom = true
     }
 
-    const divRef = useRef<HTMLDivElement>(null!)
     const domProps = hyphenateEgretConfig(otherProps)
-    const containerInstance = useRef<egret.DisplayObjectContainer>(container!)
-    const values = useRef(new CallBackArray())
-    const [contexts, setContexts] = useState<Context<any>[]>([])
+
+    const divRef = useRef<HTMLDivElement>(null!)
+    const containerRef = useRef<egret.DisplayObjectContainer>(container!)
+    const rendererRef = useRef<EgreactRoot>(null!)
+
     const [mounted, setMounted] = useState(false)
-    const egreactRoot = useRef<EgreactRoot>(null)
+    const [contexts, setContexts] = useState<Context<any>[]>([])
+
+    const { ContextListeners, ContextProviders } = useContextBridge(contexts)
 
     useEffect(() => {
       if (runEgret) {
@@ -119,10 +116,10 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
       }
 
       if (container) {
-        containerInstance.current = container
+        containerRef.current = container
       } else {
-        containerInstance.current = new egret.DisplayObjectContainer()
-        egret.lifecycle.stage.addChild(containerInstance.current)
+        containerRef.current = new egret.DisplayObjectContainer()
+        egret.lifecycle.stage.addChild(containerRef.current)
       }
 
       if (contextsFrom === true) {
@@ -136,7 +133,7 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
       setMounted(true)
 
       return () => {
-        egreactRoot.current.unmount()
+        rendererRef.current.unmount()
       }
     }, [])
 
@@ -144,35 +141,33 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
     if (error) throw error
     useEffect(() => {
       if (mounted) {
-        if (!egreactRoot.current) {
-          egreactRoot.current = createEgreactRoot(containerInstance.current, rendererOptions)
+        if (!rendererRef.current) {
+          rendererRef.current = createEgreactRoot(containerRef.current, rendererOptions)
         }
 
-        egreactRoot.current.render(
+        rendererRef.current.render(
           contextsFrom === false ? (
             <ErrorBoundary set={setError}>{children}</ErrorBoundary>
           ) : (
             <ErrorBoundary set={setError}>
-              <ContextProviders contexts={contexts} values={values.current}>
-                {children}
-              </ContextProviders>
+              <ContextProviders>{children}</ContextProviders>
             </ErrorBoundary>
           ),
-          { sync: { sync: true }, concurrent: { concurrent: true } }[mode],
+          { sync: { sync: true }, concurrent: { concurrent: true } }[renderMode],
         )
       }
     })
 
     useImperativeHandle(ref, () => ({
-      container: containerInstance.current,
-      root: egreactRoot.current,
+      container: containerRef.current,
+      root: rendererRef.current,
       dom: divRef.current,
       contexts,
     }))
 
     return (
       <>
-        {contextsFrom === false ? null : <ContextListeners contexts={contexts} values={values.current} />}
+        {contextsFrom === false ? null : <ContextListeners />}
         {renderDom ? (
           <div
             ref={divRef}

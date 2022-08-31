@@ -387,6 +387,3 @@ export function collectContextsFromDom(dom: any) {
   }
   return contexts
 }
-
-export * from './ContextBridge'
-export * from './ErrorBoundary'
