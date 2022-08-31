@@ -114,6 +114,10 @@ export const EVENT_CATEGORY_MAP: {
     category: eui.ItemTapEvent,
     withPrefix: true,
   },
+  Item: {
+    category: eui.ItemTapEvent,
+    withPrefix: true,
+  },
   Ui: {
     category: eui.UIEvent,
     withPrefix: false,
@@ -134,3 +138,5 @@ extend({
     return acc
   }, {} as any),
 })
+<<<<<<< HEAD
+=======
