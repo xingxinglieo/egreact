@@ -35,6 +35,7 @@
   "peerDependencies": {
     "react": ">=18.0",
     "react-context-bridge": "workspace:*",
+    "react-context-bridge": "workspace:*",
     "react-dom": ">=18.0",
     "react-router-dom": ">=5.0"
   },
