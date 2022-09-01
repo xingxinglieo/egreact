@@ -24,13 +24,14 @@ export function findTargetByPosition(
   }
   const children = displayObject.$children
   let notTouchThrough = false
+  var target: null | egret.DisplayObject = null
   if (children) {
     for (let index = children.length - 1; index >= 0; index--) {
       const child = children[index]
       if (child.$maskedObject) {
         continue
       }
-      var target = findTargetByPosition(child, stageX, stageY)
+      target = findTargetByPosition(child, stageX, stageY)
       // @ts-ignore
       if (target && target.ispTouchThrough !== true) {
         notTouchThrough = true
@@ -47,11 +48,7 @@ export function findTargetByPosition(
   return displayObject.$hitTest(stageX, stageY)
 }
 
-import {
-  DiscreteEventPriority,
-  ContinuousEventPriority,
-  DefaultEventPriority,
-} from 'react-reconciler/constants'
+import { DiscreteEventPriority, ContinuousEventPriority, DefaultEventPriority } from 'react-reconciler/constants'
 
 /**
  *

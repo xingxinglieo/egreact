@@ -50,6 +50,7 @@ describe('Get `__target` if exited as action instance', () => {
   const obj = { __target: 'test' }
   it('should return instance.__target if exited,else return instance', () => {
     expect(getActualInstance(obj)).toBe('test')
+    // @ts-ignore
     delete obj.__target
     expect(getActualInstance(obj)).toBe(obj)
   })

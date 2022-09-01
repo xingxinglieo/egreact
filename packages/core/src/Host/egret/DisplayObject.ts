@@ -68,6 +68,7 @@ const displayObjectPropsHandlers = mixinHelper
         instance.width = Number(newValue)
       }
       return () => {
+        // @ts-ignore 实际初始值是 null
         if (isPercent) instance.percentWidth = null
       }
     },
@@ -81,6 +82,7 @@ const displayObjectPropsHandlers = mixinHelper
         instance.height = Number(newValue)
       }
       return () => {
+        // @ts-ignore 实际初始值是 null
         if (isPercent) instance.percentHeight = null
       }
     },

@@ -1,7 +1,8 @@
+import React from 'react'
 import egretProps from './egret/index'
 import euiProps from './eui/index'
 import customProps from './custom'
-import type { IPropsHandlers, IElementProps } from '../type'
+import type { IPropsHandlers, IElementProps, ExtensionObj } from '../type'
 
 export type NodeProps<T> = {
   children?: React.ReactNode
@@ -13,7 +14,7 @@ type InferClass<T> = T extends {
   __Class: new (...args: any[]) => infer U
 }
   ? U
-  : never
+  : any
 
 /**
  * @description 用于将 IPropsHandlers 转换为 JSX Element 的工具类型
@@ -94,9 +95,9 @@ extend({
   ...Object.entries({ ...egretProps, ...customProps }).reduce((acc, [key, val]) => {
     acc[key] = val
     return acc
-  }, {} as any),
-  ...Object.keys(euiProps).reduce((acc, key) => {
+  }, {} as ExtensionObj),
+  ...(Object.keys(euiProps) as (keyof typeof euiProps)[]).reduce((acc, key) => {
     acc[`eui-${key}`] = euiProps[key]
     return acc
-  }, {} as any),
+  }, {} as ExtensionObj),
 })

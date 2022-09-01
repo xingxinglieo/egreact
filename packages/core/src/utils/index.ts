@@ -1,7 +1,9 @@
-import { EVENT_CATEGORY_MAP } from '../Host'
-import type { PropSetter, IElementProps, Instance, IRenderInfo, EventInfo } from '../type'
-import { CONSTANTS, isProduction } from '../constants'
+import React from 'react'
+import type { PropSetter, IElementProps, Instance, IRenderInfo, EventInfo, ExtensionObj } from '../type'
 import { addCompatibleDomAttributes, injectMemoizedProps } from '../devtool'
+import { CONSTANTS, isProduction } from '../constants'
+import { EVENT_CATEGORY_MAP } from '../Host'
+import { Fiber } from 'react-reconciler'
 
 const hyphenateRE = /\B([A-Z])/g
 /**
@@ -127,12 +129,11 @@ export function detachInfo(instance: any) {
 // 找一个 egret 的祖先（有宽高）。
 export function findEgretAncestor(o: Instance<unknown>): Instance<egret.DisplayObject> | null {
   while (!(getActualInstance(o) instanceof egret.DisplayObject)) {
-    // const r =
     let fiber = o[CONSTANTS.INFO_KEY].fiber.return
-    while (fiber.stateNode === null) {
+    while (fiber && fiber.stateNode === null) {
       fiber = fiber.return
     }
-    o = fiber.stateNode
+    if (fiber) o = fiber.stateNode
   }
   return getActualInstance(o)
 }
@@ -199,7 +200,7 @@ export function diffProps(
  */
 export function reduceKeysToTarget(target: any, key: string, separator = '-') {
   const prefixKeys = key.split(separator)
-  const targetKey = prefixKeys.pop()
+  const targetKey = prefixKeys.pop()!
   try {
     target = prefixKeys.reduce((target, key) => target[key], target)
     if (target instanceof Object) {
@@ -323,7 +324,7 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
       }
 
       const defaultPropsHandler =
-        ({ newValue, target, targetKey }) =>
+        ({ newValue, target, targetKey }: { newValue: any; target: ExtensionObj; targetKey: string }) =>
         () => ((target[targetKey] = newValue), void 0)
       const setter = (info.propsHandlers[key] ?? defaultPropsHandler) as PropSetter<any>
 
@@ -372,12 +373,14 @@ export function collectContextsFromDom(dom: any) {
     console.error(`prop is not a HTMLElement`)
     return []
   }
-  const fiberKey = Object.keys(dom).find((key) => key.startsWith('__react') && dom[key]?.stateNode === dom)
+  const fiberKey = Object.keys(dom).find(
+    (key) => key.startsWith('__react') && (dom as any)[key]?.stateNode === dom,
+  ) as keyof typeof dom
   if (!fiberKey) {
     console.error(`dom must be created by react-dom`)
     return []
   }
-  let fiber = dom[fiberKey]
+  let fiber = dom[fiberKey] as unknown as Fiber['return']
   const contexts: React.Context<any>[] = []
   while (fiber) {
     if (fiber.type?._context) {

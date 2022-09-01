@@ -7,6 +7,11 @@ import { catalogueMap } from './Host/index'
 import { IRenderInfo, Instance } from './type'
 import { CONSTANTS } from './constants'
 
+// addEventListener<K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+// addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+// removeEventListener<K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+// removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+
 /**
  * @description dom px 和 egret 坐标值换算比例
  */
@@ -41,6 +46,7 @@ const emptyCSSStyleSheet = {
 export function getBoundingClientRect(instance: Instance<unknown>) {
   const egretInstance = findEgretAncestor(instance)
   const canvasRect = getCanvas().getBoundingClientRect()
+  if (!egretInstance) return canvasRect
   const point = egretInstance.localToGlobal(0, 0)
   // 因为 egret 中的坐标系比例与dom中不同，所以需要换算
   const scale = calculateScale()
@@ -70,14 +76,14 @@ function unProxyGetComputedStyle() {
 
 const addEventListener = window.addEventListener
 const removeEventListener = window.removeEventListener
-type EventHandler = Parameters<typeof addEventListener>[1]
+type EventHandler = EventListener | EventListenerObject
 
 export type ProxyEventInfo = [
   // 前三个是事件参数，
   string,
-  EventHandler,
+  EventListener,
   (boolean | { capture?: boolean })?,
-  EventHandler?, // 参数是代理的事件处理
+  EventListener?, // 参数是代理的事件处理
   any?, // 第五个放置其他信息
 ]
 
@@ -117,13 +123,12 @@ export function extraMatchEvent(info: ProxyEventInfo): ProxyEventInfo | null {
  * @link https://github.com/facebook/react/blob/c3d7a7e3d72937443ef75b7e29335c98ad0f1424/packages/react-devtools-shared/src/backend/views/Highlighter/index.js#L41
  */
 function proxyListener() {
-  window.addEventListener = function (
-    type: string,
-    listener: (event: Event) => void,
-    options?: boolean | { capture?: boolean },
-  ) {
-    if (['click', 'mousedown', 'mouseover', 'mouseup', 'pointerdown', 'pointerover', 'pointerup'].includes(type)) {
-      const proxyHandler: EventHandler = function (e: MouseEvent) {
+  window.addEventListener = function (type: string, listener: EventHandler, options?: boolean | { capture?: boolean }) {
+    if (
+      is.fun(listener) &&
+      ['click', 'mousedown', 'mouseover', 'mouseup', 'pointerdown', 'pointerover', 'pointerup'].includes(type)
+    ) {
+      const proxyHandler = function (e: MouseEvent) {
         const { pageX: x, pageY: y } = e
         const r = getCanvas().getBoundingClientRect()
         r.x += window.scrollX
@@ -143,7 +148,7 @@ function proxyListener() {
           }
         }
         listener.call(this, e)
-      }
+      } as EventListener
       // 只有非相同的事件才被加入
       if (findMatchEventIndex([type, listener, options]) === -1) {
         addEventListener.call(window, type, proxyHandler, options)
@@ -164,12 +169,20 @@ function proxyListener() {
     }
   }
 
-  window.removeEventListener = function (type, listener, options = false) {
-    const info = extraMatchEvent([type, listener, options])
-    if (info) {
-      removeEventListener.call(window, type, info[3], options)
-      if (type === 'pointerover' && info[4]) {
-        getCanvas().removeEventListener('pointermove', info[4], options)
+  window.removeEventListener = function (
+    type: string,
+    listener: EventHandler,
+    options: boolean | { capture?: boolean } = false,
+  ) {
+    if (is.fun(listener)) {
+      const info = extraMatchEvent([type, listener, options])
+      if (info) {
+        removeEventListener.call(window, type, info[3]!, options)
+        if (type === 'pointerover' && info[4]) {
+          getCanvas().removeEventListener('pointermove', info[4], options)
+        }
+      } else {
+        removeEventListener.call(window, type, listener, options)
       }
     } else {
       removeEventListener.call(window, type, listener, options)
@@ -181,7 +194,7 @@ function unProxyListener() {
   window.addEventListener = addEventListener
   window.removeEventListener = removeEventListener
   while (eventInfoCollection.length) {
-    const info = eventInfoCollection.pop()
+    const info = eventInfoCollection.pop()!
     // 移除代理
     window.removeEventListener(info[0], info[3] as EventHandler, info[2])
     // 使用原生重新挂载
@@ -258,7 +271,7 @@ export function injectMemoizedProps(instance: Instance, info: IRenderInfo) {
     [CONSTANTS.INFO_KEY]: instance[CONSTANTS.INFO_KEY],
     [CONSTANTS.FIBER_KEY]: info.fiber,
   }
-  if (is.obj(info.fiber.alternate?.memoizedProps)) {
+  if (info.fiber.alternate && is.obj(info.fiber.alternate.memoizedProps)) {
     info.fiber.alternate.memoizedProps = {
       ...info.fiber.alternate.memoizedProps,
       [CONSTANTS.STATE_NODE_KEY]: instance,

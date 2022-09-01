@@ -3,7 +3,7 @@ import { Instance, IContainer, ICustomClass } from '../../type'
 import { CONSTANTS } from '../../constants'
 
 export class ArrayContainer extends egret.EventDispatcher implements IContainer, ICustomClass {
-  __target = []
+  __target:any[] = []
   addChild(child: any) {
     this.__target.push(child)
   }

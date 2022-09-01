@@ -4,6 +4,7 @@ import { RootOptions } from 'react-dom/client'
 import { hyphenate, collectContextsFromDom, is } from '../utils'
 import { createEgreactRoot, EgreactRoot } from '../renderer'
 import { ErrorBoundary } from './ErrorBoundary'
+import { ExtensionObj } from '../type'
 
 // 单独拿出来用于提示
 const DomEgretPropsName = [
@@ -61,7 +62,7 @@ interface EgreactRef {
   contexts: Context<any>[]
 }
 
-const entryClass = '__Main'
+const ENTRY_CLASS = '__Main'
 // let mountedCount = 0
 
 function hyphenateEgretConfig(p: any) {
@@ -69,7 +70,7 @@ function hyphenateEgretConfig(p: any) {
     // egretProps 转为data-中划线连接
     DomEgretPropsName.includes(key as any) ? (obj['data-' + hyphenate(key)] = p[key]) : (obj[key] = p[key])
     return obj
-  }, {} as JSX.IntrinsicElements['div'])
+  }, {} as ExtensionObj)
 }
 
 export const Egreact = React.forwardRef<EgreactRef, Props>(
@@ -111,7 +112,8 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
 
     useEffect(() => {
       if (runEgret) {
-        window[entryClass] = egret.DisplayObjectContainer
+        // @ts-ignore
+        window[ENTRY_CLASS] = egret.DisplayObjectContainer
         egret.runEgret(egretOptions)
       }
 
@@ -153,7 +155,7 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
               <ContextProviders>{children}</ContextProviders>
             </ErrorBoundary>
           ),
-          { sync: { sync: true }, concurrent: { concurrent: true } }[renderMode],
+          { sync: { sync: true }, concurrent: { concurrent: true }, normal: {} }[renderMode],
         )
       }
     })
@@ -176,7 +178,7 @@ export const Egreact = React.forwardRef<EgreactRef, Props>(
               height: '100%',
               margin: 'auto',
             }}
-            data-entry-class={entryClass}
+            data-entry-class={ENTRY_CLASS}
             {...domProps}
             className={'egret-player ' + (domProps.className || '')}></div>
         ) : null}

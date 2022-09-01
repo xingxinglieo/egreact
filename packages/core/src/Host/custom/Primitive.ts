@@ -8,7 +8,7 @@ import { proxyGetPropsHandlers } from '../utils'
 
 export class Primitive extends egret.EventDispatcher implements IContainer, ICustomClass {
   __target: any
-  constructor(...args) {
+  constructor(...args: any[]) {
     super()
     const props = args[args.length - 1]
     const { object, constructor } = props
@@ -24,28 +24,28 @@ export class Primitive extends egret.EventDispatcher implements IContainer, ICus
   get object() {
     return this.__target
   }
-  addChild(child: any, childInstance) {
+  addChild(child: any, childInstance: any) {
     if (is.fun(this.__target.addChild)) {
       this.__target.addChild(child, childInstance)
     } else {
       DevThrow(`please promise addChild method to ${this.__target.constructor.name}`)
     }
   }
-  removeChild(child: any, childInstance) {
+  removeChild(child: any, childInstance: any) {
     if (is.fun(this.__target.removeChild)) {
       this.__target.removeChild(child, childInstance)
     } else {
       DevThrow(`please promise removeChild method to ${this.__target.constructor.name}`)
     }
   }
-  addChildAt(child: any, index: number, childInstance) {
+  addChildAt(child: any, index: number, childInstance: any) {
     if (is.fun(this.__target.addChildAt)) {
       this.__target.addChildAt(child, index, childInstance)
     } else {
       DevThrow(`please promise addChildAt method to ${this.__target.constructor.name}`)
     }
   }
-  getChildIndex(child: any, childInstance) {
+  getChildIndex(child: any, childInstance: any) {
     if (is.fun(this.__target.getChildIndex)) {
       return this.__target.getChildIndex(child, childInstance)
     } else {
@@ -74,7 +74,7 @@ const primitive = {
       }
     }
   },
-  [objectDiffKey]: (n, o) => n === o,
+  [objectDiffKey]: (n: any, o: any) => n === o,
 }
 
 const primitiveProxy = new Proxy(primitive, {
