@@ -19,6 +19,7 @@ importers:
       prettier: ^2.6.1
       pretty-quick: ^3.1.3
       react: ^18.1.0
+      react-context-bridge: '*'
       react-dom: ^18.1.0
       react-reconciler: ^0.28.0
       react-redux: ^8.0.2
@@ -27,6 +28,7 @@ importers:
       typescript: ^4.7.2
     dependencies:
       lodash: 4.17.21
+      react-context-bridge: 0.0.4_react@18.2.0
     devDependencies:
       '@reduxjs/toolkit': 1.8.4_kkwg4cbsojnjnupd3btipussee
       '@testing-library/react': 13.3.0_biqbaboplfbrettd7655fr4n2y
@@ -60,7 +62,7 @@ importers:
       jest: ^28.1.0
       lodash: '*'
       react: '>=18.0'
-      react-context-bridge: workspace:0.0.4
+      react-context-bridge: '*'
       react-dom: '>=18.0'
       react-reconciler: ^0.27.0
       react-router-dom: '>=5.0'
@@ -71,8 +73,7 @@ importers:
       typescript: ^4.7.3
     dependencies:
       lodash: 4.17.21
-      react: 18.2.0
-      react-context-bridge: link:../react-context-bridge
+      react-context-bridge: 0.0.4_react@18.2.0
       react-reconciler: 0.27.0_react@18.2.0
     devDependencies:
       '@babel/core': 7.18.5
@@ -82,6 +83,7 @@ importers:
       '@types/sinon': 10.0.13
       concurrently: 7.3.0
       jest: 28.1.1_@types+node@17.0.42
+      react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-router-dom: 6.3.0_biqbaboplfbrettd7655fr4n2y
       rollup: 2.75.6
@@ -155,20 +157,6 @@ importers:
       typescript: 4.7.4
       webpack: 5.74.0_webpack-cli@4.10.0
       webpack-cli: 4.10.0_webpack@5.74.0
-
-  packages/react-context-bridge:
-    specifiers:
-      react: '>=16.9'
-      rollup: ^2.75.6
-      rollup-plugin-typescript: ^1.0.1
-      tslib: ^2.4.0
-      typescript: ^4.7.3
-    devDependencies:
-      react: 18.2.0
-      rollup: 2.75.6
-      rollup-plugin-typescript: 1.0.1_xglhvrpkxkkdzawzolnhxfl3di
-      tslib: 2.4.0
-      typescript: 4.7.4
 
 packages:
 
@@ -5184,6 +5172,14 @@ packages:
       iconv-lite: 0.4.24
       unpipe: 1.0.0
     dev: true
+
+  /react-context-bridge/0.0.4_react@18.2.0:
+    resolution: {integrity: sha512-EsxcyNYdqOlUpOvg+i5GT3EpVsk0j+DJeUWZNEIymH/rJT8uuTo+P/vhw9U/Av+PfyHIaOG2QDPeA7ItMI4S3A==}
+    peerDependencies:
+      react: '>=16.9'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /react-dom/18.2.0_react@18.2.0:
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
