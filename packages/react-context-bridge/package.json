@@ -1,6 +1,6 @@
 {
   "name": "react-context-bridge",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A useful util to pass context between multiple renderers",
   "keywords": [
     "react",

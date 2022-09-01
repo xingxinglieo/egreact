@@ -29,11 +29,12 @@
   },
   "dependencies": {
     "lodash": "*",
-    "react-context-bridge": "workspace:*",
+    "react-context-bridge": "*",
     "react-reconciler": "^0.27.0"
   },
   "peerDependencies": {
     "react": ">=18.0",
+    "react-context-bridge": "workspace:*",
     "react-context-bridge": "workspace:*",
     "react-dom": ">=18.0",
     "react-router-dom": ">=5.0"
