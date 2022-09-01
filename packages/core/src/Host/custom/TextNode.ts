@@ -5,7 +5,7 @@ export interface TextContainer {
 const TextContainerMap = new Map<TextContainer, TextNode[]>()
 
 class TextNode {
-  private container?: TextContainer
+  private container: TextContainer = { text: '' }
 
   constructor(private _text: string) {}
 
@@ -13,19 +13,19 @@ class TextNode {
     this.container = container
     if (container) {
       if (!TextContainerMap.has(container)) TextContainerMap.set(container, [])
-      const children = TextContainerMap.get(container)
+      const children = TextContainerMap.get(container)!
       children.push(this)
       this.updateContainerText()
     }
   }
   removeContainer() {
-    const textNodes = TextContainerMap.get(this.container)
+    const textNodes = TextContainerMap.get(this.container)!
     textNodes.splice(textNodes.indexOf(this), 1)
     this.updateContainerText()
   }
 
   private updateContainerText() {
-    const children = TextContainerMap.get(this.container)
+    const children = TextContainerMap.get(this.container)!
     this.container.text = children.reduce((s, c) => s + c.text, '')
   }
 
@@ -39,7 +39,7 @@ class TextNode {
   }
 }
 
-export const detachTextContainer = (container) => {
+export const detachTextContainer = (container: TextContainer) => {
   if (TextContainerMap.has(container)) TextContainerMap.delete(container)
 }
 

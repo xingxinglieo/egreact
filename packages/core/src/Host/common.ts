@@ -80,7 +80,6 @@ export module EventProp {
     onUiCreationCompleteOnce: EventProp.uiEventSetter,
   }
 }
-
 export module NormalProp {
   export const boo: PropSetter<boolean | `${boolean}`> = ({ newValue, target, targetKey }) => (
     (target[targetKey] = newValue === 'false' ? false : Boolean(newValue)), void 0
@@ -95,7 +94,7 @@ export module NormalProp {
   )
 
   export const pass = <T = any>({ newValue, target, targetKey }: PropSetterParameters<T>) => (
-    /* ts 4.7 不调用可以传入范型 */
+    // 4.7 不调用可以传入范型
     (target[targetKey] = newValue), void 0
   )
 
@@ -275,7 +274,7 @@ export const layoutBaseHandlers = {
     }
     target[targetKey] = value
   },
-  __diff: (a, b) => a === b,
+  __diff: (a: any, b: any) => a === b,
 
   // 共有的属性
   horizontalAlign: NormalProp.str,

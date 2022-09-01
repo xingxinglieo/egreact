@@ -7,7 +7,7 @@ const aTag = {
   __Class: eui.Label,
   href: () => void 0,
   onClick: ({ newValue, instance }: PropSetterParameters<Function, Instance<egret.DisplayObject>>) => {
-    const value = (e) => {
+    const value = (e: any) => {
       e.button = 0 // 据 react-router 源码
       newValue(e)
     }

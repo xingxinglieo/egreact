@@ -100,7 +100,6 @@ const appendChild: HostConfig['appendChild'] = function (parentInstance, child) 
   const isAttach = is.str(attach)
 
   if (isAttach) {
-    const attach = info.attach
     const [target, targetKey, prefixKeys] = reduceKeysToTarget(parentInstance, attach)
 
     if (target === null) {
@@ -210,7 +209,7 @@ const commitUpdate: HostConfig['commitUpdate'] = function (instance, diff, _type
     if (target === null) return
 
     // 清除前一个 attach 副作用
-    const [oTarget, oTargetKey, defaultValue] = info.targetInfo
+    const [oTarget, oTargetKey, defaultValue] = info.targetInfo!
     oTarget[oTargetKey] = defaultValue
 
     info.targetInfo = [target, targetKey, target[targetKey]]

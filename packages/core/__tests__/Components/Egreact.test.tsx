@@ -15,7 +15,7 @@ describe('Egreact', () => {
     const TestComponent = () => {
       const divRef = React.useRef(null)
       useEffect(() => {
-        render(<Egreact container={container} contextsFrom={divRef.current}></Egreact>)
+        render(<Egreact container={container} contextsFrom={divRef.current!}></Egreact>)
       }, [])
       return <div ref={divRef}></div>
     }

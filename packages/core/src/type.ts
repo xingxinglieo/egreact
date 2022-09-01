@@ -1,6 +1,6 @@
 import { CONSTANTS } from './constants'
 
-type ExtensionObj = { [key: string]: any }
+export type ExtensionObj = { [key: string]: any; [key: symbol]: any }
 
 export type EventInfo = {
   type: string
@@ -11,11 +11,11 @@ export type EventInfo = {
   keys: string[]
 }
 export type PropResetter = void | ((removed: boolean) => void)
-export type PropSetter<P, I = Instance, T = P> = (args: {
+export type PropSetter<P, I = Instance> = (args: {
   newValue: P
   oldValue: P | typeof CONSTANTS.PROP_MOUNT
   instance: I
-  target: T // 实际用于增删操作的实例
+  target: ExtensionObj // 实际用于增删操作的实例
   targetKey: string // 实际用于增删操作的实例的key
   keys: string[] // 被切割的key
   [key: string]: any
@@ -32,7 +32,7 @@ export type EventSet<P, I = Instance, T = P> = (args: {
   [key: string]: any
 }) => PropResetter
 
-export type PropSetterParameters<P, I = Instance, T = P> = Parameters<PropSetter<P, I, T>>[0]
+export type PropSetterParameters<P, I = Instance> = Parameters<PropSetter<P, I>>[0]
 
 export type DiffHandler<T> = (np: T, op: T) => boolean
 

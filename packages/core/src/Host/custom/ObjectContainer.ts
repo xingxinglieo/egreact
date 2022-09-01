@@ -1,4 +1,3 @@
-import { NormalProp } from '../common'
 import { proxyHelper, proxyGetPropsHandlers } from '../utils'
 import { Instance, ICustomClass } from '../../type'
 import { CONSTANTS } from '../../constants'

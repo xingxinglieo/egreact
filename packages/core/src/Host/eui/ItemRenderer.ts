@@ -1,7 +1,7 @@
 import componentHandlers from '../eui/Component'
 
 export class ItemRenderer {
-  constructor(...args) {
+  constructor(...args: any[]) {
     const props = args[args.length - 1]
     const { object } = props
     if (object) return object

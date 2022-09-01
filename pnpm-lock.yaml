@@ -62,10 +62,9 @@ importers:
       jest: ^28.1.0
       lodash: '*'
       react: '>=18.0'
-      react-context-bridge: '*'
+      react-context-bridge: ^0.0.4
       react-dom: '>=18.0'
       react-reconciler: ^0.27.0
-      react-router-dom: '>=5.0'
       react-router-dom: '>=5.0'
       rollup: ^2.75.6
       rollup-plugin-typescript: ^1.0.1
@@ -5175,6 +5174,14 @@ packages:
       iconv-lite: 0.4.24
       unpipe: 1.0.0
     dev: true
+
+  /react-context-bridge/0.0.4_react@18.2.0:
+    resolution: {integrity: sha512-EsxcyNYdqOlUpOvg+i5GT3EpVsk0j+DJeUWZNEIymH/rJT8uuTo+P/vhw9U/Av+PfyHIaOG2QDPeA7ItMI4S3A==}
+    peerDependencies:
+      react: '>=16.9'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /react-context-bridge/0.0.4_react@18.2.0:
     resolution: {integrity: sha512-EsxcyNYdqOlUpOvg+i5GT3EpVsk0j+DJeUWZNEIymH/rJT8uuTo+P/vhw9U/Av+PfyHIaOG2QDPeA7ItMI4S3A==}

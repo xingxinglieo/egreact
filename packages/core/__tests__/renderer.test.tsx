@@ -1,10 +1,7 @@
 import { render } from '@testing-library/react'
 import React, { createRef, useEffect, useState } from 'react'
-import { Egreact, getActualInstance, Instance, hostConfig, createEgreactRoot } from '../src/index'
+import { Egreact, getActualInstance, Instance, hostConfig, createEgreactRoot, ExtensionObj } from '../src/index'
 import TextNode from '../src/Host/custom/TextNode'
-
-// import { Pool } from '../src/index'
-// Pool.enable = true
 
 describe('Egreact', () => {
   it('should throw error when use html element in egreact context', () => {
@@ -75,10 +72,11 @@ describe('Egreact', () => {
     const container = new egret.DisplayObjectContainer()
     const arrRef = createRef<any>()
     const TestComponent = () => {
-      const [p, setP] = useState<any>({ attach: 'test1' })
+      const [p, setP] = useState<any>({ attach: 'attach1' })
       useEffect(() => {
-        expect(container['test1']).toBe(getActualInstance(arrRef.current))
-        setP({ attach: 'test2' })
+        // @ts-ignore
+        expect(container["attach1"]).toBe(getActualInstance(arrRef.current))
+        setP({ attach: 'attach2' })
       }, [])
       return <arrayContainer ref={arrRef} {...p}></arrayContainer>
     }
@@ -87,7 +85,8 @@ describe('Egreact', () => {
         <TestComponent />
       </Egreact>,
     )
-    expect(container['test2']).toBe(getActualInstance(arrRef.current))
+    // @ts-ignore
+    expect(container['attach2']).toBe(getActualInstance(arrRef.current))
   })
 
   it('should call reset fun if is existed when remove child', () => {
@@ -98,8 +97,8 @@ describe('Egreact', () => {
     const TestComponent = () => {
       const [show, setShow] = useState(true)
       useEffect(() => {
-        resetFun = jest.fn(displayObjectRef.current.__renderInfo.memoizedResetter['width'])
-        displayObjectRef.current.__renderInfo.memoizedResetter['width'] = resetFun
+        resetFun = jest.fn(displayObjectRef.current!.__renderInfo.memoizedResetter['width'])
+        displayObjectRef.current!.__renderInfo.memoizedResetter['width'] = resetFun
         setShow(false)
       }, [])
       return show ? <displayObject ref={displayObjectRef} width="100%"></displayObject> : null
@@ -215,19 +214,19 @@ describe('Egreact', () => {
     const textNode = new TextNode('e') as Instance<TextNode>
     textNode.setContainer(new egret.TextField())
 
-    hostConfig.hideInstance(displayObjectContainer)
+    hostConfig.hideInstance?.(displayObjectContainer)
     expect(displayObjectContainer.visible).toBe(false)
 
-    hostConfig.unhideInstance(displayObjectContainer, {})
+    hostConfig.unhideInstance?.(displayObjectContainer, {})
     expect(displayObjectContainer.visible).toBe(true)
 
-    hostConfig.resetTextContent(textNode)
+    hostConfig.resetTextContent?.(textNode)
     expect(textNode.text).toBe('')
 
-    hostConfig.unhideTextInstance(textNode, '1')
+    hostConfig.unhideTextInstance?.(textNode, '1')
     expect(textNode.text).toBe('1')
 
-    hostConfig.hideTextInstance(textNode)
+    hostConfig.hideTextInstance?.(textNode)
     expect(textNode.text).toBe('')
 
     hostConfig.preparePortalMount(displayObjectContainer)

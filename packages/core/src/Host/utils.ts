@@ -1,4 +1,4 @@
-import { IPropsHandlers, IPropInterface } from '../type'
+import { IPropsHandlers, IPropInterface, ExtensionObj } from '../type'
 import { CONSTANTS } from '../constants'
 import { isEvent } from '../utils'
 import { EventProp, NormalProp } from './common'
@@ -63,7 +63,7 @@ module Mixin {
         obj[keys.join('-')] = value
       }
       return obj
-    }, {} as Mixin.FlattenObject<P, S[0]>)
+    }, {} as ExtensionObj) as Mixin.FlattenObject<P, S[0]>
     return { ...target, ...flattenObj }
   }
 }
@@ -96,7 +96,7 @@ export const proxyHelper = <T extends new (...args: any[]) => any>(config: {
   constructor: T // 类
   targetKey?: string // 可以用.分隔
   excludeKeys?: string[] // 排除判断的键
-  setCallback?: (target: any, key, value: any) => void // set 后的回调函数
+  setCallback?: (props: { instance: any; target: any; value: any; oldValue: any; propName: string | symbol }) => void // set 后的回调函数
   configs?: ProxyHandler<InstanceType<T>> // 其他 proxy 配置
 }) => {
   let {
@@ -109,10 +109,10 @@ export const proxyHelper = <T extends new (...args: any[]) => any>(config: {
 
   excludeKeys = [...excludeKeys, '__renderInfo']
   const keys = targetKey.split('.')
-  targetKey = keys.pop()
+  targetKey = keys.pop()!
   const name = 'Proxy' + constructor.name
   let proxyConstructor = {
-    [name]: function (...args) {
+    [name]: function (...args: any[]) {
       const instance = new constructor(...args)
       instance['$name'] = name
       return new Proxy(instance, {
@@ -166,8 +166,7 @@ export const proxyHelper = <T extends new (...args: any[]) => any>(config: {
   return proxyConstructor
 }
 
-
-export function proxyGetPropsHandlers (target, key:symbol|string){
+export function proxyGetPropsHandlers(target: ExtensionObj, key: symbol | string) {
   if (key in target) return target[key]
   else if (typeof key === 'symbol' || key.startsWith('__')) return undefined
   else if (isEvent(key)) return EventProp.eventSetter
