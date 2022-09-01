@@ -17,7 +17,8 @@ jobs:
         with:
           node-version: 14
           cache: 'pnpm'
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install
+      - run: pnpm i react-context-bridge -r --filter egreact
       - run: cd packages/core && pnpm run test
       - run: cd packages/core && pnpm run build
       - uses: mikeal/merge-release@master

@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "lodash": "*",
-    "react-context-bridge": "*",
+    "react-context-bridge": "workspace:0.0.4",
     "react-reconciler": "^0.27.0"
   },
   "peerDependencies": {
