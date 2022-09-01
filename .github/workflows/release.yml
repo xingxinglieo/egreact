@@ -16,11 +16,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 14
-          cache: 'pnpm'    
-      - run: cd packages/core && npm i
-      - run: pnpm i --no-frozen-lockfile
-      - run: cd packages/core && npm run test
-      - run: cd packages/core && npm run build
+          cache: 'pnpm'
+      - run: pnpm install --no-frozen-lockfile
+      - run: cd packages/core && pnpm run test
+      - run: cd packages/core && pnpm run build
       - uses: mikeal/merge-release@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
