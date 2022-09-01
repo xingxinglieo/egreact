@@ -16,8 +16,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 14
-          cache: 'pnpm'
+          cache: 'pnpm'    
       - run: cd packages/core && npm i
+      - run: pnpm i --no-frozen-lockfile
       - run: cd packages/core && npm run test
       - run: cd packages/core && npm run build
       - uses: mikeal/merge-release@master
