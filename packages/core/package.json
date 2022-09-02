@@ -30,13 +30,13 @@
   "dependencies": {
     "lodash": "*",
     "react-context-bridge": "^0.0.4",
-    "react-reconciler": "^0.27.0"
+    "react-reconciler": "^0.27.0",
+    "typescript": "^4.7.3"
   },
   "peerDependencies": {
     "react": ">=18.0",
     "react-dom": ">=18.0",
-    "react-router-dom": ">=5.0",
-    "typescript": "^4.7.3"
+    "react-router-dom": ">=5.0"
   },
   "peerDependenciesMeta": {
     "react-router-dom": {

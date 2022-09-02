@@ -79,5 +79,5 @@ const primitive = {
 
 const primitiveProxy = new Proxy(primitive, {
   get: proxyGetPropsHandlers,
-})
+}) as typeof primitive
 export default primitiveProxy
