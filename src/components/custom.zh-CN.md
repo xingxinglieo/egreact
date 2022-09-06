@@ -74,6 +74,13 @@ export default () => (
 );
 ```
 
+新增了 Primitive 组件，它仅是对 primitive 类型推断的封装
+```tsx | pure
+import { Primitive } from 'egreact'
+// 书写属性时会推断属性
+<Primitive constructor={egret.DisplayObject} x={2} /> 
+```
+
 ## font
 
 内部实例为`egret.ITextElement`,赋值除 `text` 外属性时，挂载到 font.style 上

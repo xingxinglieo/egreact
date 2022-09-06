@@ -25,6 +25,12 @@ export interface IEgreactProps {
   renderDom?: boolean;
 
   /**
+   * @description       渲染模式，'normal'：正常渲染；'sync'：同步渲染；'concurrent'：react 18 的 concurrrent 模式
+   * @default           'normal''
+   */
+  renderMode?: 'normal' | 'sync' | 'concurrent';
+
+  /**
    * @description       传入 egret.runEgret 的 options
    * @default           {}
    */

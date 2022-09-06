@@ -113,10 +113,7 @@ declare global {
 使用 `extend` 告诉 egreact 你定义了这个组件
 
 ``` typescript
-extend({
-  // 首字符统一大写，jsx 中首字母需要小写
-  Shape: shape
-})
+extend({ shape })
 ```
 
 至此一个自定义原生组件就可以使用了。

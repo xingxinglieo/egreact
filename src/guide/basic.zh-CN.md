@@ -54,7 +54,8 @@ class ReactRender extends egret.DisplayObjectContainer {
   root = createEgreactRoot(this)
   constructor(reactNode: React.ReactNode) {
     super()
-    this.addEventListener(egret.Event.ADDED, () => this.root.render(reactNode), this)
+    this.root.render(reactNode)
+    // 必须，否则会内存泄漏
     this.addEventListener(egret.Event.REMOVED, () => this.root.unmount(), this)
   }
 }
@@ -77,7 +78,7 @@ export type CreateRootOptions = {
 }
 
 class EgreactRoot{
-  render(children: React.ReactNode, sync: boolean) => void // sync 是否同步渲染
+  render(children: React.ReactNode, options: { sync: boolean }) => void // sync 是否同步渲染
   unmount() => void // 需要卸载整个组件树调用
 }
 
@@ -355,13 +356,15 @@ export default () =>(<Provider store={store}><App/></Provider>)
 
 它成功运行了，而且点击时组件的状态会同步，这正是 `ContextBridge` 所发挥的作用！在 `Egreact` 内部，会通过 dom 节点获取 `fiber` 节点并回溯到根结点，收集路径上的 `contexts`,再通过 `ContextBridge` 桥接到 `egreact` 渲染器中。你也可以传递 `contexts` 数组直接指定 `contexts` 的来源。
 
+如果想在多渲染器共享 Context，此功能已经抽出一个 npm 包 [react-context-bridge](https://www.npmjs.com/package/react-context-bridge)
+
 ## React DevTools 开发者工具
 
 得益于 React DevTools 对自定义渲染器的支持，只需要调用一个简单的 api 就能在 Devtools 中展示 egreact 的组件树。然而，Devtools 并未支持对自定义渲染器 picker 的适配接口，egreact 通过拦截监听器等操作完美适配了 picker。
 
 <img src="https://xingxinglieo.github.io/egreact/devtools.png" width="666" />
 
-## Pool 对象池 <Badge type="warning">不稳定</Badge>
+<!-- ## Pool 对象池 <Badge type="warning">不稳定</Badge>
 
 > 不稳定，在大量元素频繁切换时会布局错乱，目前已经默认关闭。
 
@@ -386,4 +389,4 @@ egreact 对回收的对象会自动清除显式赋值的副作用，但挂载后
 ``` tsx | pure
 // 直接使用构造函数创建且不会被回收
 <eui-group noUsePool></eui-group>
-```
+``` -->

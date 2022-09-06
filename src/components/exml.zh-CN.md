@@ -5,6 +5,59 @@ toc: menu
 ---
 
 ## 语法
+
+### 循环
+
+项数较少的列表无需使用 `e:DataGroup` 组件，直接使用 tsx 中的 map 循环即可。
+
+``` xml
+<e:DataGroup dataProvider="data">
+    <e:itemRendererSkinName>
+        <e:Skin>
+            <e:Image source="{data.url}" />
+        </e:Skin>
+    </e:itemRendererSkinName>
+</e:DataGroup>
+```
+
+``` tsx | pure
+<eui-group>
+  {/* 别忘记了 key */}
+  {data.map(({ url })=>(<eui-image source={url} key={url} />))}
+</eui-group>
+```
+
+如果项数较多，为了复用 eui 的虚拟列表能力，egreact 导出了一个组件适配 `eui.DataGroup`
+
+```tsx | pure
+import { ItemRendererClass } from 'egreact'
+<eui-dataGroup dataProvider={data}>
+  {/* 用 ItemRendererClass 包裹 */}
+	<ItemRendererClass>
+    {/* children 需要为一个返回 jsx 的函数，参数为每个项的数据 */}
+    {/* jsx 最外层元素必须是 eui-itemRenderer */}
+		{(data, itemRendererInstance) => 
+      <eui-itemRenderer width="100%">
+        <eui-image source={data.url} key={data.url} />
+      </eui-itemRenderer>}
+	</ItemRendererClass>
+</eui-dataGroup>
+```
+
+```ts | pure
+interface ItemRendererClassProps {
+  children: (data: any, instance: eui.ItemRenderer) => React.ReactElement
+  // 是否开启渲染器模式，默认开启，开启后每一个项都会为其创建渲染器
+  // 关闭则在父元素所在渲染器渲染
+  // 建议多项数列表开启，性能更优，缺点是在 react devtool 中无法呈现布局结构
+  useRenderer?: boolean 
+  // 是否开启 react 18 的 concurrent 模式进行渲染，默认开启
+  concurrent?: boolean
+  // 是否开启同步渲染，默认关闭，与 concurrent 互斥，优先判断 sync
+  sync?: boolean
+}
+```
+
 ### 属性为对象
 
 将 exml 改造为 jsx 需要改造的地方并不多，在前面的组件介绍中，你应该了解到 egreact 组件属性和子组件的声明是界限分明的。比如在 exml 中，
@@ -41,27 +94,6 @@ toc: menu
 ``` tsx | pure
 <eui-scroller>
     <eui-group attach="viewport"></eui-group>
-</eui-group>
-```
-
-### 循环
-
-无需使用 `e:DataGroup` 组件，直接使用 tsx 中的 map 循环即可。
-
-``` xml
-<e:DataGroup>
-    <e:itemRendererSkinName>
-        <e:Skin>
-            <e:Image source="{data.url}" />
-        </e:Skin>
-    </e:itemRendererSkinName>
-</e:DataGroup>
-```
-
-``` tsx | pure
-<eui-group>
-    {/* 别忘记了 key */}
-    {data.map(({ url })=>(<eui-image source={url} key={url} />))}
 </eui-group>
 ```
 ## vscode 插件 exml2egreact
