@@ -1,15 +1,13 @@
 import { PropSetterParameters } from './../../type'
 import { proxyHelper } from '../utils'
-import { isEvent, DevThrow, is } from '../../utils'
+import { DevThrow, is } from '../../utils'
 import type { Instance, IContainer, ICustomClass } from '../../type'
 import { CONSTANTS } from '../../constants'
-import { NormalProp, EventProp } from '../common'
 import { proxyGetPropsHandlers } from '../utils'
 
-export class Primitive extends egret.EventDispatcher implements IContainer, ICustomClass {
+export class Primitive implements IContainer, ICustomClass {
   __target: any
   constructor(...args: any[]) {
-    super()
     const props = args[args.length - 1]
     const { object, constructor } = props
 
@@ -79,5 +77,5 @@ const primitive = {
 
 const primitiveProxy = new Proxy(primitive, {
   get: proxyGetPropsHandlers,
-})
+}) as typeof primitive
 export default primitiveProxy

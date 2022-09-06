@@ -2,21 +2,10 @@ import Reconciler from 'react-reconciler'
 import { DefaultEventPriority } from 'react-reconciler/constants'
 import { catalogueMap } from '../Host/index'
 import TextNode from '../Host/custom/TextNode'
-import {
-  getActualInstance,
-  applyProps,
-  diffProps,
-  DiffSet,
-  is,
-  attachInfo,
-  reduceKeysToTarget,
-  detachInfo,
-  getRenderInfo,
-  DevThrow,
-} from '../utils'
-// import { Pool } from '../utils/Pool'
+import { applyProps, diffProps, attachInfo, detachInfo, getRenderInfo } from './utils'
+import { getActualInstance, is, reduceKeysToTarget, DevThrow } from '../utils'
 import { getEventPriority } from '../outside'
-import { IContainer, IElementProps, Instance } from '../type'
+import { IContainer, IElementProps, DiffSet, Instance } from '../type'
 import { deleteCompatibleDomAttributes } from '../devtool'
 import { CONSTANTS, isProduction } from '../constants'
 
@@ -52,7 +41,7 @@ const createInstance: HostConfig['createInstance'] = function (
   _hostContext,
   internalInstanceHandle,
 ) {
-  const { attach, mountedApplyProps = false, noUsePool = false, ...props } = newProps
+  const { attach, mountedApplyProps = false, ...props } = newProps
   const isPrimitive = type === 'primitive'
   const instanceProp = catalogueMap[type]
 
@@ -80,7 +69,6 @@ const createInstance: HostConfig['createInstance'] = function (
       primitive: isPrimitive,
       args: hasArgs,
       mountedApplyProps,
-      noUsePool,
       attach,
     },
   )
@@ -179,10 +167,7 @@ const detachDeletedInstance: HostConfig['detachDeletedInstance'] = (instance) =>
 }
 
 const prepareUpdate: HostConfig['prepareUpdate'] = (instance, _type, oldProps, newProps) => {
-  const { args: argsN = [], attach: attachN, mountedApplyProps: nm, children: cN, ...restNew } = newProps
-  const { args: argsO = [], attach: attachO, mountedApplyProps: om, children: cO, ...restOld } = oldProps
-
-  const diff = diffProps(instance, restNew, restOld)
+  const diff = diffProps(instance, newProps, oldProps)
   if (diff.changes.length || oldProps.attach !== newProps.attach) return diff
 
   return null
@@ -264,7 +249,7 @@ export const hostConfig: HostConfig = {
 
   /* 无/未知作用 */
   getRootHostContext: () => null,
-  getChildHostContext: (parentHostContext: any) => parentHostContext,
+  getChildHostContext: (parentHostContext) => parentHostContext,
   finalizeInitialChildren: () => false,
   preparePortalMount: () => null,
 
@@ -274,7 +259,7 @@ export const hostConfig: HostConfig = {
   supportsPersistence: false,
   /* 是否开启水合，未实现 ssr，关闭 */
   supportsHydration: false,
-  /* 是否只有一个渲染器，关闭 */
+  /* 是否只有一个渲染器，egreact 必须多渲染器，关闭 */
   isPrimaryRenderer: false,
 
   /* 定时器相关 */

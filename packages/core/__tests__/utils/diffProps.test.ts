@@ -1,4 +1,4 @@
-import { diffProps, attachInfo } from '../../src/utils'
+import { diffProps, attachInfo } from '../../src/renderer/utils'
 import groupHandlers from '../../src/Host/eui/Group'
 import spriteHandlers from '../../src/Host/egret/Sprite'
 import { CONSTANTS } from '../../src/constants'

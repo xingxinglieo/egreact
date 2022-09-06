@@ -147,6 +147,12 @@ export type IElementProps = {
   args?: any
   attach?: string
   mountedApplyProps?: boolean
-  noUsePool?: boolean
+  // noUsePool?: boolean
   [x: string]: any
+}
+
+export type Changes = [key: string, value: unknown, isEvent: boolean, keys: string[]]
+export type DiffSet = {
+  memoized: { [key: string]: any }
+  changes: Changes[]
 }

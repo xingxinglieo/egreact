@@ -64,3 +64,24 @@ displayObjectContainer.addChild(new ReactRender(
     </sprite>  
 ))
 ```
+
+```
+core
+├─ src
+│  ├─ Components                自定义组件
+│  ├─ Host                      定义原生组件
+│  ├─ constants.ts              定义常量
+│  ├─ devtool.ts                react devtool 的 hack 逻辑
+│  ├─ index.ts 
+│  ├─ outside.ts                外部逻辑
+│  ├─ renderer                  定义 renderer
+│  │  ├─ create.ts              createEgreact 相关 
+│  │  └─ index.ts               定义 HostConfig
+│  │  └─ utils
+│  │     ├─ attach.ts           attachInfo 给实例附加信息
+│  │     ├─ index.ts            
+│  │     └─ props.ts            对比属性和应用变更
+│  ├─ type.ts                   类型定义
+│  └─ utils
+│     └─ index.ts
+```

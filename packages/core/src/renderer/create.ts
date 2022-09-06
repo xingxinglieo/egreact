@@ -2,7 +2,8 @@ import React, { startTransition } from 'react'
 import type { TransitionTracingCallbacks, FiberRoot } from 'react-reconciler'
 import { ConcurrentRoot } from 'react-reconciler/constants'
 import { reconciler } from './index'
-import { attachInfo, detachInfo, DevThrow } from '../utils'
+import { DevThrow } from '../utils'
+import { attachInfo, detachInfo } from './utils'
 import { defaultOnRecoverableError } from '../outside'
 import { IContainer, Instance } from '../type'
 import { isProduction } from '../constants'
@@ -57,6 +58,8 @@ export class EgreactRoot {
       if (--rendererCount === 0 && !isProduction) {
         unProxyHackForDevTools()
       }
+    }else{
+      console.warn(`renderer is unmounted!`)
     }
   }
 }

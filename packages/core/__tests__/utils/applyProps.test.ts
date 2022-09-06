@@ -1,4 +1,4 @@
-import { applyProps, attachInfo, diffProps } from '../../src/utils'
+import { applyProps, attachInfo, diffProps } from '../../src/renderer/utils'
 import groupHandlers from '../../src/Host/eui/Group'
 
 describe('apply props', () => {
@@ -35,7 +35,10 @@ describe('apply props', () => {
       instance.dispatchEvent(new egret.TouchEvent(egret.TouchEvent.TOUCH_TAP))
       expect(emptyFun).toBeCalled()
       expect(() => applyProps(instance, { ...p1, onMyEventBb: emptyFun })).not.toThrow()
-      expect(() => applyProps(instance, { ...p1, onMyEventCc: emptyFun })).toThrow()
+      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementationOnce(() => {})
+      applyProps(instance, { ...p1, onMyEventCc: emptyFun })
+      expect(consoleWarnMock).toHaveBeenCalledTimes(3)
+      consoleWarnMock.mockRestore()
     })
   })
 

@@ -7,11 +7,6 @@ import { useSelector, useDispatch } from "react-redux";
 export default function Test() {
   const count = useSelector((state: RootState) => state.counter.value);
   const dispatch = useDispatch();
-  const arrayContainer = useRef<Instance<ArrayContainer>>(null);
-  console.log(egret.$hashCount);
-  useEffect(() => {
-    arrayContainer.current.reAttach();
-  });
 
   return (
     <>
@@ -21,8 +16,11 @@ export default function Test() {
         }}
         backgroundColor={0x000000}
       >
-        <arrayContainer attach="textFlow" ref={arrayContainer}>
+        <arrayContainer attach="textFlow">
           <objectContainer text={count + ""} style={{ textColor: 0xff0000 }} />
+          <font fontFamily="Impact" textColor={0x000000}>
+            {count}
+          </font>
           <font fontFamily="Impact" textColor={0x000000}>
             {" "}
             can{" "}

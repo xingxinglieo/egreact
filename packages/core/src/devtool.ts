@@ -7,11 +7,6 @@ import { catalogueMap } from './Host/index'
 import { IRenderInfo, Instance } from './type'
 import { CONSTANTS } from './constants'
 
-// addEventListener<K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-// addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-// removeEventListener<K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-// removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-
 /**
  * @description dom px 和 egret 坐标值换算比例
  */

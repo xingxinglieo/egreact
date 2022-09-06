@@ -1,12 +1,10 @@
 export * from './constants'
 
-export * from './renderer'
-
-export * from './utils'
-
 export * from './type'
 
 export * from './Host'
+
+export { getActualInstance } from './utils'
 
 export * from './Host/utils'
 
@@ -19,7 +17,6 @@ export { ArrayContainer } from './Host/custom/ArrayContainer'
 export { ObjectContainer } from './Host/custom/ObjectContainer'
 
 export { Anchor } from './Host/custom/Anchor'
-
 
 import egretProps from './Host/egret/index'
 import euiProps from './Host/eui/index'

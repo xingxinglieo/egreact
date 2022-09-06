@@ -1,10 +1,10 @@
-import { Egreact } from '../../src/Components/Egreact'
+import { Egreact, Primitive } from '../../src/Components'
 import React, { createRef, useEffect, useState } from 'react'
 import { render } from '@testing-library/react'
 import { getActualInstance } from '../../src/utils'
 import { ArrayContainer } from '../../src/Host/custom/ArrayContainer'
 import objectContainer from '../../src/Host/custom/ObjectContainer'
-import { Primitive } from '../../src/Host/custom/Primitive'
+import { Primitive as PrimitiveHandler } from '../../src/Host/custom/Primitive'
 import { BrowserRouter } from 'react-router-dom'
 import { EgreactLink } from '../../src/Components'
 
@@ -145,7 +145,7 @@ describe('arrayContainer font objectContainer primitive', () => {
       }, [])
       return (
         <textField>
-          <primitive object={obj} ref={ref1} attach="textFlow" onChange={() => void 0}></primitive>
+          <Primitive object={obj} ref={ref1} attach="textFlow" onChange={() => void 0}></Primitive>
           <primitive constructor={C} ref={ref2} attach="test"></primitive>
         </textField>
       )
@@ -182,7 +182,7 @@ describe('arrayContainer font objectContainer primitive', () => {
   })
 
   it(`should throw error when target has IContainer method`, () => {
-    const p = new Primitive({ constructor: Object })
+    const p = new PrimitiveHandler({ constructor: Object })
 
     expect(() => p.addChild({}, {})).toThrow()
     expect(() => p.removeChild({}, {})).toThrow()

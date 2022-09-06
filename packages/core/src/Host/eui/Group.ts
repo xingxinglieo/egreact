@@ -1,5 +1,5 @@
 import IViewport from './IViewport'
-import { NormalProp, layoutBaseHandlers, EventProp } from '../common'
+import { NormalProp, layoutBaseProp, EventProp } from '../common'
 import { mixinHelper } from '../utils'
 
 const groupHandlers = mixinHelper
@@ -11,6 +11,6 @@ const groupHandlers = mixinHelper
     hasState: NormalProp.pass<(stateName: string) => boolean>,
     touchThrough: NormalProp.boo,
   })
-  .mixin(layoutBaseHandlers, 'layout')
+  .mixin(layoutBaseProp, 'layout')
   .get()
 export default groupHandlers
