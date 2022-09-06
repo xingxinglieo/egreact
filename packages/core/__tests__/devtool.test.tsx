@@ -1,7 +1,8 @@
 import { render } from '@testing-library/react'
 import React from 'react'
 import sinon from 'sinon'
-import { Egreact, findEgretAncestor } from '../src/index'
+import { Egreact } from '../src/Components'
+import { findEgretAncestor } from '../src/utils'
 
 import {
   findMatchEventIndex,

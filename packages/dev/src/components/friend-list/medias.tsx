@@ -37,7 +37,7 @@ export default function Medias() {
             layout-paddingTop={27}
             layout-paddingBottom={27}
           >
-            <ItemRendererClass useRenderer>
+            <ItemRendererClass sync>
               {(data) => (
                 <eui-itemRenderer>
                   <eui-group layout="vertical" layout-gap={8}>

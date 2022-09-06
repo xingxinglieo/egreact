@@ -1,20 +1,19 @@
 import { NormalProp } from '../common'
 import { proxyHelper } from '../utils'
-import { ICustomClass } from '../../type'
+import { ICustomClass, Instance } from '../../type'
 
-export class Font extends egret.EventDispatcher implements ICustomClass {
+export class Font implements ICustomClass {
   __target: egret.ITextElement = {
     text: '',
     style: {},
   }
   set text(value: string) {
     this.__target.text = value
+    // @ts-ignore
+    this.__renderInfo.parent?.reAttach?.()
   }
   get text() {
     return this.__target.text
-  }
-  reAttach() {
-    this.dispatchEvent(new egret.Event('reAttach'))
   }
 }
 const font = {
@@ -22,7 +21,7 @@ const font = {
     constructor: Font,
     targetKey: '__target.style',
     setCallback() {
-      this.reAttach()
+      this.__renderInfo.parent?.reAttach?.()
     },
   }),
   textColor: NormalProp.num,

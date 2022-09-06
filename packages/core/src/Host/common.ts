@@ -1,17 +1,11 @@
 import { DevThrow, getActualInstance, is } from '../utils'
 import { CONSTANTS } from '../constants'
-import { DiffHandler, PropSetter, EventSet, PropSetterParameters, IPropInterface } from '../type'
-
-export interface PropsHandlers {
-  [e: `${typeof CONSTANTS.CUSTOM_DIFF_PREFIX}${string}`]: (newProp: any, oldProp: any) => boolean
-}
+import { DiffHandler, PropSetter, EventSet, PropSetterParameters } from '../type'
 
 export interface IProp {
   __setter: PropSetter<any>
   __Class?: new (...args: any[]) => any
 }
-
-export const isMountProp = (value: any): value is typeof CONSTANTS.PROP_MOUNT => value === CONSTANTS.PROP_MOUNT
 
 export module EventProp {
   export type GetEventKeyWithoutNum<T extends string> = `${T}${'Once' | ''}${'Capture' | ''}`
@@ -253,7 +247,7 @@ export module LayoutBase {
   export type Prop = 'basic' | 'tile' | 'horizontal' | 'vertical' | eui.LayoutBase
 }
 
-export const layoutBaseHandlers = {
+export const layoutBaseProp = {
   __Class: eui.LayoutBase,
   __setter: ({ newValue, target, targetKey }: PropSetterParameters<LayoutBase.Prop>) => {
     let value: eui.LayoutBase

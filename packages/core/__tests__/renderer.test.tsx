@@ -1,6 +1,8 @@
 import { render } from '@testing-library/react'
 import React, { createRef, useEffect, useState } from 'react'
-import { Egreact, getActualInstance, Instance, hostConfig, createEgreactRoot, ExtensionObj } from '../src/index'
+import { Egreact, getActualInstance, Instance, ExtensionObj } from '../src/index'
+import { createEgreactRoot } from '../src/renderer/create'
+import { hostConfig } from '../src/renderer'
 import TextNode from '../src/Host/custom/TextNode'
 
 describe('Egreact', () => {
@@ -75,7 +77,7 @@ describe('Egreact', () => {
       const [p, setP] = useState<any>({ attach: 'attach1' })
       useEffect(() => {
         // @ts-ignore
-        expect(container["attach1"]).toBe(getActualInstance(arrRef.current))
+        expect(container['attach1']).toBe(getActualInstance(arrRef.current))
         setP({ attach: 'attach2' })
       }, [])
       return <arrayContainer ref={arrRef} {...p}></arrayContainer>

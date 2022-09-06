@@ -1,15 +1,14 @@
 import {
   hyphenate,
   isEvent,
-  isDiffSet,
-  attachInfo,
   reduceKeysToTarget,
   getActualInstance,
   splitEventKeyToInfo,
   collectContextsFromDom,
-  getRenderInfo,
-  getCurrentEventPriority,
-} from '../../src/index'
+} from '../../src/utils'
+import { isDiffSet, attachInfo, getRenderInfo } from '../../src/renderer/utils'
+import { getCurrentEventPriority } from '../../src/renderer'
+
 import sinon from 'sinon'
 
 import { DiscreteEventPriority } from 'react-reconciler/constants'

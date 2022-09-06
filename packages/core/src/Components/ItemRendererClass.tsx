@@ -6,13 +6,19 @@ interface ItemRendererClassProps {
   children: (data: any, instance: eui.ItemRenderer) => React.ReactElement
   useRenderer?: boolean
   concurrent?: boolean
+  sync?: boolean
 }
 
 interface ItemRenderer extends eui.IItemRenderer {
   element: React.ReactElement
 }
 
-export function ItemRendererClass({ children, concurrent = true, useRenderer = true }: ItemRendererClassProps) {
+export function ItemRendererClass({
+  children,
+  concurrent = true,
+  useRenderer = true,
+  sync = false,
+}: ItemRendererClassProps) {
   const [, setFlag] = useState(0)
   const _update = () => setFlag((flag) => flag + 1)
   const update = concurrent ? () => startTransition(_update) : _update
@@ -26,7 +32,7 @@ export function ItemRendererClass({ children, concurrent = true, useRenderer = t
     () =>
       class ItemRenderer extends eui.ItemRenderer {
         root = useRenderer ? createEgreactRoot(new ArrayContainer()) : null
-        element: React.ReactElement = <eui-group></eui-group>
+        element: React.ReactElement = (<eui-group />)
         constructor() {
           super()
           if (useRenderer) this.addEventListener(egret.Event.REMOVED_FROM_STAGE, () => this.root?.unmount(), this)
@@ -37,7 +43,7 @@ export function ItemRendererClass({ children, concurrent = true, useRenderer = t
             object: this,
             ...(newNode.key === null ? { key: this.$hashCode } : {}),
           })
-          if (useRenderer) this.root?.render(this.element, { concurrent })
+          if (useRenderer) this.root?.render(this.element, { concurrent, sync })
           else set.add(this) && update()
         }
       },

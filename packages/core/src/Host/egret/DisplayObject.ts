@@ -43,13 +43,9 @@ const touchEventTypeSets = touchEventType.reduce(
   },
 )
 
-// extends PropsSets
-// type TypeWithPriority = EventProp.GetEventKey<TouchEventType>
 type TypeWithoutPriority = EventProp.GetEventKeyWithoutNum<TouchEventType>
 
-// type c = TouchEventTypeSetsWithPriority["onTouchEnd2"]
 type TouchEventTypeSets = {
-  // [key in TypeWithoutPriority | TypeWithPriority]: TouchEventSetter
   [key in TypeWithoutPriority]: TouchEventSetter
 }
 const displayObjectPropsHandlers = mixinHelper
@@ -60,31 +56,17 @@ const displayObjectPropsHandlers = mixinHelper
     __Class: egret.DisplayObject,
     width: ({ newValue, instance }: PropSetterParameters<number | string, eui.UIComponent>) => {
       const isPercent = typeof newValue === 'string' && newValue[newValue.length - 1] === '%'
-      if (isPercent) {
-        const percent = [...newValue]
-        percent.pop()
-        instance.percentWidth = Number(percent.join(''))
-      } else {
-        instance.width = Number(newValue)
-      }
-      return () => {
-        // @ts-ignore 实际初始值是 null
-        if (isPercent) instance.percentWidth = null
-      }
+      if (isPercent) instance.percentWidth = Number(newValue.replace('%', ''))
+      else instance.width = Number(newValue)
+      // @ts-ignore 实际初始值是 null
+      return () => isPercent && (instance.percentWidth = null)
     },
     height: ({ newValue, instance }: PropSetterParameters<number | string, eui.UIComponent>) => {
       const isPercent = typeof newValue === 'string' && newValue[newValue.length - 1] === '%'
-      if (isPercent) {
-        const percent = [...newValue]
-        percent.pop()
-        instance.percentHeight = Number(percent.join(''))
-      } else {
-        instance.height = Number(newValue)
-      }
-      return () => {
-        // @ts-ignore 实际初始值是 null
-        if (isPercent) instance.percentHeight = null
-      }
+      if (isPercent) instance.percentHeight = Number(newValue.replace('%', ''))
+      else instance.height = Number(newValue)
+      // @ts-ignore 实际初始值是 null
+      return () => isPercent && (instance.percentHeight = null)
     },
     x: NormalProp.num,
     y: NormalProp.num,

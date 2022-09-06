@@ -33,7 +33,7 @@ export default function Friends() {
           left={26}
           right={26}
         >
-          <ItemRendererClass>
+          <ItemRendererClass sync>
             {(data) => (
               <eui-itemRenderer width={698}>
                 <eui-rect
