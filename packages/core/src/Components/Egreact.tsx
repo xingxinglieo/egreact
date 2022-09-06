@@ -63,7 +63,6 @@ interface EgreactRef {
 }
 
 const ENTRY_CLASS = '__Main'
-// let mountedCount = 0
 
 function hyphenateEgretConfig(p: any) {
   return Object.keys(p).reduce((obj, key) => {
