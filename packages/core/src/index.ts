@@ -6,6 +6,8 @@ export * from './Host'
 
 export { getActualInstance } from './utils'
 
+export * from './renderer'
+
 export * from './Host/utils'
 
 export * from './Host/common'
