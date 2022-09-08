@@ -1,6 +1,6 @@
 import { IPropsHandlers, IPropInterface, ExtensionObj } from '../type'
 import { CONSTANTS } from '../constants'
-import { isEvent } from '../utils'
+import { is, isEvent } from '../utils'
 import { EventProp, NormalProp } from './common'
 
 type ToUnionOfFunction<T> = T extends any ? (x: T) => any : never

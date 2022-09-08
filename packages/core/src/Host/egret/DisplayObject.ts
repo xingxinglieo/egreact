@@ -1,5 +1,5 @@
 import { PropSetterParameters } from './../../type'
-import { EventProp, NormalProp, rectangleProp } from '../common'
+import { EventProp, NormalProp, rectangleProp, maskProp } from '../common'
 import { mixinHelper } from '../utils'
 
 const normalEventType = [
@@ -88,10 +88,12 @@ const displayObjectPropsHandlers = mixinHelper
     name: NormalProp.str,
     matrix: NormalProp.pass<egret.Matrix | void>,
     filters: NormalProp.pass<(egret.CustomFilter | egret.Filter)[]>,
-    mask: NormalProp.pass<egret.DisplayObject | egret.Rectangle | void>,
   })
-  .mixin(rectangleProp, 'mask')
+  // 对于对象和属性冲突没有做处理
+  .mixin(maskProp, 'mask')
   .mixin(rectangleProp, 'scrollRect')
   .get()
+
+type c = Parameters<typeof displayObjectPropsHandlers.mask>[0]
 
 export default displayObjectPropsHandlers

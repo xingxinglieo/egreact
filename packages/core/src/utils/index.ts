@@ -1,5 +1,5 @@
 import React from 'react'
-import type { PropSetter, IElementProps, Instance, IRenderInfo, EventInfo, ExtensionObj } from '../type'
+import type { Instance, EventInfo } from '../type'
 import { CONSTANTS, isProduction } from '../constants'
 import { EVENT_CATEGORY_MAP } from '../Host'
 import { Fiber } from 'react-reconciler'
@@ -15,7 +15,6 @@ export function hyphenate(str: string) {
 export const isEvent = (key: string) => /^on([A-Z][a-z]+)+\d*$/.test(key) // 是否为事件
 
 export const isMountProp = (value: any): value is typeof CONSTANTS.PROP_MOUNT => value === CONSTANTS.PROP_MOUNT
-
 
 export const DevThrow = (e: string | Error) => {
   if (isProduction) {
@@ -58,6 +57,7 @@ export const is = {
   boo: (a: any): a is boolean => typeof a === 'boolean',
   und: (a: any) => a === void 0,
   arr: (a: any): a is Array<any> => Array.isArray(a),
+  empty: (a: any): a is void => a === undefined || a === null,
   equ(a: any, b: any, { arrays = 'shallow', objects = 'reference', strict = true }: EquConfig = {}) {
     // Wrong type or one of the two undefined, doesn't match
     if (typeof a !== typeof b || !!a !== !!b) return false
@@ -189,3 +189,5 @@ export function collectContextsFromDom(dom: any) {
   }
   return contexts
 }
+
+export * from '../outside'
