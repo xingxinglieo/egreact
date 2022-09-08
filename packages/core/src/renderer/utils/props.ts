@@ -11,8 +11,8 @@ export const isDiffSet = (def: any): def is DiffSet => def && !!(def as DiffSet)
  */
 export function diffProps(
   instance: Instance,
-  { children: cN, key: kN, ref: rN, attach: aN, mountedApplyProps: mN, args: argsN, ...props }: IElementProps = {},
-  { children: cP, key: kP, ref: rP, attach: aP, mountedApplyProps: mP, args: argsP, ...previous }: IElementProps = {},
+  { children: cN, attach: aN, mountedApplyProps: mN, args: argsN, ...props }: IElementProps = {},
+  { children: cP, attach: aP, mountedApplyProps: mP, args: argsP, ...previous }: IElementProps = {},
 ): DiffSet {
   if (!instance[CONSTANTS.INFO_KEY]) attachInfo(instance)
   const info = instance[CONSTANTS.INFO_KEY]
