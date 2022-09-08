@@ -1,5 +1,5 @@
 import { Instance, ArrayContainer } from "egreact";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { RootState } from "../store";
 import { increment } from "../store/counterSlice";
 import { useSelector, useDispatch } from "react-redux";
@@ -7,10 +7,16 @@ import { useSelector, useDispatch } from "react-redux";
 export default function Test() {
   const count = useSelector((state: RootState) => state.counter.value);
   const dispatch = useDispatch();
-
+  const maskRef = useRef<any>(null);
+  const [mask, setMask] = useState<egret.DisplayObject | null>(null);
+  useEffect(() => {
+    setMask(maskRef.current);
+  }, []);
   return (
     <>
+      <displayObject ref={maskRef} width="200" height="200" />
       <eui-label
+        mask={mask}
         onTouchTap={() => {
           dispatch(increment());
         }}
