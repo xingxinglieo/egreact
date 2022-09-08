@@ -28,3 +28,9 @@ export namespace CONSTANTS {
 }
 
 export const isProduction = process.env.NODE_ENV === 'production'
+
+export const isBrowser =
+  typeof navigator !== 'undefined' &&
+  (navigator.product === 'ReactNative' || navigator.product === 'NativeScript' || navigator.product === 'NS')
+    ? false
+    : typeof window !== 'undefined' && typeof document !== 'undefined'

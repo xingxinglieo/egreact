@@ -6,7 +6,7 @@ import { DevThrow } from '../utils'
 import { attachInfo, detachInfo } from './utils'
 import { defaultOnRecoverableError } from '../outside'
 import { IContainer, Instance } from '../type'
-import { isProduction } from '../constants'
+import { isProduction, isBrowser } from '../constants'
 import { proxyHackForDevTools, unProxyHackForDevTools } from '../devtool'
 
 export type CreateRootOptions = {
@@ -30,7 +30,7 @@ export class EgreactRoot {
     }
     if (!this.rendered) {
       this.rendered = true
-      if (++rendererCount === 1 && !isProduction) {
+      if (++rendererCount === 1 && !isProduction && isBrowser) {
         proxyHackForDevTools()
       }
     }
@@ -55,10 +55,10 @@ export class EgreactRoot {
       }, void 0)
       detachInfo(container)
 
-      if (--rendererCount === 0 && !isProduction) {
+      if (--rendererCount === 0 && !isProduction && isBrowser) {
         unProxyHackForDevTools()
       }
-    }else{
+    } else {
       console.warn(`renderer is unmounted!`)
     }
   }

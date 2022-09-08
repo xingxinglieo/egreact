@@ -54,7 +54,7 @@ describe('devtool', () => {
   })
 
   describe('findTargetByPosition', () => {
-    it('should find a entire egret ancestor', () => {
+    it('should find a entire egret ancestor', async () => {
       const ref1 = React.createRef<any>()
       const ref2 = React.createRef<any>()
       const ref3 = React.createRef<any>()
@@ -109,6 +109,15 @@ describe('devtool', () => {
       window.dispatchEvent(e)
       window.removeEventListener('pointermove', handle2)
       window.removeEventListener('pointerover', handle)
+
+      sinon.stub(document, 'querySelectorAll').get(() => {
+        const div1 = document.createElement('div')
+        const div2 = document.createElement('div')
+        div1.innerHTML = `<div><span/></div>`
+        return () => [div1, div2]
+      })
+
+      await new Promise((r) => setTimeout(r, 100))
 
       unProxyHackForDevTools()
       window.addEventListener('pointerover', handle1)

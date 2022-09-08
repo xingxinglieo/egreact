@@ -89,7 +89,7 @@ export module NormalProp {
 
   export const pass = <T = any>({ newValue, target, targetKey }: PropSetterParameters<T>) => (
     // 4.7 不调用可以传入范型
-    (target[targetKey] = newValue), void 0
+    !is.empty(target) && (target[targetKey] = newValue), void 0
   )
 
   // 解决无法传范型的问题
@@ -115,7 +115,7 @@ export module NormalProp {
 
   export const instance =
     <P>(constructor: new (...args: any) => any) =>
-    ({ newValue, target, targetKey, keys }: PropSetterParameters<P>) => {
+    ({ newValue, target, targetKey }: PropSetterParameters<P>) => {
       if (newValue instanceof constructor) {
         target[targetKey] = newValue
       } else {
@@ -208,7 +208,7 @@ export const pointProp = {
 }
 
 export module Rectangle {
-  export type Prop = [] | number[] | egret.Rectangle
+  export type Prop = [] | number[] | egret.Rectangle | void
   export const setter: PropSetter<Prop> = NormalProp.instance(egret.Rectangle)
   export const diff: DiffHandler<Prop> = NormalProp.flatArrDiffWithLevel()
 }
@@ -229,8 +229,25 @@ export const rectangleProp = {
   topLeft: pointProp,
 }
 
+export module Mask {
+  export type Prop = Rectangle.Prop | egret.DisplayObject
+  const rectSetter = NormalProp.instance(egret.Rectangle)
+  export const setter: PropSetter<Prop> = (props) => {
+    const { newValue } = props
+    if (newValue instanceof egret.DisplayObject) return NormalProp.pass(props)
+    else return rectSetter(props)
+  }
+  export const diff: DiffHandler<Prop> = NormalProp.flatArrDiffWithLevel()
+}
+
+export const maskProp = {
+  ...rectangleProp,
+  __setter: Mask.setter,
+  __diff: Mask.diff,
+}
+
 export module Texture {
-  export type Prop = [] | egret.Texture
+  export type Prop = egret.DisplayObject | Rectangle.Prop
   export const setter: PropSetter<Prop> = NormalProp.instance(egret.Texture)
   export const diff: DiffHandler<Prop> = NormalProp.flatArrDiffWithLevel()
 }

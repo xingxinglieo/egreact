@@ -159,3 +159,17 @@ export const defaultOnRecoverableError =
         // eslint-disable-next-line react-internal/no-production-logging
         console['error'](error)
       }
+
+export function throttle<T extends (...args: any[]) => any>(func: T, wait: number) {
+  let previous = 0
+  let res: ReturnType<T>
+  return function (...args: any[]) {
+    let now = +new Date()
+    let remain = wait - (now - previous)
+
+    if (remain < 0) {
+      previous = now
+      return (res = func.apply(this, args))
+    } else return res
+  } as T
+}

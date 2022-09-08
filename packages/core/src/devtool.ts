@@ -1,7 +1,6 @@
-import { throttle } from 'lodash'
 import { Reconciler } from 'react-reconciler'
 
-import { getCanvas, findEgretAncestor, is, getActualInstance } from './utils'
+import { getCanvas, findEgretAncestor, is, getActualInstance, throttle } from './utils'
 import { findTargetByPosition } from './outside'
 import { catalogueMap } from './Host/index'
 import { IRenderInfo, Instance } from './type'
@@ -16,29 +15,38 @@ function calculateScale() {
   return rect.width / egret.lifecycle.stage.stageWidth
 }
 
-const getComputedStyle = window.getComputedStyle
-const emptyCSSStyleSheet = {
-  ...getComputedStyle(document.createElement('div')),
-  ...{
-    borderLeftWidth: '0',
-    borderRightWidth: '0',
-    borderTopWidth: '0',
-    borderBottomWidth: '0',
-    marginLeft: '0',
-    marginRight: '0',
-    marginTop: '0',
-    marginBottom: '0',
-    paddingLeft: '0',
-    paddingRight: '0',
-    paddingTop: '0',
-    paddingBottom: '0',
-  },
-}
+const [storeOriginComputedStyle, getOriginComputedStyle] = (function () {
+  var getComputedStyle: typeof window.getComputedStyle
+  return [() => getComputedStyle || (getComputedStyle = window.getComputedStyle), () => getComputedStyle]
+})()
 
+const getEmptyCSSStyleSheet = (function () {
+  var emptyCSSStyleSheet: ReturnType<typeof getComputedStyle>
+  return () =>
+    emptyCSSStyleSheet ||
+    (emptyCSSStyleSheet = {
+      ...getOriginComputedStyle()(document.createElement('div')),
+      borderLeftWidth: '0',
+      borderRightWidth: '0',
+      borderTopWidth: '0',
+      borderBottomWidth: '0',
+      marginLeft: '0',
+      marginRight: '0',
+      marginTop: '0',
+      marginBottom: '0',
+      paddingLeft: '0',
+      paddingRight: '0',
+      paddingTop: '0',
+      paddingBottom: '0',
+    })
+})()
+
+// 记录最近的一个显示对象信息
+let latestEgretRect = { w: 0, h: 0, x: 0, y: 0 }
 /**
  * @description 挂载 getBoundingClientRect，给 react devtool 调用
  */
-export function getBoundingClientRect(instance: Instance<unknown>) {
+export function getBoundingClientRect(instance: Instance<egret.DisplayObject>) {
   const egretInstance = findEgretAncestor(instance)
   const canvasRect = getCanvas().getBoundingClientRect()
   if (!egretInstance) return canvasRect
@@ -49,28 +57,41 @@ export function getBoundingClientRect(instance: Instance<unknown>) {
   const y = point.y * scale + canvasRect.top
   const width = egretInstance.width * scale
   const height = egretInstance.height * scale
+  latestEgretRect = { w: instance.width, h: instance.height, x: instance.x, y: instance.y }
   return { x, y, width, height, left: x, top: y }
 }
 
+let isSelectedEgret = false
 /**
  * @description 代理 window.getComputedStyle，使它也能计算某个函数的宽高大小
  * @link https://github.com/facebook/react/blob/29c2c633159cb2171bb04fe84b9caa09904388e8/packages/react-devtools-shared/src/backend/views/utils.js#L113
  */
 function proxyGetComputedStyle() {
+  storeOriginComputedStyle()
   window.getComputedStyle = function (el, pseudo) {
     if (Object.entries(catalogueMap).some(([n, catalogue]) => catalogue.__Class && el instanceof catalogue.__Class)) {
-      return emptyCSSStyleSheet
+      isSelectedEgret = true
+      return getEmptyCSSStyleSheet()
     } else {
-      return getComputedStyle.call(this, el, pseudo)
+      isSelectedEgret = false
+      return getOriginComputedStyle().call(this, el, pseudo)
     }
   }
 }
 function unProxyGetComputedStyle() {
-  window.getComputedStyle = getComputedStyle
+  window.getComputedStyle = getOriginComputedStyle()
 }
 
-const addEventListener = window.addEventListener
-const removeEventListener = window.removeEventListener
+const [storeOriginListeners, getOriginListeners] = (function () {
+  var listeners: { addEventListener: typeof addEventListener; removeEventListener: typeof removeEventListener }
+  return [
+    () =>
+      listeners ||
+      (listeners = { addEventListener: window.addEventListener, removeEventListener: window.removeEventListener }),
+    () => listeners,
+  ]
+})()
+
 type EventHandler = EventListener | EventListenerObject
 
 export type ProxyEventInfo = [
@@ -113,11 +134,32 @@ export function extraMatchEvent(info: ProxyEventInfo): ProxyEventInfo | null {
   } else return null
 }
 
+let rafId: number | null = null
+
+function specifiedShadowInfoForEgret() {
+  const shadows = document.querySelectorAll('div[style^="z-index: 10000000;"]')
+  for (let i = 0; i < shadows.length; i++) {
+    const shadow = shadows[i] as HTMLDivElement
+    if (i === 0) {
+      shadow.style.display = 'block'
+      const rectSpan = shadow.firstChild?.lastChild
+      // 修改dom，显示之前记录的宽高轴
+      if (isSelectedEgret && rectSpan)
+        rectSpan.textContent = `w:${latestEgretRect.w} h:${latestEgretRect.h} x:${latestEgretRect.x} y:${latestEgretRect.y} (in egret)`
+    } else shadow.style.display = 'none'
+  }
+  rafId = requestAnimationFrame(specifiedShadowInfoForEgret)
+}
 /**
  * @description 代理window监听器，目的是代理 react-devtool 添加的事件
  * @link https://github.com/facebook/react/blob/c3d7a7e3d72937443ef75b7e29335c98ad0f1424/packages/react-devtools-shared/src/backend/views/Highlighter/index.js#L41
  */
 function proxyListener() {
+  // 对 shadow 显示 egret 对象特殊化
+  if (!rafId) {
+    rafId = requestAnimationFrame(specifiedShadowInfoForEgret)
+  }
+  storeOriginListeners()
   window.addEventListener = function (type: string, listener: EventHandler, options?: boolean | { capture?: boolean }) {
     if (
       is.fun(listener) &&
@@ -129,16 +171,17 @@ function proxyListener() {
         r.x += window.scrollX
         r.y += window.scrollY
         // 判断点击点是否处于画布中
+        let target: egret.DisplayObject | null = null
         if (x > r.x && x < r.x + r.width && y > r.y && y < r.y + r.height) {
           const scale = calculateScale()
-          const target = findTargetByPosition(egret.lifecycle.stage, (x - r.x) / scale, (y - r.y) / scale) as any
+          target = findTargetByPosition(egret.lifecycle.stage, (x - r.x) / scale, (y - r.y) / scale)
           // 模拟一个新的 event，目的是改变 target
           if (target) {
             e = {
               ...e,
               preventDefault: e.preventDefault.bind(e),
               stopPropagation: e.stopPropagation.bind(e),
-              target,
+              target: target as any,
             }
           }
         }
@@ -146,7 +189,7 @@ function proxyListener() {
       } as EventListener
       // 只有非相同的事件才被加入
       if (findMatchEventIndex([type, listener, options]) === -1) {
-        addEventListener.call(window, type, proxyHandler, options)
+        getOriginListeners().addEventListener.call(window, type, proxyHandler, options)
         const info: ProxyEventInfo = [type, listener, options, proxyHandler]
         if (type === 'pointerover') {
           // 特殊处理，react devtool 没有监听 pointermove，但是进入画布的话，只有一次 pointerover
@@ -160,7 +203,7 @@ function proxyListener() {
         eventInfoCollection.push(info)
       }
     } else {
-      addEventListener.call(window, type, listener, options)
+      getOriginListeners().addEventListener.call(window, type, listener, options)
     }
   }
 
@@ -172,22 +215,26 @@ function proxyListener() {
     if (is.fun(listener)) {
       const info = extraMatchEvent([type, listener, options])
       if (info) {
-        removeEventListener.call(window, type, info[3]!, options)
+        getOriginListeners().removeEventListener.call(window, type, info[3]!, options)
         if (type === 'pointerover' && info[4]) {
           getCanvas().removeEventListener('pointermove', info[4], options)
         }
       } else {
-        removeEventListener.call(window, type, listener, options)
+        getOriginListeners().removeEventListener.call(window, type, listener, options)
       }
     } else {
-      removeEventListener.call(window, type, listener, options)
+      getOriginListeners().removeEventListener.call(window, type, listener, options)
     }
   }
 }
 
 function unProxyListener() {
-  window.addEventListener = addEventListener
-  window.removeEventListener = removeEventListener
+  if (rafId) {
+    cancelAnimationFrame(rafId)
+    rafId = null
+  }
+  window.addEventListener = getOriginListeners().addEventListener
+  window.removeEventListener = getOriginListeners().removeEventListener
   while (eventInfoCollection.length) {
     const info = eventInfoCollection.pop()!
     // 移除代理
