@@ -12,7 +12,7 @@ export function hyphenate(str: string) {
   return str.replace(hyphenateRE, '-$1').toLowerCase()
 }
 
-export const isEvent = (key: string) => /^on([A-Z][a-z]+)+\d*$/.test(key) // 是否为事件
+export const isEvent = (key: string) => /^on(([A-Z]|-)[a-z]+)+\d*$/.test(key) // 是否为事件
 
 export const isMountProp = (value: any): value is typeof CONSTANTS.PROP_MOUNT => value === CONSTANTS.PROP_MOUNT
 
@@ -111,7 +111,7 @@ export function reduceKeysToTarget(target: any, key: string, separator = '-') {
 }
 
 export const DEFAULT_EVENT_CATEGORY = egret.Event
-const eventReg = /(([A-Z][a-z]+)|([0-9]+))/g
+const eventReg = /((([A-Z]|-)[a-z]+)|([0-9]+))/g
 /**
  * @description 将 event 的 key 转换为 type,once,capture,priority 4个部分
  * 注意 Once Capture Priority 是作为后缀，某个可以缺失，但顺序不能颠倒
@@ -126,7 +126,7 @@ export function splitEventKeyToInfo(key: string): EventInfo {
     priority: 0,
     keys: [],
   }
-  key.replace(eventReg, (match) => (words.push(match), ''))
+  key.replace(eventReg, (match) => (words.push(match.replace('-', '')), ''))
   info.keys = [...words]
   const endIndex = Math.max(words.length - 3, 0)
   // 获取后缀
@@ -159,7 +159,7 @@ export function splitEventKeyToInfo(key: string): EventInfo {
   } else {
     category = DEFAULT_EVENT_CATEGORY
   }
-  info.type = category[words.join('_').toUpperCase()]
+  info.type = category[words.join('_').toUpperCase()] ?? words.join('')
   return info
 }
 

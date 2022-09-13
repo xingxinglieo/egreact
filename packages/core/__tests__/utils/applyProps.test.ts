@@ -36,8 +36,10 @@ describe('apply props', () => {
       expect(emptyFun).toBeCalled()
       expect(() => applyProps(instance, { ...p1, onMyEventBb: emptyFun })).not.toThrow()
       const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementationOnce(() => {})
-      applyProps(instance, { ...p1, onMyEventCc: emptyFun })
+      applyProps(instance, { ...p1, onMyEventCc: emptyFun, 'on-link': emptyFun })
       expect(consoleWarnMock).toHaveBeenCalledTimes(1)
+      // @ts-ignore
+      expect('link' in instance.$EventDispatcher[1]).toBeTruthy()
       consoleWarnMock.mockRestore()
     })
   })

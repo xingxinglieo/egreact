@@ -82,7 +82,8 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
       const eInfo = splitEventKeyToInfo(key)
       let setter = info.propsHandlers[eInfo.name] as PropSetter<any>
       if (!is.fun(setter)) {
-        if (isMount) console.warn(`\`${key}\` maybe not a valid event, it will be handle by default way`)
+        if (isMount && !key.startsWith('on-'))
+          console.warn(`\`${key}\` maybe not a valid event, it will be handle by default way`)
         setter = EventProp.eventSetter as unknown as PropSetter<any>
       }
 
