@@ -37,7 +37,7 @@ describe('apply props', () => {
       expect(() => applyProps(instance, { ...p1, onMyEventBb: emptyFun })).not.toThrow()
       const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementationOnce(() => {})
       applyProps(instance, { ...p1, onMyEventCc: emptyFun })
-      expect(consoleWarnMock).toHaveBeenCalledTimes(3)
+      expect(consoleWarnMock).toHaveBeenCalledTimes(1)
       consoleWarnMock.mockRestore()
     })
   })

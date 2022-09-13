@@ -3,6 +3,7 @@ import { DevThrow, is, isEvent, reduceKeysToTarget, splitEventKeyToInfo } from '
 import { DiffSet, ExtensionObj, IElementProps, Instance, PropSetter } from '../../type'
 import { CONSTANTS, isProduction } from '../../constants'
 import { attachInfo } from './attach'
+import { EventProp } from '../../Host/common'
 
 export const isDiffSet = (def: any): def is DiffSet => def && !!(def as DiffSet).memoized && !!(def as DiffSet).changes
 
@@ -75,11 +76,14 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
 
     const oldValue = oldMemoizedProps.hasOwnProperty(key) ? oldMemoizedProps[key] : CONSTANTS.PROP_MOUNT
     const isRemove = newValue === CONSTANTS.DEFAULT_REMOVE
+    const isMount = !info.memoizedResetter.hasOwnProperty(key)
+
     if (isEvent) {
       const eInfo = splitEventKeyToInfo(key)
-      const setter = info.propsHandlers[eInfo.name] as PropSetter<any>
+      let setter = info.propsHandlers[eInfo.name] as PropSetter<any>
       if (!is.fun(setter)) {
-        return console.warn(`\`${key}\` maybe not a valid event`)
+        if (isMount) console.warn(`\`${key}\` maybe not a valid event, it will be handle by default way`)
+        setter = EventProp.eventSetter as unknown as PropSetter<any>
       }
 
       // 无论如何都会先清除副作用
@@ -112,13 +116,11 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
         return DevThrow(`\`${targetKey}\` depends on \`${prefixKey}\`, you must set \`${prefixKey}\` before`)
       }
 
-      // 存储一下初始值，也是挂载的标志
-      if (!info.memoizedDefault.hasOwnProperty(key)) {
+      // 存储一下初始值
+      if (isMount) {
         info.memoizedDefault[key] = target[targetKey]
-      }
-
-      if (!is.fun(info.propsHandlers[key])) {
-        console.warn(`\`${key}\` may not be a valid prop in ${instance.constructor.name}`)
+        if (!is.fun(info.propsHandlers[key]))
+          console.warn(`\`${key}\` may not be a valid prop in ${instance.constructor.name}`)
       }
 
       const defaultPropsHandler =
