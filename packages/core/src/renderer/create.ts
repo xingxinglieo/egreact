@@ -59,7 +59,7 @@ export class EgreactRoot {
         unProxyHackForDevTools()
       }
     } else {
-      console.warn(`renderer is unmounted!`)
+      console.warn(`egreact renderer is unmounted!`)
     }
   }
 }
