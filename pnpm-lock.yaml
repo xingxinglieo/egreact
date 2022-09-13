@@ -70,6 +70,8 @@ importers:
       tslib: ^2.4.0
       typescript: ^4.7.3
     dependencies:
+      '@types/react': 18.0.19
+      react: 18.2.0
       react-context-bridge: 0.0.5_react@18.2.0
       react-reconciler: 0.27.0_react@18.2.0
       typescript: 4.8.3
@@ -106,6 +108,7 @@ importers:
       react: 18.2.0
       react-is: 17.0.2
       react-reconciler: 0.29.0_react@18.2.0
+      react-redux: 8.0.2_react@18.2.0
     devDependencies:
       '@reduxjs/toolkit': 1.8.5_kkwg4cbsojnjnupd3btipussee
       '@types/node': 17.0.45
@@ -2790,6 +2793,7 @@ packages:
     dependencies:
       immer: 9.0.15
       react: 18.2.0
+      react-redux: 8.0.2_rlv4q3lv3ye3du2t2nhu327l6i
       redux: 4.2.0
       redux-thunk: 2.4.1_redux@4.2.0
       reselect: 4.1.6
@@ -3773,7 +3777,7 @@ packages:
       webpack-cli: 4.x.x
     dependencies:
       webpack: 5.74.0_webpack-cli@4.10.0
-      webpack-cli: 4.10.0_mldmorf72vas4wjtkspcp7zl7m
+      webpack-cli: 4.10.0_webpack@5.74.0
     dev: true
 
   /@webpack-cli/info/1.5.0_webpack-cli@4.10.0:
@@ -3782,7 +3786,7 @@ packages:
       webpack-cli: 4.x.x
     dependencies:
       envinfo: 7.8.1
-      webpack-cli: 4.10.0_mldmorf72vas4wjtkspcp7zl7m
+      webpack-cli: 4.10.0_webpack@5.74.0
     dev: true
 
   /@webpack-cli/serve/1.7.0_ixpxa6msyrc3obwec7as2lygbu:
@@ -11860,15 +11864,6 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-context-bridge/0.0.5_react@18.2.0:
-    resolution: {integrity: sha512-ZdBg4gME0eEaa9fzyDa1UBhODhD91XR9pgaDCzHN0K8kPFDV7GjKi9syYvolTuI71ll0rDTxHPSmbTKl7pbFnw==}
-    peerDependencies:
-      react: '>=16.9'
-    dependencies:
-      '@types/react': 18.0.19
-      react: 18.2.0
-    dev: false
-
   /react-dom/18.2.0_react@18.2.0:
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
     peerDependencies:
@@ -11920,6 +11915,8 @@ packages:
       react: 18.2.0
       scheduler: 0.23.0
     dev: false
+
+  /react-redux/8.0.2_react@18.2.0:
     resolution: {integrity: sha512-nBwiscMw3NoP59NFCXFf02f8xdo+vSHT/uZ1ldDwF7XaTpzm+Phk97VT4urYBl5TYAPNVaFm12UHAEyzkpNzRA==}
     peerDependencies:
       '@types/react': ^16.8 || ^17.0 || ^18.0
@@ -11946,6 +11943,8 @@ packages:
       hoist-non-react-statics: 3.3.2
       react: 18.2.0
       react-is: 18.2.0
+      use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
 
   /react-redux/8.0.2_rlv4q3lv3ye3du2t2nhu327l6i:
     resolution: {integrity: sha512-nBwiscMw3NoP59NFCXFf02f8xdo+vSHT/uZ1ldDwF7XaTpzm+Phk97VT4urYBl5TYAPNVaFm12UHAEyzkpNzRA==}
@@ -12098,6 +12097,7 @@ packages:
     resolution: {integrity: sha512-oSBmcKKIuIR4ME29/AeNUnl5L+hvBq7OaJWzaptTQJAntaPvxIJqfnjbaEiCzzaIz+XmVILfqAM3Ob0aXLPfjA==}
     dependencies:
       '@babel/runtime': 7.19.0
+    dev: true
 
   /regenerate-unicode-properties/10.0.1:
     resolution: {integrity: sha512-vn5DU6yg6h8hP/2OkQo3K7uVILvY4iu0oI4t3HFa81UPkhGJwkRwM10JEc3upjdhHjs/k8GJY1sRBhk5sr69Bw==}
@@ -14629,7 +14629,7 @@ packages:
       tapable: 2.2.1
       terser-webpack-plugin: 5.3.6_webpack@5.74.0
       watchpack: 2.4.0
-      webpack-cli: 4.10.0_mldmorf72vas4wjtkspcp7zl7m
+      webpack-cli: 4.10.0_webpack@5.74.0
       webpack-sources: 3.2.3
     transitivePeerDependencies:
       - '@swc/core'
