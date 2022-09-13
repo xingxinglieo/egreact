@@ -38,6 +38,10 @@ describe('Confirm prop name if it is a event key', () => {
     expect(isEvent('onTouchMoveCapture01')).toBeTruthy()
     expect(isEvent('onTouchMoveOnceCapture')).toBeTruthy()
     expect(isEvent('onTouchMoveOnceCapture12')).toBeTruthy()
+    expect(isEvent('onlink')).toBeFalsy()
+    expect(isEvent('on-link')).toBeTruthy()
+    expect(isEvent('on-abc-dfg')).toBeTruthy()
+    expect(isEvent('on-abcDfg-abc')).toBeTruthy()
 
     expect(isEvent('on')).toBeFalsy()
     expect(isEvent('on13')).toBeFalsy()
@@ -132,7 +136,7 @@ describe('Get event info from key', () => {
     name: 'onTouchMove',
   })
   expect(splitEventKeyToInfo('onTouchMoveCaptureOnce12')).toEqual({
-    type: undefined,
+    type: 'TouchMoveCapture',
     capture: false,
     once: true,
     priority: 12,
@@ -156,6 +160,31 @@ describe('Get event info from key', () => {
     name: 'onAdded',
   })
 
+  expect(splitEventKeyToInfo('onCdBa')).toEqual({
+    type: 'CdBa',
+    capture: false,
+    once: false,
+    priority: 0,
+    keys: ['Cd', 'Ba'],
+    name: 'onCdBa',
+  })
+
+  expect(splitEventKeyToInfo('on-link')).toEqual({
+    type: 'link',
+    capture: false,
+    once: false,
+    priority: 0,
+    keys: ['link'],
+    name: 'onlink',
+  })
+  expect(splitEventKeyToInfo('on-abcDfg-abcOnce7')).toEqual({
+    type: 'abcDfgabc',
+    capture: false,
+    once: true,
+    priority: 7,
+    keys: ['abc', 'Dfg', 'abc', 'Once', '7'],
+    name: 'onabcDfgabc',
+  })
   sinon.stub(window, 'event').get(() => ({
     type: 'click',
   }))

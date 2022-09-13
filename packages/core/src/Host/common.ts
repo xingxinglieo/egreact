@@ -9,7 +9,6 @@ export interface IProp {
 
 export module EventProp {
   export type GetEventKeyWithoutNum<T extends string> = `${T}${'Once' | ''}${'Capture' | ''}`
-  // export type
   export const eventSetterWithType = <T extends egret.Event>() => {
     const eventHandler: EventSet<(event: T) => any> = (props) => {
       type InnerListener = Function
