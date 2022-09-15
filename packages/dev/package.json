@@ -23,6 +23,8 @@
   "dependencies": {
     "egreact": "workspace:*",
     "react": "^18.1.0",
-    "react-reconciler": "^0.29.0"
+    "react-is": "17",
+    "react-reconciler": "^0.29.0",
+    "react-redux": "^8.0.2"
   }
 }

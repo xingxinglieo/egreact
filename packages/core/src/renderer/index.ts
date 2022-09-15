@@ -98,11 +98,11 @@ const appendChild: HostConfig['appendChild'] = function (parentInstance, child) 
     info.targetInfo = [target, targetKey, target[targetKey]]
     target[targetKey] = getActualInstance(child)
   } else if (child instanceof TextNode) {
-    if ('text' in parentInstance) {
-      child.setContainer(parentInstance)
+    if ('text' in getActualInstance(parentInstance)) {
+      child.setContainer(getActualInstance(parentInstance))
     } else {
       return DevThrow(
-        `parent ${parentInstance.constructor.name} is incorrect, text instance must be in a text container, such as textField, bitmapText, eui-label`,
+        `text \`${child.text}\` whose parent \`${parentInstance.constructor.name}\` don't have a \`text\` attribute(e.g.textField, bitmapText, eui-label)`,
       )
     }
   } else {
