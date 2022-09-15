@@ -1,9 +1,11 @@
-import typescript from 'rollup-plugin-typescript'
+import typescript from '@rollup/plugin-typescript'
 import json from '@rollup/plugin-json'
 
 export default {
   input: './src/index.ts',
-  plugins: [json(), typescript({})],
+  plugins: [json(), typescript({
+    declaration: true
+  })],
   output: [
     {
       format: 'es',

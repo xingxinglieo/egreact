@@ -1,25 +1,16 @@
 import { NormalProp } from '../common'
 import { proxyHelper } from '../utils'
-import { ICustomClass, Instance } from '../../type'
+import { ICustomClass } from '../../type'
 
-export class Font implements ICustomClass {
-  __target: egret.ITextElement = {
-    text: '',
-    style: {},
-  }
-  set text(value: string) {
-    this.__target.text = value
-    // @ts-ignore
-    this.__renderInfo.parent?.reAttach?.()
-  }
-  get text() {
-    return this.__target.text
-  }
+export class Font implements egret.ITextElement {
+  text = ''
+  style = {}
 }
 const font = {
   __Class: proxyHelper({
     constructor: Font,
-    targetKey: '__target.style',
+    excludeKeys: ['text'],
+    targetKey: 'style',
     setCallback() {
       this.__renderInfo.parent?.reAttach?.()
     },

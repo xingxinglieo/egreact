@@ -1,4 +1,4 @@
-import { Instance, ArrayContainer } from "egreact";
+import { Primitive } from "egreact";
 import React, { useEffect, useRef, useState } from "react";
 import { RootState } from "../store";
 import { increment } from "../store/counterSlice";
@@ -16,7 +16,6 @@ export default function Test() {
     <>
       <displayObject ref={maskRef} width="200" height="200" />
       <eui-label
-        mask={mask}
         onTouchTap={() => {
           dispatch(increment());
         }}
@@ -65,6 +64,9 @@ export default function Test() {
       >
         i am {count}.
       </eui-label>
+      <Primitive constructor={eui.Label} textColor={0x000000}>
+        abc
+      </Primitive>
     </>
   );
 }
