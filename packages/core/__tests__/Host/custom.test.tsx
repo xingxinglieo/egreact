@@ -5,8 +5,7 @@ import { getActualInstance } from '../../src/utils'
 import { ArrayContainer } from '../../src/Host/custom/ArrayContainer'
 import objectContainer from '../../src/Host/custom/ObjectContainer'
 import { Primitive as PrimitiveHandler } from '../../src/Host/custom/Primitive'
-import { BrowserRouter } from 'react-router-dom'
-import { EgreactLink } from '../../src/Components'
+import { BrowserRouter, Link } from 'react-router-dom'
 
 describe('objectContainer', () => {
   it('should be undefined when getting symbol', () => {
@@ -199,7 +198,7 @@ describe('aTag for React-Router', () => {
     return (
       <Egreact container={container}>
         <BrowserRouter>
-          <EgreactLink
+          <Link
             ref={ref}
             // @ts-ignore
             test="1"
@@ -208,7 +207,7 @@ describe('aTag for React-Router', () => {
             size={60}
             y={200}>
             to eui
-          </EgreactLink>
+          </Link>
         </BrowserRouter>
       </Egreact>
     )

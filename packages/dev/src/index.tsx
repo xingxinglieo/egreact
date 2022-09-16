@@ -2,7 +2,7 @@ import React from "react";
 import { Provider, useSelector, useDispatch } from "react-redux";
 import { RootState, store } from "./store";
 import { createRoot } from "react-dom/client";
-import { Egreact, EgreactLink } from "egreact";
+import { Egreact } from "egreact";
 import {
   HashRouter,
   BrowserRouter,
@@ -15,6 +15,7 @@ global.BASE_URL = "/resource/assets/";
 import TestEui from "./components/friend-list";
 import TestFont from "./components/TestFont";
 import TestPrimitive from "./components/TestPrimitive";
+import { EgreactLink } from "./components/EgreactLink";
 function App() {
   const count = useSelector((state: RootState) => state.counter.value);
   const dispatch = useDispatch();
