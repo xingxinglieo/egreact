@@ -180,6 +180,39 @@ describe('arrayContainer font objectContainer primitive', () => {
     expect(() => render(<TestContainer />)).toThrow()
   })
 
+  it(`should throw error when target constructor/object update`, async () => {
+    const TestContainer1 = () => {
+      const [obj, setObj] = useState<any>(new egret.Shape())
+      useEffect(() => {
+        setObj(new egret.DisplayObject())
+      }, [])
+      return <primitive object={obj}></primitive>
+    }
+    const TestContainer2 = () => {
+      const [c, setC] = useState<any>(() => egret.Shape)
+      useEffect(() => {
+        setC(() => egret.DisplayObject)
+      }, [])
+      return <primitive constructor={c}></primitive>
+    }
+    // expect(() => createEgreactRoot(new ArrayContainer()).render(<TestContainer1 />, { sync: true })).toThrow()
+    // expect(() => ).toThrow()
+    expect(() =>
+      render(
+        <Egreact>
+          <TestContainer1 />
+        </Egreact>,
+      ),
+    ).toThrow()
+    expect(() =>
+      render(
+        <Egreact>
+          <TestContainer2 />
+        </Egreact>,
+      ),
+    ).toThrow()
+  })
+
   it(`should throw error when target has IContainer method`, () => {
     const p = new PrimitiveHandler({ constructor: Object })
 

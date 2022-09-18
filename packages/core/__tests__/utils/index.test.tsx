@@ -5,6 +5,7 @@ import {
   getActualInstance,
   splitEventKeyToInfo,
   collectContextsFromDom,
+  DevThrow,
 } from '../../src/utils'
 import { isDiffSet, attachInfo, getRenderInfo } from '../../src/renderer/utils'
 import { getCurrentEventPriority } from '../../src/renderer'
@@ -216,4 +217,10 @@ describe('Attach RenderInfo', () => {
     expect(getRenderInfo(attachInfo({}))).toBeTruthy()
     expect(() => attachInfo(null)).toThrow()
   })
+})
+
+describe('DevThrow', () => {
+  expect(() => {
+    DevThrow(new Error())
+  }).toThrowError()
 })

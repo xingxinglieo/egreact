@@ -127,9 +127,7 @@ export interface IRenderInfo {
   propsHandlers: IPropsHandlers
   memoizedDefault: { [key: string]: any }
   memoizedProps: { [key: string]: any }
-  memoizedResetter: {
-    [key: string]: (removed: boolean) => void
-  }
+  memoizedResetter: { [key: string]: (removed: boolean) => void }
 }
 
 export type Instance<I = ExtensionObj> = I &

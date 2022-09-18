@@ -1,13 +1,14 @@
 import React, { startTransition, useEffect, useRef, useState } from 'react'
 import { createEgreactRoot } from '../renderer/create'
 import { ArrayContainer } from '../Host/custom/ArrayContainer'
+import { DevThrow, is } from '../utils'
 
 interface ItemRendererClassProps {
   children: (data: any, instance: eui.ItemRenderer) => React.ReactElement
   useRenderer?: boolean // 是否使用渲染器渲染，否则在原渲染树中渲染
   concurrent?: boolean // 是否使用 concurrent 模式更新
   sync?: boolean // 是否使用同步模式更新
-  updateChildren?: boolean // 渲染器渲染时是否更新 children
+  updateChildren?: boolean | ReadonlyArray<unknown> // 渲染器渲染时是否更新 children
 }
 
 interface ItemRenderer extends eui.IItemRenderer {
@@ -50,6 +51,11 @@ export function ItemRendererClass({
         }
         dataChanged() {
           const newNode = elementRef.current(this.data, this)
+          if (newNode.type !== 'eui-itemRenderer')
+            DevThrow(`The container of item must be \`eui-itemRenderer\` in \`ItemRendererClass\``, {
+              from: 'ItemRendererClass',
+              link: 'https://xingxinglieo.github.io/egreact/guide/basic#%E5%BE%AA%E7%8E%AF',
+            })
           this.element = React.cloneElement(newNode, {
             object: this,
             ...(newNode.key === null ? { key: this.$hashCode } : {}),
@@ -62,10 +68,16 @@ export function ItemRendererClass({
       },
   )
 
+  const isUpdateChildren = !!updateChildren
+  const updateChildrenDeps = is.arr(updateChildren) ? updateChildren : [children]
   useEffect(() => {
-    // @ts-ignore
-    if (useRenderer && updateChildren) for (let renderer of set) renderer.dataChanged()
-  }, [updateChildren, children, set])
+    if (useRenderer && isUpdateChildren) {
+      for (let renderer of set) {
+        // @ts-ignore
+        renderer.dataChanged()
+      }
+    }
+  }, [isUpdateChildren, ...updateChildrenDeps])
 
   useEffect(() => () => set.clear(), [])
 

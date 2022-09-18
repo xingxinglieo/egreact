@@ -103,5 +103,7 @@ describe('is', () => {
     expect(is.equ([1, 2], [1, 2, 3])).toBe(false)
     expect(is.equ([1, 2, 3, 4], [1, 2, 3])).toBe(false)
     expect(is.equ([1, 2], [1, 2, 3], { strict: false })).toBe(true)
+
+    expect(is.equ(egret.DisplayObject, egret.Shape)).toBe(false)
   })
 })

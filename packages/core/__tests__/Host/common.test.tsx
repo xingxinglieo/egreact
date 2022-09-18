@@ -84,7 +84,7 @@ describe('Host common', () => {
       const ref = React.createRef<any>()
       render(
         <Egreact container={container}>
-          <displayObject scrollRect={[1, 2, 3, 4]} ref={ref} />
+          <displayObject scrollRect={[1, 2, 3, 4]} mask={[]} ref={ref} />
         </Egreact>,
       )
       expect(ref.current.scrollRect.x).toBe(1)
@@ -135,8 +135,10 @@ describe('Host common', () => {
           ['drawRect', 0, 0, 100, 100],
           ['endFill'],
         ])
+        const [x, setX] = useState({ x: 10 } as any)
         useEffect(() => {
           setActions(() => () => () => void 0)
+          setX({})
         }, [])
         useEffect(() => {
           if (typeof actions === 'function') {
@@ -144,7 +146,7 @@ describe('Host common', () => {
           }
         }, [actions])
 
-        return <shape graphics={actions} />
+        return <shape graphics={actions} {...x} />
       }
       render(
         <Egreact container={container}>

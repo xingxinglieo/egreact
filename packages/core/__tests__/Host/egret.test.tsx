@@ -12,7 +12,7 @@ const Test = () => {
   useEffect(() => {
     setNum('100')
     setP({})
-  },[])
+  }, [])
   return (
     <>
       <bitmap args={[texture]} />
@@ -20,7 +20,7 @@ const Test = () => {
 
       {/* test normal prop handler */}
       <displayObject height={num} width={num} visible name={1} />
-      <displayObject height={50} width={50} />
+      <displayObject height={50} width={50} mask={new egret.DisplayObject()} />
 
       <displayObjectContainer {...p} />
     </>

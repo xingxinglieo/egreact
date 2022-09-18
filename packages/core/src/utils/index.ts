@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Instance, EventInfo } from '../type'
 import { CONSTANTS, isProduction } from '../constants'
+import { config } from '../config'
 import { EVENT_CATEGORY_MAP } from '../Host'
 import { Fiber } from 'react-reconciler'
 
@@ -16,10 +17,21 @@ export const isEvent = (key: string) => /^on(([A-Z]|-)[a-z]+)+\d*$/.test(key) //
 
 export const isMountProp = (value: any): value is typeof CONSTANTS.PROP_MOUNT => value === CONSTANTS.PROP_MOUNT
 
-export const DevThrow = (e: string | Error) => {
-  if (isProduction) {
-    console.error(e instanceof Error ? e.message : e)
-  } else {
+export const DevThrow = (e: string | Error, options: { from?: string; link?: string; toThrow?: boolean } = {}) => {
+  const { from, link, toThrow = false } = options
+  const prefix = `Egreact${from ? `(from \`${from}\`)` : ''}:`
+  const suffix = link && !isProduction ? `,\nsee ${link}` : ''
+
+  if (e instanceof Error) e.message = prefix + e.message + suffix
+  else e = prefix + e + suffix
+
+  if (is.fun(config.errorHandler)) {
+    config.errorHandler(e)
+  } else if (!isProduction) {
+    throw e
+  }
+
+  if (toThrow) {
     throw e
   }
 }
@@ -62,7 +74,7 @@ export const is = {
     // Wrong type or one of the two undefined, doesn't match
     if (typeof a !== typeof b || !!a !== !!b) return false
     // Atomic, just compare a against b
-    if (is.str(a) || is.num(a)) return a === b
+    if (is.str(a) || is.num(a) || is.fun(a)) return a === b
     const isObj = is.obj(a)
     if (isObj && objects === 'reference') return a === b
     const isArr = is.arr(a)
@@ -76,7 +88,7 @@ export const is = {
     if (is.und(i)) {
       if (isArr && a.length === 0 && b.length === 0) return true
       if (isObj && Object.keys(a).length === 0 && Object.keys(b).length === 0) return true
-      if (a !== b) return false
+      return a === b
     }
     return true
   },

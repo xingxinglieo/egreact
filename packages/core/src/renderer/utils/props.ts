@@ -1,9 +1,9 @@
 import { injectMemoizedProps } from '../../devtool'
 import { DevThrow, is, isEvent, reduceKeysToTarget, splitEventKeyToInfo } from '../../utils'
 import { DiffSet, ExtensionObj, IElementProps, Instance, PropSetter } from '../../type'
-import { CONSTANTS, isProduction } from '../../constants'
-import { attachInfo } from './attach'
+import { CONSTANTS, isBrowserDev } from '../../constants'
 import { EventProp } from '../../Host/common'
+import { attachInfo } from './attach'
 
 export const isDiffSet = (def: any): def is DiffSet => def && !!(def as DiffSet).memoized && !!(def as DiffSet).changes
 
@@ -21,7 +21,8 @@ export function diffProps(
   const changes: DiffSet['changes'] = []
   const previousKeys = Object.keys(previous)
   for (let i = 0; i < previousKeys.length; i++) {
-    if (!props.hasOwnProperty(previousKeys[i])) entries.push([previousKeys[i], CONSTANTS.DEFAULT_REMOVE])
+    if (!props.hasOwnProperty(previousKeys[i]) && !previousKeys[i].startsWith('__'))
+      entries.push([previousKeys[i], CONSTANTS.DEFAULT_REMOVE])
   }
   // 从少key到多key，保证添加的顺序，否则会出错
   entries.sort((a, b) => a[0].split('-').length - b[0].split('-').length)
@@ -105,7 +106,9 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
           eInfo,
         })
         if (!is.fun(resetter)) {
-          return console.warn(`Return type of set of EventHandler ${key} must be a function,meaning remove event`)
+          return console.warn(
+            `Egreact(applyProps):Return type of set of EventHandler ${key} must be a function,meaning remove event`,
+          )
         }
         info.memoizedResetter[key] = resetter
       }
@@ -114,14 +117,16 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
 
       if (target === null) {
         const prefixKey = prefixKeys.join('-')
-        return DevThrow(`\`${targetKey}\` depends on \`${prefixKey}\`, you must set \`${prefixKey}\` before`)
+        return DevThrow(`\`${targetKey}\` depends on \`${prefixKey}\`, you must set \`${prefixKey}\` before`, {
+          from: 'applyProps',
+        })
       }
 
       // 存储一下初始值
       if (isMount) {
         info.memoizedDefault[key] = target[targetKey]
         if (!is.fun(info.propsHandlers[key]))
-          console.warn(`\`${key}\` may not be a valid prop in ${instance.constructor.name}`)
+          console.warn(`Egreact(applyProps):\`${key}\` may not be a valid prop in ${instance.constructor.name}`)
       }
 
       const defaultPropsHandler =
@@ -139,22 +144,19 @@ export function applyProps(instance: Instance, data: IElementProps | DiffSet) {
           target,
           targetKey,
           keys,
-        }) || (() => void 0)
+        }) || ((isRemove) => isRemove && (target[targetKey] = info.memoizedDefault[key]))
 
       // 移除情况 清除副作用
       if (isRemove) {
         // target[targetKey]?.dispose?.()
-        if (is.fun(lastResetter)) lastResetter(true)
-        else target[targetKey] = info.memoizedDefault[key]
+        is.fun(lastResetter) && lastResetter(true)
         delete info.memoizedResetter[key]
         delete info.memoizedDefault[key]
-      } else {
-        if (is.fun(lastResetter)) lastResetter(false)
-      }
+      } else is.fun(lastResetter) && lastResetter(false)
     }
   })
 
-  if (!isProduction) {
+  if (isBrowserDev) {
     injectMemoizedProps(instance, info)
   }
   return instance

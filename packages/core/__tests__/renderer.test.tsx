@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
 import React, { createRef, useEffect, useState } from 'react'
-import { Egreact, getActualInstance, Instance, ExtensionObj } from '../src/index'
+import { Egreact, getActualInstance, Instance } from '../src/index'
 import { createEgreactRoot } from '../src/renderer/create'
 import { hostConfig } from '../src/renderer'
 import TextNode from '../src/Host/custom/TextNode'

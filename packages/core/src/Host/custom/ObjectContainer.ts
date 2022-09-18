@@ -6,7 +6,7 @@ import { DevThrow } from '../../utils'
 export class ObjectContainer implements ICustomClass {
   __target = {} as { [k in string]: any }
   addChild() {
-    DevThrow(`objectContainer can't add child directly. Please add \`attach\` prop to child`)
+    DevThrow(`\`objectContainer\` can't add child directly. Please add \`attach\` prop to child`)
   }
   reAttach(this: Instance<ObjectContainer>) {
     if (this[CONSTANTS.INFO_KEY].targetInfo) {
