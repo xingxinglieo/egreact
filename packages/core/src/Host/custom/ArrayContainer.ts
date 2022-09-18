@@ -1,4 +1,5 @@
 import { proxyHelper } from '../utils'
+import { is } from '../../utils'
 import { Instance, IContainer, ICustomClass } from '../../type'
 import { CONSTANTS } from '../../constants'
 
@@ -18,7 +19,7 @@ export class ArrayContainer implements IContainer, ICustomClass {
   }
   reAttach() {
     const _this = this as unknown as Instance<ArrayContainer>
-    if (_this[CONSTANTS.INFO_KEY].targetInfo) {
+    if (_this[CONSTANTS.INFO_KEY]?.targetInfo) {
       this.__target = [...this.__target]
       const [target, targetKey] = _this[CONSTANTS.INFO_KEY].targetInfo
       target[targetKey] = this.__target

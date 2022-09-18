@@ -166,8 +166,8 @@ export const proxyHelper = <T extends new (...args: any[]) => any>(config: {
   return proxyConstructor
 }
 
-export function proxyGetPropsHandlers(target: ExtensionObj, key: symbol | string) {
-  if (key in target) return target[key]
+export function proxyGetPropsHandlers(target: ExtensionObj, key: symbol | string, receiver: any) {
+  if (key in target) return Reflect.get(target, key, receiver)
   else if (typeof key === 'symbol' || key.startsWith('__')) return undefined
   else if (isEvent(key)) return EventProp.eventSetter
   else return NormalProp.pass

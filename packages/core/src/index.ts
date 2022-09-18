@@ -12,6 +12,7 @@ export * from './Host/utils'
 
 export * from './Host/common'
 
+export { config } from './config'
 
 export { ArrayContainer } from './Host/custom/ArrayContainer'
 

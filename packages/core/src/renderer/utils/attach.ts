@@ -1,14 +1,17 @@
 import { addCompatibleDomAttributes } from '../../devtool'
-import { CONSTANTS, isProduction } from '../../constants'
+import { CONSTANTS, isBrowserDev } from '../../constants'
 import { Instance, IRenderInfo } from '../../type'
-import { is } from '../../utils'
+import { DevThrow, is } from '../../utils'
 
 /**
  * @description 附加 __renderInfo
  */
 export function attachInfo<T = unknown>(instance: any, info: Partial<IRenderInfo> = {}): Instance<T> {
   if (!(is.obj(instance) || is.arr(instance))) {
-    throw `instance must be an object`
+    DevThrow(`instance must be an object`, {
+      from: 'attachInfo',
+      toThrow: true,
+    })
   } else if (!instance[CONSTANTS.INFO_KEY]) {
     instance[CONSTANTS.INFO_KEY] = {
       type: '',
@@ -27,7 +30,7 @@ export function attachInfo<T = unknown>(instance: any, info: Partial<IRenderInfo
     }
   }
 
-  if (!isProduction) {
+  if (isBrowserDev) {
     addCompatibleDomAttributes(instance)
   }
 

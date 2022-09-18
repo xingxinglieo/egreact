@@ -34,3 +34,5 @@ export const isBrowser =
   (navigator.product === 'ReactNative' || navigator.product === 'NativeScript' || navigator.product === 'NS')
     ? false
     : typeof window !== 'undefined' && typeof document !== 'undefined'
+
+export const isBrowserDev = !isProduction && isBrowser

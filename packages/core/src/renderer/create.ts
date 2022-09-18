@@ -6,7 +6,7 @@ import { DevThrow } from '../utils'
 import { attachInfo, detachInfo } from './utils'
 import { defaultOnRecoverableError } from '../outside'
 import { IContainer, Instance } from '../type'
-import { isProduction, isBrowser } from '../constants'
+import { isBrowserDev } from '../constants'
 import { proxyHackForDevTools, unProxyHackForDevTools } from '../devtool'
 
 export type CreateRootOptions = {
@@ -26,11 +26,13 @@ export class EgreactRoot {
     const root = this._internalRoot
     const { sync = false, concurrent = false } = options
     if (root === null) {
-      return DevThrow(`Cannot update an unmounted root.`)
+      return DevThrow(`Cannot update an unmounted root.`, {
+        from: `EgreactRoot.render`,
+      })
     }
     if (!this.rendered) {
       this.rendered = true
-      if (++rendererCount === 1 && !isProduction && isBrowser) {
+      if (++rendererCount === 1 && isBrowserDev) {
         proxyHackForDevTools()
       }
     }
@@ -55,11 +57,9 @@ export class EgreactRoot {
       }, void 0)
       detachInfo(container)
 
-      if (--rendererCount === 0 && !isProduction && isBrowser) {
+      if (--rendererCount === 0 && isBrowserDev) {
         unProxyHackForDevTools()
       }
-    } else {
-      console.warn(`egreact renderer is unmounted!`)
     }
   }
 }

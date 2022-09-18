@@ -5,8 +5,10 @@ import type { Instance, IContainer, ICustomClass } from '../../type'
 import { CONSTANTS } from '../../constants'
 import { proxyGetPropsHandlers } from '../utils'
 
+const docLink = 'https://xingxinglieo.github.io/egreact/components/custom#primitive'
 export class Primitive implements IContainer, ICustomClass {
   __target: any
+  __isPrimitive = true
   constructor(...args: any[]) {
     const props = args[args.length - 1]
     const { object, constructor } = props
@@ -16,7 +18,10 @@ export class Primitive implements IContainer, ICustomClass {
     } else if (props.hasOwnProperty('constructor') && typeof constructor === 'function') {
       this.__target = new constructor(...args.slice(0, -1))
     } else {
-      DevThrow(`primitive must have an \`object\` or a \`constructor\` prop`)
+      DevThrow(`\`primitive\` must have an \`object\` or a \`constructor\` prop`, {
+        from: 'primitive',
+        link: docLink,
+      })
     }
   }
   get object() {
@@ -26,28 +31,36 @@ export class Primitive implements IContainer, ICustomClass {
     if (is.fun(this.__target.addChild)) {
       this.__target.addChild(child, childInstance)
     } else {
-      DevThrow(`please promise addChild method to ${this.__target.constructor.name}`)
+      DevThrow(`Please promise addChild method to ${this.__target.constructor.name}`, {
+        from: 'primitive',
+      })
     }
   }
   removeChild(child: any, childInstance: any) {
     if (is.fun(this.__target.removeChild)) {
       this.__target.removeChild(child, childInstance)
     } else {
-      DevThrow(`please promise removeChild method to ${this.__target.constructor.name}`)
+      DevThrow(`Please promise removeChild method to ${this.__target.constructor.name}`, {
+        from: 'primitive',
+      })
     }
   }
   addChildAt(child: any, index: number, childInstance: any) {
     if (is.fun(this.__target.addChildAt)) {
       this.__target.addChildAt(child, index, childInstance)
     } else {
-      DevThrow(`please promise addChildAt method to ${this.__target.constructor.name}`)
+      DevThrow(`Please promise addChildAt method to ${this.__target.constructor.name}`, {
+        from: 'primitive',
+      })
     }
   }
   getChildIndex(child: any, childInstance: any) {
     if (is.fun(this.__target.getChildIndex)) {
       return this.__target.getChildIndex(child, childInstance)
     } else {
-      DevThrow(`please promise getChildIndex method to ${this.__target.constructor.name}`)
+      DevThrow(`Please promise getChildIndex method to ${this.__target.constructor.name}`, {
+        from: 'primitive',
+      })
       return 0
     }
   }
@@ -61,14 +74,20 @@ const primitive = {
   object: ({}: PropSetterParameters<object, Instance<Primitive>>) => {
     return (isRemove: boolean) => {
       if (!isRemove) {
-        DevThrow(`please use key to refresh object in primitive`)
+        DevThrow(`Please use key to refresh object in primitive`, {
+          from: 'primitive',
+          link: docLink,
+        })
       }
     }
   },
   constructor: ({}: PropSetterParameters<Function, Instance<Primitive>>) => {
     return (isRemove: boolean) => {
       if (!isRemove) {
-        DevThrow(`please use key to refresh constructor in primitive`)
+        DevThrow(`Please use key to refresh constructor in primitive`, {
+          from: 'primitive',
+          link: docLink,
+        })
       }
     }
   },

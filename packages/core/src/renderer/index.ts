@@ -7,7 +7,7 @@ import { getActualInstance, is, reduceKeysToTarget, DevThrow } from '../utils'
 import { getEventPriority } from '../outside'
 import { IContainer, IElementProps, DiffSet, Instance } from '../type'
 import { deleteCompatibleDomAttributes } from '../devtool'
-import { CONSTANTS, isProduction } from '../constants'
+import { CONSTANTS, isBrowserDev, isBrowser } from '../constants'
 
 type HostConfig = Reconciler.HostConfig<
   string, // host type
@@ -46,7 +46,11 @@ const createInstance: HostConfig['createInstance'] = function (
   const instanceProp = catalogueMap[type]
 
   if (!instanceProp) {
-    throw `\`${type}\` is not a host component! Did you forget to extend it?`
+    DevThrow(`\`${type}\` is not a host component! Did you forget to extend it?`, {
+      from: 'createInstance',
+      link: 'https://xingxinglieo.github.io/egreact/guide/advance#%E4%BD%BF%E7%94%A8-extend',
+      toThrow: true,
+    })
   }
 
   let args = []
@@ -57,10 +61,12 @@ const createInstance: HostConfig['createInstance'] = function (
   const hasArgs = args.length > 0
 
   // const usePool = Pool.enable && !hasArgs && !noUsePool && Pool.isRegisteredClass(instanceProp.__Class)
-  const instance: Instance = attachInfo(
-    // last parameter is props, let constructor do something
+
+  // last parameter is props, let constructor do something
+  const instance: Instance = new instanceProp.__Class(...args, props)
+  attachInfo(
     // usePool ? Pool.get(instanceProp.__Class) :
-    new instanceProp.__Class(...args, props),
+    instance,
     {
       type,
       root: rootContainerInstance,
@@ -92,7 +98,9 @@ const appendChild: HostConfig['appendChild'] = function (parentInstance, child) 
 
     if (target === null) {
       const prefixKey = prefixKeys.join('-')
-      return DevThrow(`\`${targetKey}\` depends on \`${prefixKey}\`, you must set \`${prefixKey}\` before`)
+      return DevThrow(`\`${targetKey}\` depends on \`${prefixKey}\`, you must set \`${prefixKey}\` before`, {
+        from: 'appendChild',
+      })
     }
 
     info.targetInfo = [target, targetKey, target[targetKey]]
@@ -102,7 +110,8 @@ const appendChild: HostConfig['appendChild'] = function (parentInstance, child) 
       child.setContainer(getActualInstance(parentInstance))
     } else {
       return DevThrow(
-        `text \`${child.text}\` whose parent \`${parentInstance.constructor.name}\` don't have a \`text\` attribute(e.g.textField, bitmapText, eui-label)`,
+        `The text \`${child.text}\` whose parent \`${parentInstance.constructor.name}\` don't have a \`text\` attribute(e.g.textField, bitmapText, eui-label)`,
+        { from: 'appendChild' },
       )
     }
   } else {
@@ -119,7 +128,11 @@ const insertBefore: HostConfig['insertBefore'] = function (
   child: Instance,
   beforeChild: Instance,
 ) {
-  if (beforeChild[CONSTANTS.INFO_KEY].targetInfo) throw `please keep the order of elements which have attach prop`
+  if (beforeChild[CONSTANTS.INFO_KEY].targetInfo)
+    return DevThrow(`Please keep the order of elements which have attach prop`, {
+      from: 'insertBefore',
+      link: `https://xingxinglieo.github.io/egreact/guide/basic#attach-%E6%94%B9%E5%8F%98%E5%8A%A0%E5%85%A5%E7%88%B6%E5%AE%9E%E4%BE%8B%E7%9A%84%E6%96%B9%E5%BC%8F`,
+    })
   const actualTarget = getActualInstance(child)
   const actualBefore = getActualInstance(beforeChild)
   parentInstance.addChildAt(actualTarget, parentInstance.getChildIndex(actualBefore, beforeChild), child)
@@ -149,12 +162,12 @@ const detachDeletedInstance: HostConfig['detachDeletedInstance'] = (instance) =>
 
   info.propsHandlers.__detach?.(instance)
 
-  if (!isProduction) {
+  if (isBrowserDev) {
     deleteCompatibleDomAttributes(instance)
   }
 
   for (let [, reset] of Object.entries(info.memoizedResetter)) {
-    reset(true)
+    if (is.fun(reset)) reset(true)
   }
 
   // 对象池回收
@@ -181,7 +194,10 @@ const commitUpdate: HostConfig['commitUpdate'] = function (instance, diff, _type
   if (oldProps.attach !== newProps.attach) {
     if (oldProps.attach === undefined || newProps.attach === undefined) {
       return DevThrow(
-        `please keep prop \`attach\` state of existence, because it determined how to add into parent instance when child instance created`,
+        `Please keep prop \`attach\` state of existence, because it determined how to add into parent instance when child instance created`,
+        {
+          link: `https://xingxinglieo.github.io/egreact/guide/basic#attach-%E6%94%B9%E5%8F%98%E5%8A%A0%E5%85%A5%E7%88%B6%E5%AE%9E%E4%BE%8B%E7%9A%84%E6%96%B9%E5%BC%8F`,
+        },
       )
     }
 
@@ -272,7 +288,7 @@ export const hostConfig: HostConfig = {
 export const reconciler = Reconciler(hostConfig)
 import { injectIntoDevTools } from '../devtool'
 
-if (!isProduction) {
+if (isBrowser) {
   injectIntoDevTools(reconciler)
 }
 

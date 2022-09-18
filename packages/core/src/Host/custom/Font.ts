@@ -1,6 +1,7 @@
 import { NormalProp } from '../common'
 import { proxyHelper } from '../utils'
-import { ICustomClass } from '../../type'
+import { Primitive } from './Primitive'
+import { getActualInstance } from '../../utils'
 
 export class Font implements egret.ITextElement {
   text = ''
@@ -12,7 +13,9 @@ const font = {
     excludeKeys: ['text'],
     targetKey: 'style',
     setCallback() {
-      this.__renderInfo.parent?.reAttach?.()
+      const parent = this.__renderInfo.parent
+      const caller = parent?.__isPrimitive ? getActualInstance(parent) : parent
+      parent?.reAttach?.apply(caller)
     },
   }),
   textColor: NormalProp.num,

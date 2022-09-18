@@ -280,7 +280,9 @@ export const layoutBaseProp = {
     } else {
       // default to BasicLayout and warning user
       value = new eui.BasicLayout()
-      DevThrow(`prop which type is LayoutBase must be "basic" | "tile" | "horizontal" | "vertical" | eui.LayoutBase`)
+      DevThrow(
+        `The value of prop \`LayoutBase \` must be "basic" | "tile" | "horizontal" | "vertical" | eui.LayoutBase`,
+      )
     }
     target[targetKey] = value
   },

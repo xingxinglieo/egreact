@@ -19,6 +19,7 @@ describe('apply props', () => {
     layout: 'horizontal',
     width: '100%',
     notExistProp: 1,
+    __diff: '1',
 
     onTouchTap: emptyFun,
     onTouchTapOnce: emptyFun,
